@@ -1,0 +1,27 @@
+/* 
+	01-Artikelsystem V3 - Copyright 2006-2008 by Michael Lorer - 01-Scripts.de
+	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
+	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
+	
+	Modul:		01article
+	Dateiinfo: 	Modulspezifische CSS-Datei
+*/
+
+b.zwischengesp {
+	font-weight: normal;
+}
+
+b.free_wait {
+	font-weight: normal;
+	color: #BB0000;
+}
+
+b.public {
+	font-weight: normal;
+	color: green;
+}
+
+b.abgelaufen {
+	font-weight: normal;
+	color: blue;
+}

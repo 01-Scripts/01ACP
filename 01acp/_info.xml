@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+
+<modul>
+	<name>01acp</name>
+	<titel>01ACP</titel>
+	<beschreibung>01ACP, Zentraler Administrationsbereich fuer alle 01-PHP-Scripte (Module)</beschreibung>
+	<version>1.1.0.1</version>
+	<datum>12.11.2009</datum>
+
+	<updates>
+		<v1000_v1001>
+			<startv>1.0.0.0</startv>
+			<zielv>1.0.0.1</zielv>
+			<action>1000_zu_1001</action>
+		</v1000_v1001>
+		<v1000_v1002>
+			<startv>1.0.0.0</startv>
+			<zielv>1.0.0.2</zielv>
+			<action>1001_zu_1002</action>
+		</v1000_v1002>
+		<v1001_v1002>
+			<startv>1.0.0.1</startv>
+			<zielv>1.0.0.2</zielv>
+			<action>1001_zu_1002</action>
+		</v1001_v1002>
+		<v1002_v1100>
+			<startv>1.0.0.2</startv>
+			<zielv>1.1.0.0</zielv>
+			<action>1002_zu_1100</action>
+		</v1002_v1100>
+		<v1100_v1101>
+			<startv>1.1.0.0</startv>
+			<zielv>1.1.0.1</zielv>
+			<action>1100_zu_1101</action>
+		</v1100_v1101>
+	</updates>	
+
+</modul>

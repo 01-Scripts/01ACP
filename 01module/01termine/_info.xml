@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+
+<modul>
+	<name>01article</name>
+	<titel>01-Artikelsystem (Termine)</titel>
+	<beschreibung>Termine erstellen und verwalten.</beschreibung>
+	<icon>images/termin.gif</icon>
+	<version>3.0.0.1</version>
+	<need01acpv>1.0.0.1</need01acpv>
+	<datum>28.09.2008</datum>
+	<includeinfo><![CDATA[
+Verwenden Sie folgenden PHP-Code um das 01-Artikelsystem in Ihre Seite zu integrieren:<br />
+<code>
+&lt;?PHP<br />
+$subfolder		= "01scripts/"; // Unterverzeichnis<br />
+$modul			= "01article"; // Modul- und Verzeichnisname (ID-Name), ggf. &#228;ndern<br />
+<br />
+// Weitere m&#246;gliche Parameter:<br />
+$_GET['catid']	= "1,2,3"; // Nur bestimmte Kategorien ausgeben (kommasepariert)<br />
+$_GET['artid']	= 1; // Einzelnen Artikel / statische Seite ausgeben<br />
+$_GET['search']	= "Suchwort"; // Ausgabe der zu &quot;Suchwort&quot; gefundenen Beitr&#228;ge<br />
+$_GET['page']	= 2; // Ausgabe der 2. Seite<br />
+$flag_utf8      = FALSE; // Setzen Sie $flag_utf8 = TRUE; falls Sie Ihre Seite UTF-8-kodiert ausgeben<br />
+$flag_nocss     = FALSE; // Setzen Sie $flag_nocss = TRUE; wenn kein CSS eingebunden werden soll<br />
+<br />
+include($subfolder."01module/".$modul."/01article.php");<br />
+?&gt;
+</code>
+	]]></includeinfo>
+
+	<updates>
+		<v3000_v3001>
+			<startv>3.0.0.0</startv>
+			<zielv>3.0.0.1</zielv>
+			<action>3000_zu_30001</action>
+		</v3000_v3001>
+	</updates>	
+
+</modul>

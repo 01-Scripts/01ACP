@@ -1,0 +1,3 @@
+TinyMCE-Version:	3.2.7
+Datum:			11.11.09
+http://tinymce.moxiecode.com/index.php

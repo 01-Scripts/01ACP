@@ -1,0 +1,752 @@
+/*
+	01ACP - Copyright 2008-2009 by Michael Lorer - 01-Scripts.de
+	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
+	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
+	
+	Design by Free CSS Templates http://www.freecsstemplates.org - Noncopyright-Lizenz erworben von Michael Lorer, 01-Scripts.de
+	
+	Modul:		01ACP
+	Dateiinfo:	Layout für ACP
+	#fv.1101#
+*/
+
+/* Allgemeine Definitionen (Body, Text etc.) */
+
+body {
+	margin: 20px 0;
+	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #A1A1A1;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	color: #282858;
+	margin-top:10px;
+	margin-bottom:10px;
+}
+
+p, ol, ul, td {
+	font-size:12px;
+	color: #5E5E5E;
+}
+
+.small, .klein {
+	font-size:10px;
+	color: #5E5E5E;
+}
+
+.big {
+	font-size:16px;
+	color: #5E5E5E;
+}
+
+b, strong {
+	font-weight: bold;
+	color: #484848;
+}
+
+b.red {
+	font-weight: bold;
+	color: #BB0000;
+}
+
+b.yellow {
+	font-weight: bold;
+	color: #F8A000;
+}
+
+b.green {
+	font-weight: bold;
+	color: green;
+}
+
+a {
+	text-decoration:underline;
+	color: #000;
+}
+
+a:hover,
+a.hover {
+	text-decoration: none;
+	color: #5E5E5E;
+}
+
+a:visited {
+	text-decoration: underline;
+	color: #5E5E5E;
+}
+
+img {
+border: 0;
+}
+
+
+/* Elemente */
+
+.meldung_hinweis {
+	background: #EEE url(../images/icons/ausrufezeichen.gif) center no-repeat;
+	background-position: 15px 50%; /* x-pos y-pos */
+	line-height:16pt;
+	text-align: left;
+	font-size:12px;
+	color: #5E5E5E;
+	
+	margin: 20px 0;
+	padding: 5px 20px 5px 55px;
+	border-top: 3px solid #282858;
+	border-bottom: 3px solid #282858;
+}
+
+.meldung_error {
+	background: #EEE url(../images/icons/cancel.gif) center no-repeat;
+	background-position: 15px 50%; /* x-pos y-pos */
+	line-height:16pt;
+	text-align: left;
+	font-size:12px;
+	color: #5E5E5E;
+	
+	margin: 20px 0;
+	padding: 5px 20px 5px 55px;
+	border-top: 3px solid #BB0000;
+	border-bottom: 3px solid #BB0000;
+}
+
+.meldung_frage {
+	background: #EEE url(../images/icons/kreis_frage.gif) center no-repeat;
+	background-position: 15px 50%; /* x-pos y-pos */
+	line-height:16pt;
+	text-align: left;
+	font-size:12px;
+	color: #5E5E5E;
+	
+	margin: 20px 0;
+	padding: 5px 20px 5px 55px;
+	border-top: 3px solid #F8A000;
+	border-bottom: 3px solid #F8A000;
+}
+
+.meldung_ok, .meldung_erfolg {
+	background: #EEE url(../images/icons/apply.gif) center no-repeat;
+	background-position: 15px 50%; /* x-pos y-pos */
+	line-height:16pt;
+	text-align: left;
+	font-size:12px;
+	color: #5E5E5E;
+	
+	margin: 20px 0;
+	padding: 5px 20px 5px 55px;
+	border-top: 3px solid green;
+	border-bottom: 3px solid green;
+}
+
+.acp_startbox {
+	width:600px;
+	height:auto;
+	overflow:auto;
+	margin: 10px auto;
+	margin-top:0;
+
+	background-color:#EEE;
+	padding: 5px 10px;
+	border: 1px solid #F8A000;
+}
+
+.acp_innerbox {
+	width:255px;
+	height:255px;
+	margin:5px;
+	
+	display:inline;
+	float:left;
+	overflow:auto;
+	
+	background-color:#EEE;
+	padding: 0 15px;
+	border: 1px solid #F8A000;
+}
+
+.acp_doubleinnerbox {
+	width:551px;
+	height:60px;
+	margin:5px;
+
+	overflow:auto;
+	
+	background-color:#EEE;
+	padding: 0 15px;
+	border: 1px solid #F8A000;
+}
+
+.box_centered {
+	width:400px;
+	margin: 0 auto;
+
+	background-color:#EEE;
+	padding: 0 15px;
+	border: 1px solid #F8A000;
+}
+
+.contentbox{
+	width:95%;
+	height:auto;
+	overflow:auto;
+	margin: 10px auto;
+	margin-top:0;
+
+	background-color:#EEE;
+	padding: 5px 10px;
+	border: 1px solid #F8A000;
+}
+
+.image {
+	float: left;
+	margin: 3px 0 0 0;
+	padding: 0;
+	margin-right:10px;
+	margin-bottom:10px;
+}
+
+.indent {
+	margin-left: 125px;
+}
+
+
+.tra {
+	background-color:#FFF;
+}
+
+.trb {
+	background-color:#EEE;
+}
+
+.tr_red {
+	background-color:#BB0000;
+	color:#FFF;
+}
+
+.tr_red  a,.tr_red b{
+	color:#FFF;
+}
+
+.tr_green {
+	background-color:green;
+	color:#FFF;
+}
+
+.tr_green  a,.tr_green b{
+	color:#FFF;
+}
+
+
+.actionbutton,
+.actionbutton:visited,
+.actionbutton:active {
+
+    height:22px;
+    line-height:250%;       /* sorgt für vertikale zentrierung des Inhalts */
+    padding:4px;
+    padding-top:10px;
+    padding-bottom:0;
+    
+	background-color:#fff;
+	border:1px solid #282858;
+    
+    margin:0;
+    margin-right:10px;
+    margin-bottom:10px;
+    
+    text-decoration:none;
+    font-weight:bold;
+    color:#484848;
+}
+
+.actionbutton:hover{
+	border-color:#F8A000;
+    color:#484848;
+}
+
+/* CSS-Hack nur füe IE 6 */
+* html .actionbutton,
+* html .actionbutton:visited,
+* html .actionbutton:active {
+	border: 0;
+}
+/* CSS-Hack nur füe IE 7 */
+*+html .actionbutton,
+*+html .actionbutton:visited,
+*+html .actionbutton:active {
+	border: 0;
+}
+
+
+
+
+
+
+
+
+
+/* AJAX-Elemente */
+
+.ajax_box {
+	position:fixed; 
+    top:80px; 
+    right:30px;
+    
+    width:60px;
+	height: 25px;
+	float:right;
+	display:none;
+	
+	font-weight: bold;
+	font-size:14pt;
+	padding: 3px;
+	margin:1px;
+}
+
+.ajax_erfolg {
+	border: 1px solid green;
+	background: #EEE url(../images/icons/apply.gif) center no-repeat;
+	background-position: right; /* x-pos y-pos */
+	
+	color: green;
+}
+
+.ajax_error {
+	width:90px;
+	border: 1px solid #BB0000;
+	background: #EEE url(../images/icons/cancel.gif) center no-repeat;
+	background-position: right; /* x-pos y-pos */
+	
+	color: #BB0000;
+}
+
+.ajax_loading {
+	width:100px;
+	border: 1px solid #F8A000;
+	background: #EEE url(../images/icons/loading.gif) center no-repeat;
+	background-position: right; /* x-pos y-pos */
+
+	color: #F8A000;
+}
+
+.ajax_meldung {
+	width:100px;
+	height:auto;
+	border: 1px solid #BB0000;
+	background: #EEE url(../images/icons/cancel.gif) center no-repeat;
+	background-position: top; /* x-pos y-pos */
+	padding-top:30px;
+
+	color: #484848;
+	font-weight:normal;
+	font-size:12px;
+}
+
+.moo_hiddenelements {
+	display:none;
+}
+
+#sortliste li,
+#sortliste a{
+    cursor: move;
+    }
+
+/* Drag & Drop */
+.dragable {
+	position:relative;
+	top:0px;
+	left:0px;
+
+	cursor:move;
+}
+.droppable {
+
+}
+
+.dropzone_entered {
+	height:25px;
+	background:green;
+}
+
+
+
+
+
+
+
+
+
+
+
+/* Formularelemente */
+
+.input_old {
+	padding: 3px 10px;
+	background-color: #FFFFFF;
+	color: #5E5E5E;
+	border: 1px dotted #282858;
+}
+
+.input_text {
+	padding: 1px 1px;
+	background-color: #FFFFFF;
+	color: #5E5E5E;
+	border: 1px solid #5E5E5E;
+}
+
+.input_textarea {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+}
+
+.input_select {
+	padding: 1px 1px;
+	background-color: #FFFFFF;
+	color: #5E5E5E;
+	border: 1px solid #5E5E5E;
+}
+
+.input_select2 {
+	padding: 1px 1px;
+	background-color: #FFFFFF;
+	color: #5E5E5E;
+	border: 0;
+}
+
+.asd_input {
+	padding: 4px 12px;
+	height: 20px;
+	background: #FFFFFF url(../images/layout/img09.gif) repeat-x;
+	border: 0;
+
+	font-size: 12px;
+	font-weight:bold;
+	color: #5E5E5E;
+}
+
+.input2 , .input{
+	height: 20px;
+	background-color: #5E5E5E;
+	margin-bottom:2px;
+
+	border: 0;
+	font-size: 10px;
+	font-weight: normal;
+	color: #FFFFFF;
+}
+
+.input_search {
+	background-image: url(../images/icons/icon_search.gif);
+	background-position:0px 0px;
+	background-repeat:no-repeat;
+	padding-left:25px;
+	border:1px solid #5E5E5E;
+}
+
+
+
+
+
+
+
+/* Header */
+
+#header {
+	width: 95%;
+	height: 37px;
+	margin: 0 auto;
+	background: #F8A000 url(../images/layout/img01.gif) repeat-x;
+	border-bottom: 3px solid #FFFFFF;
+}
+
+#rightbox {
+	float: right;
+	height: 28px;
+	margin: 0;
+	padding: 9px 25px 0 0;
+	background: url(../images/layout/img03.gif) no-repeat right top;
+}
+
+#rightbox fieldset {
+	display: inline;
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+
+/* Top-Menu */
+
+#menu {
+	float: left;
+	width: 600px;
+	height: 37px;
+	margin: 0;
+	padding: 0 0 0 10px;
+	list-style: none;
+	background: url(../images/layout/img02.gif) no-repeat;
+}
+
+#menu li {
+	display: inline;
+}
+
+#menu a {
+	display: block;
+	float: left;
+	height: 27px;
+	padding: 10px 10px 0px 10px;
+	margin-left:10px;
+	text-decoration: none;
+	font-size: 12px;
+	font-weight: bold;
+	color: #FFFFFF;
+}
+
+#menu a:hover {
+	background: #A4B74C url(../images/layout/img04.gif) repeat-x;
+}
+
+
+
+
+
+
+
+
+
+/* Content */
+
+#content {
+	width: 95%;
+	margin: 0 auto;
+	background-image: url(../images/layout/img09.gif);
+	background-repeat:repeat-x;
+}
+
+/* Logo */
+
+#logo {
+	height: 150px;
+	background: url(../images/layout/img06.gif) no-repeat;
+	border-right:5px solid #FFF;
+}
+
+#logo h1, #logo h2, #logo a {
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+	text-align: center;
+	color: #FFFFFF;
+}
+
+#logo h1 {
+	color:#FFF;
+	padding-top: 25px;
+	font-size: 34px;
+}
+
+#logo h2 {
+	color:#FFF;
+	margin-top: -5px;
+	font-size: 12px;
+}
+
+/* Linkes Menue*/
+
+#colOne {
+	float:left;
+	width:20%;
+	background: url(../images/layout/img05.gif) repeat-x;
+	margin-right:20px;
+}
+
+#colOne a {
+	text-decoration:none;
+	color:#5E5E5E;
+}
+
+#colOne a:visited {
+	text-decoration:none;
+	color:#5E5E5E;
+}
+
+#colOne a:hover {
+	text-decoration:none;
+	color:#000;
+}
+
+#colOne h3 {
+	padding: 0 20px;
+}
+
+#colOne ul {
+	margin-left: 0;
+	padding-left: 20px;
+	padding-right: 20px;
+	list-style: none;
+}
+
+#colOne li {
+	padding: 5px 0;
+	border-top: 1px solid #EFEFEF;
+}
+
+#colOne li.first {
+	border: none;
+}
+
+/* Haupt-Content*/
+
+#mainContent {
+	float:right;
+	width:77%;
+	padding-top:20px;
+	/* background: url(../images/layout/img09.gif) repeat-x; */
+}
+
+#mainContent h1 {
+	font-size: 24px;
+}
+
+#mainContent h2 {
+	font-size: 21px;
+}
+
+#mainContent h3 {
+	clear:both;
+	font-size: 18px;
+}
+
+#mainContent h4 {
+	font-size: 16px;
+	font-weight:bold;
+}
+
+#mainContent .rundrahmen, .rundrahmen {
+    padding: 4px;
+    border: 2px solid #CCCCCC;
+}
+
+
+
+
+
+
+
+/**
+ * FancyUpload Showcase
+ *
+ * @license		MIT License
+ * @author		Harald Kirschner <mail [at] digitarald [dot] de>
+ * @copyright	Authors
+ */
+
+/* CSS vs. Adblock tabs */
+.swiff-uploader-box a {
+	display: none !important;
+}
+
+#fancy-status {
+	padding: 10px 15px;
+	width: 420px;
+	border: 1px solid #eee;
+}
+
+#fancy-status .progress {
+	background: url(../images/fancy/progress.gif) no-repeat;
+	background-position: +50% 0;
+	margin-right: 0.5em;
+	vertical-align: middle;
+}
+
+#fancy-status .progress-text {
+	font-size: 0.9em;
+	font-weight: bold;
+}
+
+#fancy-list {
+	list-style: none;
+	width: 420px;
+	margin: 0;
+}
+
+#fancy-list li.validation-error {
+	padding-left: 44px;
+	display: block;
+	clear: left;
+	line-height: 40px;
+	color: #8a1f11;
+	cursor: pointer;
+	border-bottom: 1px solid #fbc2c4;
+	background: #fbe3e4 url(../images/fancy/failed.png) no-repeat 4px 4px;
+}
+
+#fancy-list li.file {
+	border-bottom: 1px solid #eee;
+	background: url(../images/fancy/file.png) no-repeat 4px 4px;
+	overflow: auto;
+}
+#fancy-list li.file.file-uploading {
+	background-image: url(../images/fancy/uploading.png);
+	background-color: #D9DDE9;
+}
+#fancy-list li.file.file-success {
+	background-image: url(../images/icons/apply.gif);
+}
+#fancy-list li.file.file-failed {
+	background-image: url(../images/icons/ausrufezeichen.gif);
+}
+
+#fancy-list li.file .file-name {
+	font-size: 1.2em;
+	margin-left: 44px;
+	display: block;
+	clear: left;
+	line-height: 40px;
+	height: 40px;
+	font-weight: bold;
+}
+#fancy-list li.file .file-size {
+	font-size: 0.9em;
+	line-height: 18px;
+	float: right;
+	margin-top: 2px;
+	margin-right: 6px;
+}
+#fancy-list li.file .file-info {
+	display: block;
+	margin-left: 44px;
+	font-size: 0.9em;
+	line-height: 20px;
+	clear:both;
+}
+#fancy-list li.file .file-remove {
+	clear: right;
+	float: right;
+	line-height: 18px;
+	margin-right: 6px;
+}
+
+
+
+
+
+
+
+/* Footer */
+
+#footer {
+	clear: both;
+	width: 95%;
+	margin: 0 auto;
+	margin-top: 20px;
+	padding-top: 40px;
+	background: url(../images/layout/img11.gif) repeat-x;
+}
+
+#footer p {
+	margin: 0;
+	text-align: center;
+}

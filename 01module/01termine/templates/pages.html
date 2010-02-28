@@ -1,0 +1,117 @@
+<table align="center" class="table_page page_text">
+<?php if (isset($sites) && $sites > 1 && $row['static'] == 0): ?>
+    <tr>
+        <td align="center" width="33%" valign="top">
+	        <?php if (isset($szl1) && !empty($szl1)): ?>
+				<a href="<?php echo $szl1; ?>">&laquo; 1</a>
+			<?php endif; ?>
+			<?php if (isset($sz) && $sz > 0): ?>
+				<a href="<?php echo $szl2; ?>">&laquo; Zur Seite <?php echo $sz; ?></a>
+			<?php endif; ?>
+        </td>
+        <td align="center" width="33%" valign="top">
+            <b><?PHP echo $current; ?>/<?PHP echo $sites; ?></b>
+        </td>
+        <td align="center" width="33%" valign="top">
+			<?php if (isset($sv) && $sv <= $sites): ?>
+				<a href="<?php echo $svl1; ?>">Zur Seite <?php echo $sv; ?> &raquo;</a>
+	        <?php endif; ?>
+			<?php if (isset($svl2) && !empty($svl2)): ?>
+				<a href="<?php echo $svl2; ?>"><?php echo $sites; ?>&raquo;</a>
+			<?php endif; ?>
+        </td>
+    </tr>
+<?php endif; ?>
+
+<?php if (isset($iderror) && $iderror == 1): ?>
+    <tr>
+        <td align="center" colspan="3" valign="top">
+        <b>Fehler:</b> Es existiert kein zur übergebenen ID passender Artikel!<br />
+        <a href="<?PHP echo $filename; ?>#01jumpartikel">Zur Startseite</a>
+        </td>
+    </tr>
+<?php endif; ?>
+
+<?php if (isset($searcherror) && $searcherror == 1): ?>
+    <tr>
+        <td align="center" colspan="3" valign="top">
+        <b>Fehler:</b> Ihre Suche nach <i><?PHP echo stripslashes($_GET['searchstring']); ?></i> brachte leider kein Ergebnis.<br />
+        Bitte gehen Sie <a href="javascript:history.back()">zur&uuml;ck</a>.
+        </td>
+    </tr>
+<?php endif; ?>
+
+<?php if (isset($ssearch) && $ssearch == 1): ?>
+    <tr>
+        <td align="center" colspan="3" valign="top">
+        <b><a href="<?PHP echo $filename; ?>#01jumpartikel">Zur&uuml;ck zur &Uuml;bersicht</a></b>
+        </td>
+    </tr>
+<?php endif; ?>
+
+<?php if ($static == 0): ?>
+    <tr>
+        <td colspan="3">
+		
+        <table align="center" class="table_page_fields small">
+          <tr>
+<?php if ($settings['artikelsuche'] == 1): ?>
+            <td align="center" valign="top">
+              <form action="<?PHP echo $filename; ?>#01jumpartikel" method="get">
+			  <input type="text" name="<?php echo $names['search']; ?>" value="Suchen..." onclick="this.value=''" size="13" class="input_field" /><input type="submit" name="send" value="Go" class="input_button" />
+              </form>
+			</td>
+<?php endif; ?>
+
+<?php if (isset($listcats) && !empty($listcats)): ?>
+            <td align="center" valign="top">
+              <form action="<?PHP echo $filename; ?>#01jumpartikel" method="get">
+              <select name="<?php echo $names['catid']; ?>" size="1" class="input_selectfield">
+              <?PHP echo $listcats; ?>
+              </select><input type="submit" name="send" value="Go" class="input_button" />
+              </form>
+			</td>
+<?php endif; ?>   
+           
+<?php if (!empty($settings['archiv_time']) && $settings['archiv_time'] > 0 && $_GET[$names['artid']] != "archiv"): ?>
+            <td align="center" valign="top">
+              <a href="<?PHP echo $filename; ?>?<?php echo $names['artid']; ?>=archiv#01jumpartikel">Archiv</a>
+            </td>
+<?php elseif (isset($_GET[$names['artid']]) && $_GET[$names['artid']] == "archiv"): ?>
+            <td align="center" valign="top">
+              <a href="<?PHP echo $filename; ?>?#01jumpartikel">Startseite</a>
+            </td>
+<?php endif; ?>
+
+<?php if ($settings['rss_aktiv'] == 1): ?>
+            <td align="left" valign="top">
+              <a href="<?PHP echo $system_link_rss."?".$names['rss']."=show_rssfeed&amp;modul=".$modul.""; ?>" target="_blank"><img src="<?PHP echo $basicdir; ?>images/icon_rss.gif" alt="RSS-Feed (Eintr&auml;ge) abonnieren" title="RSS2.0-Feed" style="border:0;" /> Eintr&auml;ge</a><br />
+<?php if ($settings['artikelkommentarfeed'] == 1): ?>
+              <a href="<?PHP echo $system_link_rss."?".$names['rss']."=show_commentrssfeed&amp;modul=".$modul.""; ?>" target="_blank"><img src="<?PHP echo $basicdir; ?>images/icon_rss.gif" alt="RSS-Feed (Eintr&auml;ge) abonnieren" title="RSS2.0-Feed" style="border:0;" /> Kommentare</a>
+<?php endif; ?>
+            </td>
+<?php endif; ?>
+
+<?php if (isset($sites) && $sites > 1): ?>
+            <td align="center" valign="top">
+              <form action="<?PHP echo $filename; ?>#01jumpartikel" method="get">
+              <select name="<?PHP echo $names['page']; ?>" size="1" class="input_selectfield">
+              <?PHP echo $option_sites; ?>
+              </select> <input type="submit" value="Go" class="input_button" />
+              </form>
+            </td>
+<?php endif; ?>
+
+          </tr>
+        </table>
+		
+        </td>
+    </tr>
+<?php endif; ?>
+</table>
+
+<p align="center" class="copyright">
+<b>01-Artikelsystem</b> &copy; 2006-<?PHP echo date("Y"); ?> by <a href="http://www.01-scripts.de" target="_blank">01-Scripts.de</a>
+</p>
+
+<br />
