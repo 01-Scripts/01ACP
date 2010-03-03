@@ -9,6 +9,7 @@
 	
 	Modul:		01ACP
 	Dateiinfo:	Layout für ACP
+	#fv.1102#
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -66,7 +67,7 @@ if(isset($addCSSFile) && file_exists($modulpath.$addCSSFile) && !is_dir($modulpa
 
 <body>
 <?php 
-if(eregi("MSIE 6.0",$_SERVER['HTTP_USER_AGENT']) && $flag_showIE6Warning)
+if(strchr($_SERVER['HTTP_USER_AGENT'],"MSIE 6.0") && $flag_showIE6Warning)
 	echo "<p align=\"center\" class=\"meldung_error\" style=\"margin-top: 0;\">
 	Sie verwenden einen <b>veralteten Browser</b> (Internet Explorer 6) mit <b>Sicherheitsschwachstellen</b>
 	und <b>können nicht alle Funktionen dieser Webseite nutzen</b>.<br /><a href=\"http://browser-update.org/update.php\" target=\"_blank\">Hier erfahren Sie, wie 

@@ -367,7 +367,7 @@ if($row['formename'] == "text"){
 	
 // Textarea
 elseif($row['formename'] == "textarea"){
-	list($nrrows, $nrcols) = split("\|", stripslashes($row['formwerte']));
+	list($nrrows, $nrcols) = explode("|", stripslashes($row['formwerte']),2);
 	$inputfield = "<textarea name=\"".$row['idname']."\" rows=\"".$nrrows."\" cols=\"".$nrcols."\" style=\"font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; font-style: normal;\">".stripslashes($row['wert'])."</textarea>";
 	}
 	
@@ -806,6 +806,7 @@ switch($barlook){
     $return .= "theme_advanced_buttons1 : \"".$bar_own."\",";
 	$return .= "theme_advanced_buttons2 : \"\",";
 	$return .= "theme_advanced_buttons3 : \"\",";
+	$plugins = "";
   break;
   }
 

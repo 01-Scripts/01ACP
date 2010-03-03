@@ -20,6 +20,7 @@ error_reporting(E_ALL);
 //@ini_set("register_globals", "0");
 
 //@error_reporting(E_ALL ^ E_NOTICE);
+@date_default_timezone_set("Europe/Berlin");
 
 /* Globale Einstellungen und Definitionen */
 if($flag_acp) $subfolder = "../";
