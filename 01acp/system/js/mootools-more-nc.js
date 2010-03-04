@@ -23,8 +23,8 @@ provides: [MooTools.More]
 */
 
 MooTools.More = {
-	'version': '1.2.4.2',
-	'build': 'bd5a93c0913cce25917c48cbdacde568e15e02ef'
+	'version': '1.2.4.4',
+	'build': '6f6057dc645fdb7547689183b2311063bd653ddf'
 };
 
 /*
@@ -127,6 +127,86 @@ provides: [MooTools.Lang]
 		}
 
 	});
+
+})();
+
+/*
+---
+
+script: Log.js
+
+description: Provides basic logging functionality for plugins to implement.
+
+license: MIT-style license
+
+authors:
+- Guillermo Rauch
+- Thomas Aylott
+- Scott Kyle
+
+requires:
+- core:1.2.4/Class
+- /MooTools.More
+
+provides: [Log]
+
+...
+*/
+
+(function(){
+
+var global = this;
+
+var log = function(){
+	if (global.console && console.log){
+		try {
+			console.log.apply(console, arguments);
+		} catch(e) {
+			console.log(Array.slice(arguments));
+		}
+	} else {
+		Log.logged.push(arguments);
+	}
+	return this;
+};
+
+var disabled = function(){
+	this.logged.push(arguments);
+	return this;
+};
+
+this.Log = new Class({
+	
+	logged: [],
+	
+	log: disabled,
+	
+	resetLog: function(){
+		this.logged.empty();
+		return this;
+	},
+
+	enableLog: function(){
+		this.log = log;
+		this.logged.each(function(args){
+			this.log.apply(this, args);
+		}, this);
+		return this.resetLog();
+	},
+
+	disableLog: function(){
+		this.log = disabled;
+		return this;
+	}
+	
+});
+
+Log.extend(new Log).enableLog();
+
+// legacy
+Log.logger = function(){
+	return this.log.apply(this, arguments);
+};
 
 })();
 
@@ -301,6 +381,64 @@ provides: [Chain.Wait]
 	});
 
 })();
+
+/*
+---
+
+script: Array.Extras.js
+
+description: Extends the Array native object to include useful methods to work with arrays.
+
+license: MIT-style license
+
+authors:
+- Christoph Pojer
+
+requires:
+- core:1.2.4/Array
+
+provides: [Array.Extras]
+
+...
+*/
+Array.implement({
+
+	min: function(){
+		return Math.min.apply(null, this);
+	},
+
+	max: function(){
+		return Math.max.apply(null, this);
+	},
+
+	average: function(){
+		return this.length ? this.sum() / this.length : 0;
+	},
+
+	sum: function(){
+		var result = 0, l = this.length;
+		if (l){
+			do {
+				result += this[--l];
+			} while (l);
+		}
+		return result;
+	},
+
+	unique: function(){
+		return [].combine(this);
+	},
+
+	shuffle: function(){
+		for (var i = this.length; i && --i;){
+			var temp = this[i], r = Math.floor(Math.random() * ( i + 1 ));
+			this[i] = this[r];
+			this[r] = temp;
+		}
+		return this;
+	}
+
+});
 
 /*
 ---
@@ -724,7 +862,7 @@ var build = function(format){
 			bits = bits.slice(1).associate(parsed);
 			var date = new Date().clearTime();
 			if ('d' in bits) handle.call(date, 'd', 1);
-			if ('m' in bits) handle.call(date, 'm', 1);
+			if ('m' in bits || 'b' in bits || 'B' in bits) handle.call(date, 'm', 1);
 			for (var key in bits) handle.call(date, key, bits[key]);
 			return date;
 		}
@@ -1374,10 +1512,6 @@ Element.implement({
 				calc = rel == document.body ? window.getScroll() : rel.getPosition(),
 				top = calc.y, left = calc.x;
 
-		var scrolls = rel.getScrolls();
-		top += scrolls.y;
-		left += scrolls.x;
-
 		var dim = this.getDimensions({computeSize: true, styles:['padding', 'border','margin']});
 		var pos = {},
 				prefY = options.offset.y,
@@ -1517,15 +1651,15 @@ Element.implement({
 	hide: function(){
 		var d;
 		try {
-			// IE fails here if the element is not in the dom
-			if ((d = this.getStyle('display')) == 'none') d = null;
+			//IE fails here if the element is not in the dom
+			d = this.getStyle('display');
 		} catch(e){}
-		
-		return this.store('originalDisplay', d || 'block').setStyle('display', 'none');
+		return this.store('originalDisplay', d || '').setStyle('display', 'none');
 	},
 
 	show: function(display){
-		return this.setStyle('display', display || this.retrieve('originalDisplay') || 'block');
+		display = display || this.retrieve('originalDisplay') || 'block';
+		return this.setStyle('display', (display == 'none') ? 'block' : display);
 	},
 
 	swapClass: function(remove, add){
@@ -1607,19 +1741,18 @@ if (!window.Form) window.Form = {};
 
 		makeRequest: function(){
 			this.request = new Request.HTML($merge({
-					url: this.element.get('action'),
 					update: this.update,
 					emulation: false,
 					spinnerTarget: this.element,
 					method: this.element.get('method') || 'post'
 			}, this.options.requestOptions)).addEvents({
 				success: function(text, xml){
-					['success', 'complete'].each(function(evt){
+					['complete', 'success'].each(function(evt){
 						this.fireEvent(evt, [this.update, text, xml]);
 					}, this);
 				}.bind(this),
 				failure: function(xhr){
-					this.fireEvent('failure', xhr);
+					this.fireEvent('complete').fireEvent('failure', xhr);
 				}.bind(this),
 				exception: function(){
 					this.fireEvent('failure', xhr);
@@ -1651,7 +1784,8 @@ if (!window.Form) window.Form = {};
 		},
 
 		onFormValidate: function(valid, form, e) {
-			if (valid || !fv.options.stopOnFailure) {
+			var fv = this.element.retrieve('validator');
+			if (valid || (fv && !fv.options.stopOnFailure)) {
 				if (e && e.stop) e.stop();
 				this.send();
 			}
@@ -1661,7 +1795,6 @@ if (!window.Form) window.Form = {};
 			if (this.element.retrieve('validator')) {
 				//form validator was created after Form.Request
 				this.detach();
-				this.addFormEvent();
 				return;
 			}
 			e.stop();
@@ -1673,8 +1806,8 @@ if (!window.Form) window.Form = {};
 			var data = $H(this.options.extraData).toQueryString();
 			if (str) str += "&" + data;
 			else str = data;
-			this.fireEvent('send', [this.element, str]);
-			this.request.send({data: str});
+			this.fireEvent('send', [this.element, str.parseQueryString()]);
+			this.request.send({data: str, url: this.element.get("action")});
 			return this;
 		}
 
@@ -1795,888 +1928,6 @@ Form.Request.Append = new Class({
 	}
 
 });
-
-/*
----
-
-script: Form.Validator.js
-
-description: A css-class based form validation system.
-
-license: MIT-style license
-
-authors:
-- Aaron Newton
-
-requires:
-- core:1.2.4/Options
-- core:1.2.4/Events
-- core:1.2.4/Selectors
-- core:1.2.4/Element.Event
-- core:1.2.4/Element.Style
-- core:1.2.4/JSON
-- /Lang- /Class.Binds
-- /Date Element.Forms
-- /Form.Validator.English
-- /Element.Shortcuts
-
-provides: [Form.Validator, InputValidator, FormValidator.BaseValidators]
-
-...
-*/
-if (!window.Form) window.Form = {};
-
-var InputValidator = new Class({
-
-	Implements: [Options],
-
-	options: {
-		errorMsg: 'Validation failed.',
-		test: function(field){return true;}
-	},
-
-	initialize: function(className, options){
-		this.setOptions(options);
-		this.className = className;
-	},
-
-	test: function(field, props){
-		if (document.id(field)) return this.options.test(document.id(field), props||this.getProps(field));
-		else return false;
-	},
-
-	getError: function(field, props){
-		var err = this.options.errorMsg;
-		if ($type(err) == 'function') err = err(document.id(field), props||this.getProps(field));
-		return err;
-	},
-
-	getProps: function(field){
-		if (!document.id(field)) return {};
-		return field.get('validatorProps');
-	}
-
-});
-
-Element.Properties.validatorProps = {
-
-	set: function(props){
-		return this.eliminate('validatorProps').store('validatorProps', props);
-	},
-
-	get: function(props){
-		if (props) this.set(props);
-		if (this.retrieve('validatorProps')) return this.retrieve('validatorProps');
-		if (this.getProperty('validatorProps')){
-			try {
-				this.store('validatorProps', JSON.decode(this.getProperty('validatorProps')));
-			}catch(e){
-				return {};
-			}
-		} else {
-			var vals = this.get('class').split(' ').filter(function(cls){
-				return cls.test(':');
-			});
-			if (!vals.length){
-				this.store('validatorProps', {});
-			} else {
-				props = {};
-				vals.each(function(cls){
-					var split = cls.split(':');
-					if (split[1]) {
-						try {
-							props[split[0]] = JSON.decode(split[1]);
-						} catch(e) {}
-					}
-				});
-				this.store('validatorProps', props);
-			}
-		}
-		return this.retrieve('validatorProps');
-	}
-
-};
-
-Form.Validator = new Class({
-
-	Implements:[Options, Events],
-
-	Binds: ['onSubmit'],
-
-	options: {/*
-		onFormValidate: $empty(isValid, form, event),
-		onElementValidate: $empty(isValid, field, className, warn),
-		onElementPass: $empty(field),
-		onElementFail: $empty(field, validatorsFailed) */
-		fieldSelectors: 'input, select, textarea',
-		ignoreHidden: true,
-		ignoreDisabled: true,
-		useTitles: false,
-		evaluateOnSubmit: true,
-		evaluateFieldsOnBlur: true,
-		evaluateFieldsOnChange: true,
-		serial: true,
-		stopOnFailure: true,
-		warningPrefix: function(){
-			return Form.Validator.getMsg('warningPrefix') || 'Warning: ';
-		},
-		errorPrefix: function(){
-			return Form.Validator.getMsg('errorPrefix') || 'Error: ';
-		}
-	},
-
-	initialize: function(form, options){
-		this.setOptions(options);
-		this.element = document.id(form);
-		this.element.store('validator', this);
-		this.warningPrefix = $lambda(this.options.warningPrefix)();
-		this.errorPrefix = $lambda(this.options.errorPrefix)();
-		if (this.options.evaluateOnSubmit) this.element.addEvent('submit', this.onSubmit);
-		if (this.options.evaluateFieldsOnBlur || this.options.evaluateFieldsOnChange) this.watchFields(this.getFields());
-	},
-
-	toElement: function(){
-		return this.element;
-	},
-
-	getFields: function(){
-		return (this.fields = this.element.getElements(this.options.fieldSelectors));
-	},
-
-	watchFields: function(fields){
-		fields.each(function(el){
-			if (this.options.evaluateFieldsOnBlur)
-				el.addEvent('blur', this.validationMonitor.pass([el, false], this));
-			if (this.options.evaluateFieldsOnChange)
-				el.addEvent('change', this.validationMonitor.pass([el, true], this));
-		}, this);
-	},
-
-	validationMonitor: function(){
-		$clear(this.timer);
-		this.timer = this.validateField.delay(50, this, arguments);
-	},
-
-	onSubmit: function(event){
-		if (!this.validate(event) && event) event.preventDefault();
-		else this.reset();
-	},
-
-	reset: function(){
-		this.getFields().each(this.resetField, this);
-		return this;
-	},
-
-	validate: function(event){
-		var result = this.getFields().map(function(field){
-			return this.validateField(field, true);
-		}, this).every(function(v){ return v;});
-		this.fireEvent('formValidate', [result, this.element, event]);
-		if (this.options.stopOnFailure && !result && event) event.preventDefault();
-		return result;
-	},
-
-	validateField: function(field, force){
-		if (this.paused) return true;
-		field = document.id(field);
-		var passed = !field.hasClass('validation-failed');
-		var failed, warned;
-		if (this.options.serial && !force){
-			failed = this.element.getElement('.validation-failed');
-			warned = this.element.getElement('.warning');
-		}
-		if (field && (!failed || force || field.hasClass('validation-failed') || (failed && !this.options.serial))){
-			var validators = field.className.split(' ').some(function(cn){
-				return this.getValidator(cn);
-			}, this);
-			var validatorsFailed = [];
-			field.className.split(' ').each(function(className){
-				if (className && !this.test(className, field)) validatorsFailed.include(className);
-			}, this);
-			passed = validatorsFailed.length === 0;
-			if (validators && !field.hasClass('warnOnly')){
-				if (passed){
-					field.addClass('validation-passed').removeClass('validation-failed');
-					this.fireEvent('elementPass', field);
-				} else {
-					field.addClass('validation-failed').removeClass('validation-passed');
-					this.fireEvent('elementFail', [field, validatorsFailed]);
-				}
-			}
-			if (!warned){
-				var warnings = field.className.split(' ').some(function(cn){
-					if (cn.test('^warn-') || field.hasClass('warnOnly'))
-						return this.getValidator(cn.replace(/^warn-/,''));
-					else return null;
-				}, this);
-				field.removeClass('warning');
-				var warnResult = field.className.split(' ').map(function(cn){
-					if (cn.test('^warn-') || field.hasClass('warnOnly'))
-						return this.test(cn.replace(/^warn-/,''), field, true);
-					else return null;
-				}, this);
-			}
-		}
-		return passed;
-	},
-
-	test: function(className, field, warn){
-		field = document.id(field);
-		if((this.options.ignoreHidden && !field.isVisible()) || (this.options.ignoreDisabled && field.get('disabled'))) return true;
-		var validator = this.getValidator(className);
-		if (field.hasClass('ignoreValidation')) return true;
-		warn = $pick(warn, false);
-		if (field.hasClass('warnOnly')) warn = true;
-		var isValid = validator ? validator.test(field) : true;
-		if (validator && field.isVisible()) this.fireEvent('elementValidate', [isValid, field, className, warn]);
-		if (warn) return true;
-		return isValid;
-	},
-
-	resetField: function(field){
-		field = document.id(field);
-		if (field){
-			field.className.split(' ').each(function(className){
-				if (className.test('^warn-')) className = className.replace(/^warn-/, '');
-				field.removeClass('validation-failed');
-				field.removeClass('warning');
-				field.removeClass('validation-passed');
-			}, this);
-		}
-		return this;
-	},
-
-	stop: function(){
-		this.paused = true;
-		return this;
-	},
-
-	start: function(){
-		this.paused = false;
-		return this;
-	},
-
-	ignoreField: function(field, warn){
-		field = document.id(field);
-		if (field){
-			this.enforceField(field);
-			if (warn) field.addClass('warnOnly');
-			else field.addClass('ignoreValidation');
-		}
-		return this;
-	},
-
-	enforceField: function(field){
-		field = document.id(field);
-		if (field) field.removeClass('warnOnly').removeClass('ignoreValidation');
-		return this;
-	}
-
-});
-
-Form.Validator.getMsg = function(key){
-	return MooTools.lang.get('Form.Validator', key);
-};
-
-Form.Validator.adders = {
-
-	validators:{},
-
-	add : function(className, options){
-		this.validators[className] = new InputValidator(className, options);
-		//if this is a class (this method is used by instances of Form.Validator and the Form.Validator namespace)
-		//extend these validators into it
-		//this allows validators to be global and/or per instance
-		if (!this.initialize){
-			this.implement({
-				validators: this.validators
-			});
-		}
-	},
-
-	addAllThese : function(validators){
-		$A(validators).each(function(validator){
-			this.add(validator[0], validator[1]);
-		}, this);
-	},
-
-	getValidator: function(className){
-		return this.validators[className.split(':')[0]];
-	}
-
-};
-
-$extend(Form.Validator, Form.Validator.adders);
-
-Form.Validator.implement(Form.Validator.adders);
-
-Form.Validator.add('IsEmpty', {
-
-	errorMsg: false,
-	test: function(element){
-		if (element.type == 'select-one' || element.type == 'select')
-			return !(element.selectedIndex >= 0 && element.options[element.selectedIndex].value != '');
-		else
-			return ((element.get('value') == null) || (element.get('value').length == 0));
-	}
-
-});
-
-Form.Validator.addAllThese([
-
-	['required', {
-		errorMsg: function(){
-			return Form.Validator.getMsg('required');
-		},
-		test: function(element){
-			return !Form.Validator.getValidator('IsEmpty').test(element);
-		}
-	}],
-
-	['minLength', {
-		errorMsg: function(element, props){
-			if ($type(props.minLength))
-				return Form.Validator.getMsg('minLength').substitute({minLength:props.minLength,length:element.get('value').length });
-			else return '';
-		},
-		test: function(element, props){
-			if ($type(props.minLength)) return (element.get('value').length >= $pick(props.minLength, 0));
-			else return true;
-		}
-	}],
-
-	['maxLength', {
-		errorMsg: function(element, props){
-			//props is {maxLength:10}
-			if ($type(props.maxLength))
-				return Form.Validator.getMsg('maxLength').substitute({maxLength:props.maxLength,length:element.get('value').length });
-			else return '';
-		},
-		test: function(element, props){
-			//if the value is <= than the maxLength value, element passes test
-			return (element.get('value').length <= $pick(props.maxLength, 10000));
-		}
-	}],
-
-	['validate-integer', {
-		errorMsg: Form.Validator.getMsg.pass('integer'),
-		test: function(element){
-			return Form.Validator.getValidator('IsEmpty').test(element) || (/^(-?[1-9]\d*|0)$/).test(element.get('value'));
-		}
-	}],
-
-	['validate-numeric', {
-		errorMsg: Form.Validator.getMsg.pass('numeric'),
-		test: function(element){
-			return Form.Validator.getValidator('IsEmpty').test(element) ||
-				(/^-?(?:0$0(?=\d*\.)|[1-9]|0)\d*(\.\d+)?$/).test(element.get('value'));
-		}
-	}],
-
-	['validate-digits', {
-		errorMsg: Form.Validator.getMsg.pass('digits'),
-		test: function(element){
-			return Form.Validator.getValidator('IsEmpty').test(element) || (/^[\d() .:\-\+#]+$/.test(element.get('value')));
-		}
-	}],
-
-	['validate-alpha', {
-		errorMsg: Form.Validator.getMsg.pass('alpha'),
-		test: function(element){
-			return Form.Validator.getValidator('IsEmpty').test(element) ||  (/^[a-zA-Z]+$/).test(element.get('value'));
-		}
-	}],
-
-	['validate-alphanum', {
-		errorMsg: Form.Validator.getMsg.pass('alphanum'),
-		test: function(element){
-			return Form.Validator.getValidator('IsEmpty').test(element) || !(/\W/).test(element.get('value'));
-		}
-	}],
-
-	['validate-date', {
-		errorMsg: function(element, props){
-			if (Date.parse){
-				var format = props.dateFormat || '%x';
-				return Form.Validator.getMsg('dateSuchAs').substitute({date: new Date().format(format)});
-			} else {
-				return Form.Validator.getMsg('dateInFormatMDY');
-			}
-		},
-		test: function(element, props){
-			if (Form.Validator.getValidator('IsEmpty').test(element)) return true;
-			var d;
-			if (Date.parse){
-				var format = props.dateFormat || '%x';
-				d = Date.parse(element.get('value'));
-				var formatted = d.format(format);
-				if (formatted != 'invalid date') element.set('value', formatted);
-				return !isNaN(d);
-			} else {
-				var regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
-				if (!regex.test(element.get('value'))) return false;
-				d = new Date(element.get('value').replace(regex, '$1/$2/$3'));
-				return (parseInt(RegExp.$1, 10) == (1 + d.getMonth())) &&
-					(parseInt(RegExp.$2, 10) == d.getDate()) &&
-					(parseInt(RegExp.$3, 10) == d.getFullYear());
-			}
-		}
-	}],
-
-	['validate-email', {
-		errorMsg: Form.Validator.getMsg.pass('email'),
-		test: function(element){
-			return Form.Validator.getValidator('IsEmpty').test(element) || (/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i).test(element.get('value'));
-		}
-	}],
-
-	['validate-url', {
-		errorMsg: Form.Validator.getMsg.pass('url'),
-		test: function(element){
-			return Form.Validator.getValidator('IsEmpty').test(element) || (/^(https?|ftp|rmtp|mms):\/\/(([A-Z0-9][A-Z0-9_-]*)(\.[A-Z0-9][A-Z0-9_-]*)+)(:(\d+))?\/?/i).test(element.get('value'));
-		}
-	}],
-
-	['validate-currency-dollar', {
-		errorMsg: Form.Validator.getMsg.pass('currencyDollar'),
-		test: function(element){
-			// [$]1[##][,###]+[.##]
-			// [$]1###+[.##]
-			// [$]0.##
-			// [$].##
-			return Form.Validator.getValidator('IsEmpty').test(element) ||  (/^\$?\-?([1-9]{1}[0-9]{0,2}(\,[0-9]{3})*(\.[0-9]{0,2})?|[1-9]{1}\d*(\.[0-9]{0,2})?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$/).test(element.get('value'));
-		}
-	}],
-
-	['validate-one-required', {
-		errorMsg: Form.Validator.getMsg.pass('oneRequired'),
-		test: function(element, props){
-			var p = document.id(props['validate-one-required']) || element.getParent();
-			return p.getElements('input').some(function(el){
-				if (['checkbox', 'radio'].contains(el.get('type'))) return el.get('checked');
-				return el.get('value');
-			});
-		}
-	}]
-
-]);
-
-Element.Properties.validator = {
-
-	set: function(options){
-		var validator = this.retrieve('validator');
-		if (validator) validator.setOptions(options);
-		return this.store('validator:options');
-	},
-
-	get: function(options){
-		if (options || !this.retrieve('validator')){
-			if (options || !this.retrieve('validator:options')) this.set('validator', options);
-			this.store('validator', new Form.Validator(this, this.retrieve('validator:options')));
-		}
-		return this.retrieve('validator');
-	}
-
-};
-
-Element.implement({
-
-	validate: function(options){
-		this.set('validator', options);
-		return this.get('validator', options).validate();
-	}
-
-});
-//legacy
-var FormValidator = Form.Validator;
-
-/*
----
-
-script: Form.Validator.Inline.js
-
-description: Extends Form.Validator to add inline messages.
-
-license: MIT-style license
-
-authors:
-- Aaron Newton
-
-requires:
-- /Form.Validator
-
-provides: [Form.Validator.Inline]
-
-...
-*/
-
-Form.Validator.Inline = new Class({
-
-	Extends: Form.Validator,
-
-	options: {
-		scrollToErrorsOnSubmit: true,
-		scrollFxOptions: {
-			transition: 'quad:out',
-			offset: {
-				y: -20
-			}
-		}
-	},
-
-	initialize: function(form, options){
-		this.parent(form, options);
-		this.addEvent('onElementValidate', function(isValid, field, className, warn){
-			var validator = this.getValidator(className);
-			if (!isValid && validator.getError(field)){
-				if (warn) field.addClass('warning');
-				var advice = this.makeAdvice(className, field, validator.getError(field), warn);
-				this.insertAdvice(advice, field);
-				this.showAdvice(className, field);
-			} else {
-				this.hideAdvice(className, field);
-			}
-		});
-	},
-
-	makeAdvice: function(className, field, error, warn){
-		var errorMsg = (warn)?this.warningPrefix:this.errorPrefix;
-			errorMsg += (this.options.useTitles) ? field.title || error:error;
-		var cssClass = (warn) ? 'warning-advice' : 'validation-advice';
-		var advice = this.getAdvice(className, field);
-		if(advice) {
-			advice = advice.set('html', errorMsg);
-		} else {
-			advice = new Element('div', {
-				html: errorMsg,
-				styles: { display: 'none' },
-				id: 'advice-' + className + '-' + this.getFieldId(field)
-			}).addClass(cssClass);
-		}
-		field.store('advice-' + className, advice);
-		return advice;
-	},
-
-	getFieldId : function(field){
-		return field.id ? field.id : field.id = 'input_' + field.name;
-	},
-
-	showAdvice: function(className, field){
-		var advice = this.getAdvice(className, field);
-		if (advice && !field.retrieve(this.getPropName(className))
-				&& (advice.getStyle('display') == 'none'
-				|| advice.getStyle('visiblity') == 'hidden'
-				|| advice.getStyle('opacity') == 0)){
-			field.store(this.getPropName(className), true);
-			if (advice.reveal) advice.reveal();
-			else advice.setStyle('display', 'block');
-		}
-	},
-
-	hideAdvice: function(className, field){
-		var advice = this.getAdvice(className, field);
-		if (advice && field.retrieve(this.getPropName(className))){
-			field.store(this.getPropName(className), false);
-			//if Fx.Reveal.js is present, transition the advice out
-			if (advice.dissolve) advice.dissolve();
-			else advice.setStyle('display', 'none');
-		}
-	},
-
-	getPropName: function(className){
-		return 'advice' + className;
-	},
-
-	resetField: function(field){
-		field = document.id(field);
-		if (!field) return this;
-		this.parent(field);
-		field.className.split(' ').each(function(className){
-			this.hideAdvice(className, field);
-		}, this);
-		return this;
-	},
-
-	getAllAdviceMessages: function(field, force){
-		var advice = [];
-		if (field.hasClass('ignoreValidation') && !force) return advice;
-		var validators = field.className.split(' ').some(function(cn){
-			var warner = cn.test('^warn-') || field.hasClass('warnOnly');
-			if (warner) cn = cn.replace(/^warn-/, '');
-			var validator = this.getValidator(cn);
-			if (!validator) return;
-			advice.push({
-				message: validator.getError(field),
-				warnOnly: warner,
-				passed: validator.test(),
-				validator: validator
-			});
-		}, this);
-		return advice;
-	},
-
-	getAdvice: function(className, field){
-		return field.retrieve('advice-' + className);
-	},
-
-	insertAdvice: function(advice, field){
-		//Check for error position prop
-		var props = field.get('validatorProps');
-		//Build advice
-		if (!props.msgPos || !document.id(props.msgPos)){
-			if(field.type.toLowerCase() == 'radio') field.getParent().adopt(advice);
-			else advice.inject(document.id(field), 'after');
-		} else {
-			document.id(props.msgPos).grab(advice);
-		}
-	},
-
-	validateField: function(field, force){
-		var result = this.parent(field, force);
-		if (this.options.scrollToErrorsOnSubmit && !result){
-			var failed = document.id(this).getElement('.validation-failed');
-			var par = document.id(this).getParent();
-			while (par != document.body && par.getScrollSize().y == par.getSize().y){
-				par = par.getParent();
-			}
-			var fx = par.retrieve('fvScroller');
-			if (!fx && window.Fx && Fx.Scroll){
-				fx = new Fx.Scroll(par, this.options.scrollFxOptions);
-				par.store('fvScroller', fx);
-			}
-			if (failed){
-				if (fx) fx.toElement(failed);
-				else par.scrollTo(par.getScroll().x, failed.getPosition(par).y - 20);
-			}
-		}
-		return result;
-	}
-
-});
-
-
-/*
----
-
-script: Form.Validator.Extras.js
-
-description: Additional validators for the Form.Validator class.
-
-license: MIT-style license
-
-authors:
-- Aaron Newton
-
-requires:
-- /Form.Validator
-
-provides: [Form.Validator.Extras]
-
-...
-*/
-Form.Validator.addAllThese([
-
-	['validate-enforce-oncheck', {
-		test: function(element, props){
-			if (element.checked){
-				var fv = element.getParent('form').retrieve('validator');
-				if (!fv) return true;
-				(props.toEnforce || document.id(props.enforceChildrenOf).getElements('input, select, textarea')).map(function(item){
-					fv.enforceField(item);
-				});
-			}
-			return true;
-		}
-	}],
-
-	['validate-ignore-oncheck', {
-		test: function(element, props){
-			if (element.checked){
-				var fv = element.getParent('form').retrieve('validator');
-				if (!fv) return true;
-				(props.toIgnore || document.id(props.ignoreChildrenOf).getElements('input, select, textarea')).each(function(item){
-					fv.ignoreField(item);
-					fv.resetField(item);
-				});
-			}
-			return true;
-		}
-	}],
-
-	['validate-nospace', {
-		errorMsg: function(){
-			return Form.Validator.getMsg('noSpace');
-		},
-		test: function(element, props){
-			return !element.get('value').test(/\s/);
-		}
-	}],
-
-	['validate-toggle-oncheck', {
-		test: function(element, props){
-			var fv = element.getParent('form').retrieve('validator');
-			if (!fv) return true;
-			var eleArr = props.toToggle || document.id(props.toToggleChildrenOf).getElements('input, select, textarea');
-			if (!element.checked){
-				eleArr.each(function(item){
-					fv.ignoreField(item);
-					fv.resetField(item);
-				});
-			} else {
-				eleArr.each(function(item){
-					fv.enforceField(item);
-				});
-			}
-			return true;
-		}
-	}],
-
-	['validate-reqchk-bynode', {
-		errorMsg: function(){
-			return Form.Validator.getMsg('reqChkByNode');
-		},
-		test: function(element, props){
-			return (document.id(props.nodeId).getElements(props.selector || 'input[type=checkbox], input[type=radio]')).some(function(item){
-				return item.checked;
-			});
-		}
-	}],
-
-	['validate-required-check', {
-		errorMsg: function(element, props){
-			return props.useTitle ? element.get('title') : Form.Validator.getMsg('requiredChk');
-		},
-		test: function(element, props){
-			return !!element.checked;
-		}
-	}],
-
-	['validate-reqchk-byname', {
-		errorMsg: function(element, props){
-			return Form.Validator.getMsg('reqChkByName').substitute({label: props.label || element.get('type')});
-		},
-		test: function(element, props){
-			var grpName = props.groupName || element.get('name');
-			var oneCheckedItem = $$(document.getElementsByName(grpName)).some(function(item, index){
-				return item.checked;
-			});
-			var fv = element.getParent('form').retrieve('validator');
-			if (oneCheckedItem && fv) fv.resetField(element);
-			return oneCheckedItem;
-		}
-	}],
-
-	['validate-match', {
-		errorMsg: function(element, props){
-			return Form.Validator.getMsg('match').substitute({matchName: props.matchName || document.id(props.matchInput).get('name')});
-		},
-		test: function(element, props){
-			var eleVal = element.get('value');
-			var matchVal = document.id(props.matchInput) && document.id(props.matchInput).get('value');
-			return eleVal && matchVal ? eleVal == matchVal : true;
-		}
-	}],
-
-	['validate-after-date', {
-		errorMsg: function(element, props){
-			return Form.Validator.getMsg('afterDate').substitute({
-				label: props.afterLabel || (props.afterElement ? Form.Validator.getMsg('startDate') : Form.Validator.getMsg('currentDate'))
-			});
-		},
-		test: function(element, props){
-			var start = document.id(props.afterElement) ? Date.parse(document.id(props.afterElement).get('value')) : new Date();
-			var end = Date.parse(element.get('value'));
-			return end && start ? end >= start : true;
-		}
-	}],
-
-	['validate-before-date', {
-		errorMsg: function(element, props){
-			return Form.Validator.getMsg('beforeDate').substitute({
-				label: props.beforeLabel || (props.beforeElement ? Form.Validator.getMsg('endDate') : Form.Validator.getMsg('currentDate'))
-			});
-		},
-		test: function(element, props){
-			var start = Date.parse(element.get('value'));
-			var end = document.id(props.beforeElement) ? Date.parse(document.id(props.beforeElement).get('value')) : new Date();
-			return end && start ? end >= start : true;
-		}
-	}],
-
-	['validate-custom-required', {
-		errorMsg: function(){
-			return Form.Validator.getMsg('required');
-		},
-		test: function(element, props){
-			return element.get('value') != props.emptyValue;
-		}
-	}],
-
-	['validate-same-month', {
-		errorMsg: function(element, props){
-			var startMo = document.id(props.sameMonthAs) && document.id(props.sameMonthAs).get('value');
-			var eleVal = element.get('value');
-			if (eleVal != '') return Form.Validator.getMsg(startMo ? 'sameMonth' : 'startMonth');
-		},
-		test: function(element, props){
-			var d1 = Date.parse(element.get('value'));
-			var d2 = Date.parse(document.id(props.sameMonthAs) && document.id(props.sameMonthAs).get('value'));
-			return d1 && d2 ? d1.format('%B') == d2.format('%B') : true;
-		}
-	}],
-
-
-	['validate-cc-num', {
-		errorMsg: function(element){
-			var ccNum = element.get('value').ccNum.replace(/[^0-9]/g, '');
-			return Form.Validator.getMsg('creditcard').substitute({length: ccNum.length});
-		},
-		test: function(element){
-			// required is a different test
-			if (Form.Validator.getValidator('IsEmpty').test(element)) { return true; }
-
-			// Clean number value
-			var ccNum = element.get('value');
-			ccNum = ccNum.replace(/[^0-9]/g, '');
-
-			var valid_type = false;
-
-			if (ccNum.test(/^4[0-9]{12}([0-9]{3})?$/)) valid_type = 'Visa';
-			else if (ccNum.test(/^5[1-5]([0-9]{14})$/)) valid_type = 'Master Card';
-			else if (ccNum.test(/^3[47][0-9]{13}$/)) valid_type = 'American Express';
-			else if (ccNum.test(/^6011[0-9]{12}$/)) valid_type = 'Discover';
-
-			if (valid_type) {
-				var sum = 0;
-				var cur = 0;
-
-				for(var i=ccNum.length-1; i>=0; --i) {
-					cur = ccNum.charAt(i).toInt();
-					if (cur == 0) { continue; }
-
-					if ((ccNum.length-i) % 2 == 0) { cur += cur; }
-					if (cur > 9) { cur = cur.toString().charAt(0).toInt() + cur.toString().charAt(1).toInt(); }
-
-					sum += cur;
-				}
-				if ((sum % 10) == 0) { return true; }
-			}
-
-			var chunks = '';
-			while (ccNum != '') {
-				chunks += ' ' + ccNum.substr(0,4);
-				ccNum = ccNum.substr(4);
-			}
-
-			element.getParent('form').retrieve('validator').ignoreField(element);
-			element.set('value', chunks.clean());
-			element.getParent('form').retrieve('validator').enforceField(element);
-			return false;
-		}
-	}]
-
-
-]);
 
 /*
 ---
@@ -2825,10 +2076,12 @@ var OverText = new Class({
 			this.text.hide();
 			this.fireEvent('textHide', [this.text, this.element]);
 			this.pollingPaused = true;
-			try {
-				if (!suppressFocus) this.element.fireEvent('focus');
-				this.element.focus();
-			} catch(e){} //IE barfs if you call focus on hidden elements
+			if (!suppressFocus){
+				try {
+					this.element.fireEvent('focus');
+					this.element.focus();
+				} catch(e){} //IE barfs if you call focus on hidden elements
+			}
 		}
 		return this;
 	},
@@ -2986,7 +2239,7 @@ provides: [Fx.Accordion]
 ...
 */
 
-var Accordion = Fx.Accordion = new Class({
+Fx.Accordion = new Class({
 
 	Extends: Fx.Elements,
 
@@ -3008,10 +2261,14 @@ var Accordion = Fx.Accordion = new Class({
 	},
 
 	initialize: function(){
-		var params = Array.link(arguments, {'container': Element.type, 'options': Object.type, 'togglers': $defined, 'elements': $defined});
+		var params = Array.link(arguments, {
+			'container': Element.type, //deprecated
+			'options': Object.type,
+			'togglers': $defined,
+			'elements': $defined
+		});
 		this.parent(params.elements, params.options);
 		this.togglers = $$(params.togglers);
-		this.container = document.id(params.container);
 		this.previous = -1;
 		this.internalChain = new Chain();
 		if (this.options.alwaysHide) this.options.wait = true;
@@ -3035,7 +2292,8 @@ var Accordion = Fx.Accordion = new Class({
 				for (var fx in this.effects) el.setStyle(fx, 0);
 			}
 		}, this);
-		if ($chk(this.options.display)) this.display(this.options.display, this.options.initialDisplayFx);
+		if ($chk(this.options.display) || this.options.initialDisplayFx === false) this.display(this.options.display, this.options.initialDisplayFx);
+		if (this.options.fixedHeight !== false) this.options.returnHeightToAuto = false;
 		this.addEvent('complete', this.internalChain.callChain.bind(this.internalChain));
 	},
 
@@ -3101,6 +2359,37 @@ var Accordion = Fx.Accordion = new Class({
 			};
 		}.bind(this));
 		return useFx ? this.start(obj) : this.set(obj);
+	}
+
+});
+
+/*
+	Compatibility with 1.2.0
+*/
+var Accordion = new Class({
+
+	Extends: Fx.Accordion,
+
+	initialize: function(){
+		this.parent.apply(this, arguments);
+		var params = Array.link(arguments, {'container': Element.type});
+		this.container = params.container;
+	},
+
+	addSection: function(toggler, element, pos){
+		toggler = document.id(toggler);
+		element = document.id(element);
+		var test = this.togglers.contains(toggler);
+		var len = this.togglers.length;
+		if (len && (!test || pos)){
+			pos = $pick(pos, len - 1);
+			toggler.inject(this.togglers[pos], 'before');
+			element.inject(toggler, 'after');
+		} else if (this.container && !test){
+			toggler.inject(this.container);
+			element.inject(this.container);
+		}
+		return this.parent.apply(this, arguments);
 	}
 
 });
@@ -3223,7 +2512,7 @@ Fx.Reveal = new Class({
 						styles: this.options.styles,
 						mode: this.options.mode
 					});
-					this.element.setStyle('display', 'block');
+					this.element.setStyle('display', this.options.display);
 					if (this.options.transitionOpacity) startStyles.opacity = 1;
 					var zero = {};
 					$each(startStyles, function(style, name){
@@ -3590,12 +2879,14 @@ Fx.Slide = new Class({
 
 	options: {
 		mode: 'vertical',
+		wrapper: false,
 		hideOverflow: true
 	},
 
 	initialize: function(element, options){
 		this.addEvent('complete', function(){
 			this.open = (this.wrapper['offset' + this.layout.capitalize()] != 0);
+			if (this.open) this.wrapper.setStyle('height', '');
 			if (this.open && Browser.Engine.webkit419) this.element.dispose().inject(this.wrapper);
 		}, true);
 		this.element = this.subject = document.id(element);
@@ -3603,6 +2894,7 @@ Fx.Slide = new Class({
 		var wrapper = this.element.retrieve('wrapper');
 		var styles = this.element.getStyles('margin', 'position', 'overflow');
 		if (this.options.hideOverflow) styles = $extend(styles, {overflow: 'hidden'});
+		if (this.options.wrapper) wrapper = document.id(this.options.wrapper).setStyles(styles);
 		this.wrapper = wrapper || new Element('div', {
 			styles: styles
 		}).wraps(this.element);
@@ -4162,7 +3454,7 @@ Drag.Move = new Class({
 		if (this.container && $type(this.container) != 'element')
 			this.container = document.id(this.container.getDocument().body);
 		
-		var styles = element.getStyles('left', 'right', 'position');
+		var styles = element.getStyles('left', 'top', 'position');
 		if (styles.left == 'auto' || styles.top == 'auto')
 			element.setPosition(element.getPosition(element.getOffsetParent()));
 		
@@ -4572,12 +3864,20 @@ var Sortables = new Class({
 	getClone: function(event, element){
 		if (!this.options.clone) return new Element('div').inject(document.body);
 		if ($type(this.options.clone) == 'function') return this.options.clone.call(this, event, element, this.list);
-		return element.clone(true).setStyles({
+		var clone = element.clone(true).setStyles({
 			margin: '0px',
 			position: 'absolute',
 			visibility: 'hidden',
 			'width': element.getStyle('width')
-		}).inject(this.list).setPosition(element.getPosition(element.getOffsetParent()));
+		});
+		//prevent the duplicated radio inputs from unchecking the real one
+		if (clone.get('html').test('radio')) {
+			clone.getElements('input[type=radio]').each(function(input, i) {
+				input.set('name', 'clone_' + i);
+			});
+		}
+		
+		return clone.inject(this.list).setPosition(element.getPosition(element.getOffsetParent()));
 	},
 
 	getDroppables: function(){
@@ -4669,6 +3969,167 @@ var Sortables = new Class({
 /*
 ---
 
+script: Color.js
+
+description: Class for creating and manipulating colors in JavaScript. Supports HSB -> RGB Conversions and vice versa.
+
+license: MIT-style license
+
+authors:
+- Valerio Proietti
+
+requires:
+- core:1.2.4/Array
+- core:1.2.4/String
+- core:1.2.4/Number
+- core:1.2.4/Hash
+- core:1.2.4/Function
+- core:1.2.4/$util
+
+provides: [Color]
+
+...
+*/
+
+var Color = new Native({
+
+	initialize: function(color, type){
+		if (arguments.length >= 3){
+			type = 'rgb'; color = Array.slice(arguments, 0, 3);
+		} else if (typeof color == 'string'){
+			if (color.match(/rgb/)) color = color.rgbToHex().hexToRgb(true);
+			else if (color.match(/hsb/)) color = color.hsbToRgb();
+			else color = color.hexToRgb(true);
+		}
+		type = type || 'rgb';
+		switch (type){
+			case 'hsb':
+				var old = color;
+				color = color.hsbToRgb();
+				color.hsb = old;
+			break;
+			case 'hex': color = color.hexToRgb(true); break;
+		}
+		color.rgb = color.slice(0, 3);
+		color.hsb = color.hsb || color.rgbToHsb();
+		color.hex = color.rgbToHex();
+		return $extend(color, this);
+	}
+
+});
+
+Color.implement({
+
+	mix: function(){
+		var colors = Array.slice(arguments);
+		var alpha = ($type(colors.getLast()) == 'number') ? colors.pop() : 50;
+		var rgb = this.slice();
+		colors.each(function(color){
+			color = new Color(color);
+			for (var i = 0; i < 3; i++) rgb[i] = Math.round((rgb[i] / 100 * (100 - alpha)) + (color[i] / 100 * alpha));
+		});
+		return new Color(rgb, 'rgb');
+	},
+
+	invert: function(){
+		return new Color(this.map(function(value){
+			return 255 - value;
+		}));
+	},
+
+	setHue: function(value){
+		return new Color([value, this.hsb[1], this.hsb[2]], 'hsb');
+	},
+
+	setSaturation: function(percent){
+		return new Color([this.hsb[0], percent, this.hsb[2]], 'hsb');
+	},
+
+	setBrightness: function(percent){
+		return new Color([this.hsb[0], this.hsb[1], percent], 'hsb');
+	}
+
+});
+
+var $RGB = function(r, g, b){
+	return new Color([r, g, b], 'rgb');
+};
+
+var $HSB = function(h, s, b){
+	return new Color([h, s, b], 'hsb');
+};
+
+var $HEX = function(hex){
+	return new Color(hex, 'hex');
+};
+
+Array.implement({
+
+	rgbToHsb: function(){
+		var red = this[0],
+				green = this[1],
+				blue = this[2],
+				hue = 0;
+		var max = Math.max(red, green, blue),
+				min = Math.min(red, green, blue);
+		var delta = max - min;
+		var brightness = max / 255,
+				saturation = (max != 0) ? delta / max : 0;
+		if(saturation != 0) {
+			var rr = (max - red) / delta;
+			var gr = (max - green) / delta;
+			var br = (max - blue) / delta;
+			if (red == max) hue = br - gr;
+			else if (green == max) hue = 2 + rr - br;
+			else hue = 4 + gr - rr;
+			hue /= 6;
+			if (hue < 0) hue++;
+		}
+		return [Math.round(hue * 360), Math.round(saturation * 100), Math.round(brightness * 100)];
+	},
+
+	hsbToRgb: function(){
+		var br = Math.round(this[2] / 100 * 255);
+		if (this[1] == 0){
+			return [br, br, br];
+		} else {
+			var hue = this[0] % 360;
+			var f = hue % 60;
+			var p = Math.round((this[2] * (100 - this[1])) / 10000 * 255);
+			var q = Math.round((this[2] * (6000 - this[1] * f)) / 600000 * 255);
+			var t = Math.round((this[2] * (6000 - this[1] * (60 - f))) / 600000 * 255);
+			switch (Math.floor(hue / 60)){
+				case 0: return [br, t, p];
+				case 1: return [q, br, p];
+				case 2: return [p, br, t];
+				case 3: return [p, q, br];
+				case 4: return [t, p, br];
+				case 5: return [br, p, q];
+			}
+		}
+		return false;
+	}
+
+});
+
+String.implement({
+
+	rgbToHsb: function(){
+		var rgb = this.match(/\d{1,3}/g);
+		return (rgb) ? rgb.rgbToHsb() : null;
+	},
+
+	hsbToRgb: function(){
+		var hsb = this.match(/\d{1,3}/g);
+		return (hsb) ? hsb.hsbToRgb() : null;
+	}
+
+});
+
+
+/*
+---
+
 script: IframeShim.js
 
 description: Defines IframeShim, a class for obscuring select lists and flash objects in IE.
@@ -4743,7 +4204,7 @@ var IframeShim = new Class({
 				this[this.options.display ? 'show' : 'hide']();
 				this.fireEvent('inject');
 			}).bind(this);
-			if (IframeShim.ready) window.addEvent('load', inject);
+			if (!IframeShim.ready) window.addEvent('load', inject);
 			else inject();
 		} else {
 			this.position = this.hide = this.show = this.dispose = $lambda(this);
@@ -4823,7 +4284,7 @@ var Mask = new Class({
 
 	Implements: [Options, Events],
 
-	Binds: ['resize'],
+	Binds: ['position'],
 
 	options: {
 		// onShow: $empty,
@@ -4840,12 +4301,13 @@ var Mask = new Class({
 		style: {},
 		'class': 'mask',
 		maskMargins: false,
-		useIframeShim: true
+		useIframeShim: true,
+		iframeShimOptions: {}
 	},
 
 	initialize: function(target, options){
-		this.target = document.id(target) || document.body;
-		this.target.store('mask', this);
+		this.target = document.id(target) || document.id(document.body);
+		this.target.store('Mask', this);
 		this.setOptions(options);
 		this.render();
 		this.inject();
@@ -4877,7 +4339,7 @@ var Mask = new Class({
 		target = target || this.options.inject ? this.options.inject.target : '' || this.target;
 		this.element.inject(target, where);
 		if (this.options.useIframeShim) {
-			this.shim = new IframeShim(this.element);
+			this.shim = new IframeShim(this.element, this.options.iframeShimOptions);
 			this.addEvents({
 				show: this.shim.show.bind(this.shim),
 				hide: this.shim.hide.bind(this.shim),
@@ -4917,8 +4379,7 @@ var Mask = new Class({
 
 	show: function(){
 		if (!this.hidden) return this;
-		this.target.addEvent('resize', this.resize);
-		if (this.target != document.body) document.id(document.body).addEvent('resize', this.resize);
+		window.addEvent('resize', this.position);
 		this.position();
 		this.showMask.apply(this, arguments);
 		return this;
@@ -4932,7 +4393,7 @@ var Mask = new Class({
 
 	hide: function(){
 		if (this.hidden) return this;
-		this.target.removeEvent('resize', this.resize);
+		window.removeEvent('resize', this.position);
 		this.hideMask.apply(this, arguments);
 		if (this.options.destroyOnHide) return this.destroy();
 		return this;
@@ -5252,64 +4713,5 @@ MooTools.lang.set('en-US', 'Date', {
 	monthsUntil: '{delta} months from now',
 	yearUntil: '1 year from now',
 	yearsUntil: '{delta} years from now'
-
-});
-
-
-/*
----
-
-script: Form.Validator.English.js
-
-description: Date messages for English.
-
-license: MIT-style license
-
-authors:
-- Aaron Newton
-
-requires:
-- /Lang
-- /Form.Validator
-
-provides: [Form.Validator.English]
-
-...
-*/
-
-MooTools.lang.set('en-US', 'Form.Validator', {
-
-	required:'This field is required.',
-	minLength:'Please enter at least {minLength} characters (you entered {length} characters).',
-	maxLength:'Please enter no more than {maxLength} characters (you entered {length} characters).',
-	integer:'Please enter an integer in this field. Numbers with decimals (e.g. 1.25) are not permitted.',
-	numeric:'Please enter only numeric values in this field (i.e. "1" or "1.1" or "-1" or "-1.1").',
-	digits:'Please use numbers and punctuation only in this field (for example, a phone number with dashes or dots is permitted).',
-	alpha:'Please use letters only (a-z) with in this field. No spaces or other characters are allowed.',
-	alphanum:'Please use only letters (a-z) or numbers (0-9) only in this field. No spaces or other characters are allowed.',
-	dateSuchAs:'Please enter a valid date such as {date}',
-	dateInFormatMDY:'Please enter a valid date such as MM/DD/YYYY (i.e. "12/31/1999")',
-	email:'Please enter a valid email address. For example "fred@domain.com".',
-	url:'Please enter a valid URL such as http://www.google.com.',
-	currencyDollar:'Please enter a valid $ amount. For example $100.00 .',
-	oneRequired:'Please enter something for at least one of these inputs.',
-	errorPrefix: 'Error: ',
-	warningPrefix: 'Warning: ',
-
-	//Form.Validator.Extras
-
-	noSpace: 'There can be no spaces in this input.',
-	reqChkByNode: 'No items are selected.',
-	requiredChk: 'This field is required.',
-	reqChkByName: 'Please select a {label}.',
-	match: 'This field needs to match the {matchName} field',
-	startDate: 'the start date',
-	endDate: 'the end date',
-	currendDate: 'the current date',
-	afterDate: 'The date should be the same or after {label}.',
-	beforeDate: 'The date should be the same or before {label}.',
-	startMonth: 'Please select a start month',
-	sameMonth: 'These two dates must be in the same month - you must change one or the other.',
-	creditcard: 'The credit card number entered is invalid. Please check the number and try again. {length} digits entered.'
 
 });

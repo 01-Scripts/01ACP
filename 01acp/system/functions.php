@@ -7,7 +7,7 @@
 	Modul:		01ACP
 	Dateiinfo:	Globale PHP-Funktionen
 				Auf Funktionen kann nach dem Include der headinclude.php zugrgriffen werden
-	#fv.1102#
+	#fv.1200#
 */
 
 // E-Mail-Adresse auf äußerliche Gültigkeit überprüfen

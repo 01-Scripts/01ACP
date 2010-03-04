@@ -9,7 +9,7 @@
 				auslesen, installierte Module auslesen, Modulspezifische Dateien includieren, Grundeinstellungen,
 				Pfadangaben, Funktionen includen
 				Datei wird sowohl im Frontpanel als auch im Adminbereich als erstes includiert
-	#fv.1102#
+	#fv.1200#
 */
 
 //Session starten:
@@ -93,9 +93,12 @@ $mootools['moo_fancyup'][] = "<script src=\"system/js/Swiff.Uploader.js\" type=\
 $mootools['moo_fancyup'][] = "<script src=\"system/js/Fx.ProgressBar.js\" type=\"text/javascript\"></script>";
 $mootools['moo_fancyup'][] = "<script src=\"system/js/mootools-more-lang.js\" type=\"text/javascript\"></script>";
 $mootools['moo_fancyup'][] = "<script src=\"system/js/FancyUpload2.js\" type=\"text/javascript\"></script>";
+$mootools['moo_rainbow'][] = "<script src=\"system/js/mooRainbow.1.2b2.js\" type=\"text/javascript\"></script>";
+$mootools['moo_rainbow'][] = "<link rel=\"stylesheet\" type=\"text/css\" href=\"system/js/mootools-rainbow.css\" />";
 
 // DOMReady-Code
 /*	Dateinamen der Dateien, die in den DOMReady-Bereich includiert werden sollen */
+$domready['moo_rainbow'][]  = "system/js/mootools-domready-rainbow.js";			// Color Picker
 $domready['moo_calendar'][] = "system/js/mootools-domready-calendar.js";		// Date Picker
 $domready['moo_slidev'][]	= "system/js/mootools-domready-slidev.js";			// Verikaler Slide-Effekt
 $domready['moo_slideh'][]	= "system/js/mootools-domready-slideh.js";			// Horizontaler Slide-Effekt
