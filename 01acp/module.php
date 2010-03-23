@@ -244,14 +244,16 @@ elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "update" &&
 	isset($_REQUEST['modul']) && !empty($_REQUEST['modul']) &&
 	isset($_REQUEST['step']) && $_REQUEST['step'] == 1 &&
 	file_exists($moduldir.$_REQUEST['modul']."/_info.xml")){
-	
+	$options = "";
+
 	$xml = simplexml_load_file($moduldir.$_REQUEST['modul']."/_info.xml",NULL,LIBXML_NOCDATA);
 	
 	if($xml->need01acpv <= $settings['acpversion']){
 	
 		foreach($xml->updates as $updates){
 			foreach($updates as $update){
-				if($update->startv == $module[$_REQUEST['modul']]['version'])
+				// Abfrage funktioniert aus ungeklärter Ursache nicht ohne md5()
+				if($update->startv == $module[$_REQUEST['modul']]['version'] && md5($update->zielv) == md5($xml->version))
 					$options .= "<option value=\"".$update->action."\">Version ".$update->startv." nach ".$update->zielv."</option>\n";
 				}
 			}
@@ -272,11 +274,16 @@ elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "update" &&
     <tr>
         <td class="tra">Bitte w&auml;hlen Sie das passende Update aus.<br />
 			<br />
-			<b>Beispiel:</b> Wenn Sie von Version 1.0.0.0 auf Version 1.0.0.3 aktualisieren m&ouml;chten
-			m&uuml;ssen alle dazwischenliegende Updates in der richtigen Reihenfolgen installiert werden:<br />
-			Version 1.0.0.0 -> Version 1.0.0.1<br />
-			Version 1.0.0.1 -> Version 1.0.0.2<br />
-			Version 1.0.0.2 -> Version 1.0.0.3</td>
+			<b>Beispiel:</b> Wenn Sie von Version 1.0.0.0 auf Version 1.0.0.3 aktualisieren m&ouml;chten,
+			m&uuml;ssen <b class="red">alle dazwischenliegende Updates</b> in der richtigen Reihenfolgen
+			<b class="red">einzeln(!)</b> installiert werden:<br />
+			Version 1.0.0.0 -&gt; Version 1.0.0.1 (passendes Update-Paket herunterladen!)<br />
+			Version 1.0.0.1 -&gt; Version 1.0.0.2 (passendes Update-Paket herunterladen!)<br />
+			Version 1.0.0.2 -&gt; Version 1.0.0.3 (passendes Update-Paket herunterladen!)<br />
+			<b class="red">Bitte achten Sie darauf, dass Sie mit dem ERSTEN Update-Paket (z.B. 1.0.0.0 nach 1.0.0.1) starten und wirklich alle ge&auml;nderten
+			Dateien &uuml;berschreiben.<br />
+			Starten Sie dann hier den ERSTEN Update-Prozess (z.B. 1.0.0.0 nach 1.0.0.1)<br />
+			und nehmen Sie ERST DANN das n&auml;chste Update (z.B. 1.0.0.1 nach 1.0.0.2, etc.) vor!</b></td>
     </tr>
 
 	<tr>
