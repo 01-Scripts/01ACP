@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS `01prefix_module` (
   `instname` varchar(50) NOT NULL COMMENT 'Individueller, vom Benutzer eingegebene Name',
   `idname` varchar(25) NOT NULL COMMENT 'entspricht dem Verzeichnisnamen',
   `version` varchar(10) NOT NULL,
-  `serialized_data` mediumtext NOT NULL COMMENT 'use unserialize() to get data back',
+  `serialized_data` MEDIUMBLOB NULL DEFAULT NULL COMMENT 'use unserialize() to get data back',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `idname` (`idname`)
 ) TYPE=MyISAM AUTO_INCREMENT=1 ;
