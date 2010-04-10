@@ -1,9 +1,9 @@
 <?PHP
-/* 
+/*
 	01ACP - Copyright 2008-2010 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
-	
+
 	Modul:		01ACP
 	Dateiinfo: 	Globale Variablendefinitionen, Verbindung zur MySQL-Tabelle aufbauen, Settings aus MySQL-DB
 				auslesen, installierte Module auslesen, Modulspezifische Dateien includieren, Grundeinstellungen,
@@ -17,7 +17,7 @@
 
 error_reporting(E_ALL);
 //@ini_set('session.bug_compat_warn', "0");
-//@ini_set("register_globals", "0"); Test
+//@ini_set("register_globals", "0");
 
 //@error_reporting(E_ALL ^ E_NOTICE);
 @date_default_timezone_set("Europe/Berlin");
@@ -133,7 +133,7 @@ Struktur von $module
 			['db-feld'] -> 'wert'
 			['db-feld'] -> 'wert'
 			...
-			
+
 Struktur von $inst_module
 	array()
 		['idname']
@@ -146,23 +146,23 @@ if(isset($modul) && strchr($modul,"/") == "/")
     $modul = substr($modul,0,-1);
 
 // Modul-Spezifische headinclude- & _functions-Datei einbinden
-if(isset($_REQUEST['modul']) && !empty($_REQUEST['modul']) && in_array($_REQUEST['modul'],$inst_module) OR 
+if(isset($_REQUEST['modul']) && !empty($_REQUEST['modul']) && in_array($_REQUEST['modul'],$inst_module) OR
    isset($modul) && !empty($modul) && in_array($modul,$inst_module)){
-		
+
 	if(isset($_REQUEST['modul']) && !empty($_REQUEST['modul']) || empty($modul)) $modul = $_REQUEST['modul'];
 	$flag_modcheck = TRUE;
 	if(file_exists($modulpath."_headinclude.php")) include_once($modulpath."_headinclude.php");
 	if(file_exists($modulpath."_functions.php")) include_once($modulpath."_functions.php");
 	}else $modul = "01acp";
-	
+
 // DB: Einstellungen in Array $settings[] einlesen
 $list = mysql_query("SELECT idname,wert FROM ".$mysql_tables['settings']." WHERE is_cat = '0' AND (modul = '01acp' OR modul = '".mysql_real_escape_string($modul)."')");
 while($row = mysql_fetch_array($list)){
 	$settings[stripslashes($row['idname'])] = stripslashes($row['wert']);
 	}
-	
-	
-	
+
+
+
 /* Auf MySQL-Daten basierende weitere Einstellungen & Standardwerte */
 
 // Erlaubte Dateiendungen
