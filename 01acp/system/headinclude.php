@@ -17,7 +17,7 @@
 
 error_reporting(E_ALL);
 //@ini_set('session.bug_compat_warn', "0");
-//@ini_set("register_globals", "0");
+//@ini_set("register_globals", "0"); Test
 
 //@error_reporting(E_ALL ^ E_NOTICE);
 @date_default_timezone_set("Europe/Berlin");
