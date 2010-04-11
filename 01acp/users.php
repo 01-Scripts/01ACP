@@ -261,7 +261,8 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "edit_users" && $userdat
 			include_once($moduldir.$modul_akt['idname']."/_headinclude.php");
 		if(file_exists($moduldir.$modul_akt['idname']."/_functions.php"))
 			include_once($moduldir.$modul_akt['idname']."/_functions.php");
-		$addstats = @call_user_func("_".$modul_akt['modulname']."_getUserstats",$row['id']);
+		if(function_exists("_".$modul_akt['modulname']."_getUserstats"))
+			$addstats = call_user_func("_".$modul_akt['modulname']."_getUserstats",$row['id']);
 		
 		if(isset($addstats) && is_array($addstats))
 			$userstats = array_merge($userstats,$addstats);
@@ -302,7 +303,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "edit_users" && $userdat
 	echo "</table>";
 
 	echo echopages($sites,"80%","site","action=edit_users&amp;search=".$_GET['search']."&amp;sort=".$_GET['sort']."&amp;orderby=".$_GET['orderby']."");
-	//echo echo_sortablecontrols("table","80%");
+
 	}elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "edit_users")
 		$flag_loginerror = true;
 
@@ -377,7 +378,6 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_del" && $userdata['u
 		mysql_query("DELETE FROM ".$mysql_tables['user']." WHERE id='".mysql_real_escape_string($u_id)."' AND id != '0' LIMIT 1");
 		
 		mysql_query("UPDATE ".$mysql_tables['files']." SET uid='0' WHERE uid='".mysql_real_escape_string($u_id)."'");
-		mysql_query("UPDATE ".$mysql_tables['pics']."  SET uid='0' WHERE uid='".mysql_real_escape_string($u_id)."'");
 		
 		/*An dieser Stelle alle Modulspezifischen zur Verfügung gestellten Lösch-Funktionen ausführen
 		Schema der Funktionsnamen: modulname_DeleteUser()
@@ -392,7 +392,8 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_del" && $userdata['u
 				include_once($moduldir.$modul_akt['idname']."/_headinclude.php");
 			if(file_exists($moduldir.$modul_akt['idname']."/_functions.php"))
 				include_once($moduldir.$modul_akt['idname']."/_functions.php");
-			call_user_func("_".$modul_akt['modulname']."_DeleteUser",$u_id,$u_username,$u_mail);
+			if(function_exists("_".$modul_akt['modulname']."_DeleteUser"))
+				call_user_func("_".$modul_akt['modulname']."_DeleteUser",$u_id,$u_username,$u_mail);
 			
 			unset($modul);
 			}
