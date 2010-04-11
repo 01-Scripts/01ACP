@@ -1718,6 +1718,7 @@ $dumpline = ereg_replace("01prefix_", "01_".$instnr."_", $dumpline);
 $dumpline = ereg_replace("01modulprefix_", "01_".$instnr."_".$modulnr."_", $dumpline);
 $dumpline = ereg_replace("#modul_idname#", $modulidname, $dumpline);
 $dumpline = ereg_replace("#UID_ADMIN_AKT#", $userdata['id'], $dumpline);
+$dumpline = ereg_replace("#01ACP_VERSION_NR#", _01ACP_VERSION_NR, $dumpline);
 
 return $dumpline;
 }
