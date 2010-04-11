@@ -1,12 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2010 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Benutzerverwaltung (Benutzer hinzufügen und bearbeiten; Eigenes Profil)
-	#fv.1102#
+	#fv.1200#
 */
 
 $menuecat = "01acp_users";
@@ -66,7 +66,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "add_user" && $userdata[
 				if($_POST['pwwahl'] == "random" || isset($_POST['emailinfo']) && $_POST['emailinfo'] == 1){
 					$header = "From:".$settings['email_absender']."<".$settings['email_absender'].">\n";
 			        $email_betreff = $settings['sitename']." - Ein Benutzerkonto wurde für Sie angelegt";
-			        $emailbody = $settings['sitename']."\n\nFür Sie wurde ein neues Benutzerkonto angelegt. Sie können sich unter\n".$settings['absolut_url']."/01acp/\nmit folgenden Zugangsdaten einloggen:\n\nBenutzername: ".$_POST['username']."\nPasswort: ".$password."\n\n---\nWebmailer";
+			        $emailbody = $settings['sitename']."\n\nFür Sie wurde ein neues Benutzerkonto angelegt. Sie können sich unter\n".$settings['absolut_url']."01acp/\nmit folgenden Zugangsdaten einloggen:\n\nBenutzername: ".$_POST['username']."\nPasswort: ".$password."\n\n---\nWebmailer";
 
 			        if(!mail(stripslashes($_POST['mail']),$email_betreff,$emailbody,$header)){
 						echo "<p class=\"meldung_error\">Fehler: Es konnte keine E-Mail an den neuen Benutzer versand werden.</p>";
@@ -799,5 +799,4 @@ isset($_REQUEST['action']) && $_REQUEST['action'] == "profil" && $userdata['prof
 }else $flag_loginerror = true;
 include("system/foot.php");
 
-// 01ACP Copyright 2008 by Michael Lorer - 01-Scripts.de
 ?>
