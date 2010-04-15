@@ -243,9 +243,8 @@ border: 0;
 .actionbutton:active {
 
     height:22px;
-    line-height:250%;       /* sorgt für vertikale zentrierung des Inhalts */
     padding:4px;
-    padding-top:10px;
+    padding-top:8px;
     padding-bottom:0;
     
 	background-color:#fff;

@@ -29,7 +29,7 @@ if(isset($userdata['id']) && $userdata['id'] > 0){
 // Neuen Benutzer hinzufügen
 if(isset($_REQUEST['action']) && $_REQUEST['action'] == "add_user" && $userdata['userverwaltung'] >= 1){
 ?>
-<h1>Neuen Benutzer hinzuf&uuml;gen</h1>
+<h1>Neuen Benutzer erstellen</h1>
 
 <?PHP
 	// Neuen Benutzer in Datenbank eintragen
@@ -73,29 +73,33 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "add_user" && $userdata[
 						}
 					} 
 
-				echo "<script>redirect(\"".$filename."?action=edit_user&userid=".$lastinsertid."\");</script>";
-				echo "<p class=\"meldung_ok\">Der Benutzer <b>".$_POST['username']."</b> wurde erfolgreich angelegt.<br />
+				if($userdata['userverwaltung'] == 2){
+					echo "<script>redirect(\"".$filename."?action=edit_user&userid=".$lastinsertid."\");</script>";
+					echo "<p class=\"meldung_ok\">Der Benutzer <b>".$_POST['username']."</b> wurde erfolgreich erstellt.<br />
 						Sie werden zur Konfiguration der Benutzerrechte weitergeleitet. Sollten Sie nicht weitergeleitet werden, klicken Sie
 						bitte <a href=\"".$filename."?action=edit_user&amp;userid=".$lastinsertid."\">hier</a>.</p>";
+					}
+				else
+					echo "<p class=\"meldung_ok\">Der Benutzer <b>".$_POST['username']."</b> wurde erfolgreich erstellt.</p>";
 			
 				}
 			// Fehler: Beim Eintragen trat ein Fehler auf
 			else{
-				echo "<p class=\"meldung_error\">Fehler: Es konnte kein neuer Benutzer angelegt werden.<br />
+				echo "<p class=\"meldung_error\">Fehler: Es konnte kein neuer Benutzer erstellt werden.<br />
 						Beim Eintragen in die Datenbank trat ein unvorhergesehener Fehler auf. Bitte beachten Sie
 						die MySQL-Fehlermeldung und setzen sich mit einem technischen Ansprechpartner in Verbindung.</p>";
 				}
 		}
 		// Fehler: Benutzername oder E-Mail existieren schon in der DB
 		else{
-			echo "<p class=\"meldung_error\">Fehler: Der neue Benutzer konnte nicht hinzugef&uuml;gt werden. Ein Benutzer mit diesem
+			echo "<p class=\"meldung_error\">Fehler: Der neue Benutzer konnte nicht erstellt werden. Ein Benutzer mit diesem
 					Benutzernamen oder dieser E-Mail-Adresse existiert bereits.<br />
 					Bitte gehen Sie <a href=\"javascript:history.back();\">zur&uuml;ck</a> und &auml;ndern Sie Ihre Eingaben entsprechend ab.</p>";
 		}
 	}
 	// Fehler: Nicht alle Felder ausgefüllt oder PW zu kurz
 	elseif(isset($_POST['send']) && $_POST['send'] == 1){
-		echo "<p class=\"meldung_error\">Fehler: Der neue Benutzer konnte nicht hinzugef&uuml;gt werden. Sie haben nicht
+		echo "<p class=\"meldung_error\">Fehler: Der neue Benutzer konnte nicht erstellt werden. Sie haben nicht
 				alle Felder komplett ausgef&uuml;llt oder das von Ihnen eingegebene Passwort ist zu kurz (mind. ".PW_LAENGE." Zeichen).<br />
 				Bitte gehen Sie <a href=\"javascript:history.back();\">zur&uuml;ck</a> und &auml;ndern Sie Ihre Eingaben entsprechend ab.</p>";
 		}
@@ -148,7 +152,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "add_user" && $userdata[
         <td class="tra">
 			<input type="hidden" name="action" value="add_user" />
 			<input type="hidden" name="send" value="1" />
-			<input type="submit" value="Benutzer anlegen &raquo;" class="input" />
+			<input type="submit" value="Benutzer erstellen &raquo;" class="input" />
 		</td>
     </tr>
 
@@ -181,7 +185,9 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "edit_users" && $userdat
 <h1>Benutzer bearbeiten</h1>
 
 <form action="<?PHP echo $filename; ?>" method="get">
-	<p><input type="text" name="search" value="Nach Benutzername oder E-Mail" size="30" onfocus="clearField(this);" onblur="checkField(this);" class="input_search" /> <input type="submit" value="Benutzer suchen" class="input" /></p>
+	<p>
+	<a href="users.php?action=add_user" class="actionbutton"><img src="images/icons/add.gif" alt="Plus-Zeichen" title="Neuen Benutzer erstellen" style="border:0; margin-right:10px;" />Neuen Benutzer erstellen</a>
+	<input type="text" name="search" value="Nach Benutzername oder E-Mail" size="30" onfocus="clearField(this);" onblur="checkField(this);" class="input_search" /> <input type="submit" value="Benutzer suchen" class="input" /></p>
 	<input type="hidden" name="action" value="edit_users" />
 </form>
 
@@ -304,6 +310,9 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "edit_users" && $userdat
 
 	echo echopages($sites,"80%","site","action=edit_users&amp;search=".$_GET['search']."&amp;sort=".$_GET['sort']."&amp;orderby=".$_GET['orderby']."");
 
+	}elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "edit_users" && $userdata['userverwaltung'] == 1){
+		echo "<h1>Benutzer erstellen</h1>";
+		echo "<p><a href=\"users.php?action=add_user\" class=\"actionbutton\"><img src=\"images/icons/add.gif\" alt=\"Plus-Zeichen\" title=\"Neuen Benutzer erstellen\" style=\"border:0; margin-right:10px;\" />Neuen Benutzer erstellen</a></p>";
 	}elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "edit_users")
 		$flag_loginerror = true;
 
@@ -462,12 +471,13 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 
 				// Passwort ändern?
 				if(isset($_POST['changepw']) && $_POST['changepw'] == 1){
-				
+					$pwerror = true;
 					if(isset($_POST['pwwahl']) && $_POST['pwwahl'] == "eigen" && 
 						isset($_POST['password']) && !empty($_POST['password']) && 
 						strlen($_POST['password']) >= PW_LAENGE){
 						
 						mysql_query("UPDATE ".$mysql_tables['user']." SET password='".pwhashing($_POST['password'])."', cookiehash='' WHERE id='".mysql_real_escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
+						$pwerror = false;
 						}
 					elseif(isset($_POST['pwwahl']) && $_POST['pwwahl'] == "random" ||
 						isset($_POST['pwwahl']) && $_POST['pwwahl'] == "eigen" && empty($_POST['password'])){
@@ -486,13 +496,14 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 						$empf = preg_replace( "/[^a-z0-9 !?:;,.\/_\-=+@#$&\*\(\)]/im", "",$_POST['mail']);
 						$empf = preg_replace( "/(content-type:|bcc:|cc:|to:|from:)/im", "",$empf);
 				        mail($empf,$email_betreff,$emailbody,$header);
+				        $pwerror = false;
 						}
 					}
 
 				// Alle Datensätze in DB durchgehen und neue Formularwerte ggf. speichern
 				$query = "SELECT id,modul,idname FROM ".$mysql_tables['rights']." WHERE is_cat='0' AND hide='0'";
 				$list = mysql_query($query);
-				unset($savequery);
+				$savequery = "";
 				while($row_save = mysql_fetch_assoc($list)){
 					if(isset($_POST[$row_save['modul']."_".$row_save['idname']]))
 						$savequery .= $row_save['modul']."_".$row_save['idname']."='".mysql_real_escape_string($_POST[$row_save['modul']."_".$row_save['idname']])."', ";
@@ -503,7 +514,11 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 				
 				echo "<p class=\"meldung_ok\">Benutzerdaten wurden gespeichert.<br />
 					<a href=\"users.php?action=edit_user&userid=".$_POST['userid']."\">Benutzer erneut bearbeiten &raquo;</a><br />
-					<a href=\"users.php?action=edit_users\">Zur&uuml;ck zur Benutzer-&Uuml;bersicht &raquo;</a></p>";
+					<a href=\"users.php?action=edit_users\">Zur&uuml;ck zur Benutzer-&Uuml;bersicht &raquo;</a></p>";#
+				
+				if($pwerror)
+				    echo "<p class=\"meldung_error\">Das Passwort wurde <b>nicht</b> ge&auml;ndert.<br />
+							Bitte geben Sie ein Passwort mit mindestens ".PW_LAENGE." Zeichen ein!</p>";
 				}
 		  break;
 		  case "profil":
