@@ -26,7 +26,8 @@
 					file : url+'../../../../../popups.php?action=tiny_uploader&var1=pic&var2=post&var3=newsfeld&returnvalue=tinymce',
 					width : 620,
 					height : 480,
-					inline : 1
+					inline : 1,
+					scrollbars: 'yes'
 				}, {
 					plugin_url : url, // Plugin absolute URL
 					some_custom_arg : 'custom arg' // Custom argument
@@ -38,7 +39,8 @@
 					file : url+'../../../../../popups.php?action=tiny_uploader&var1=file&var2=post&var3=newsfeld&returnvalue=tinymce',
 					width : 620,
 					height : 480,
-					inline : 1
+					inline : 1,
+					scrollbars: 'yes'
 				}, {
 					plugin_url : url, // Plugin absolute URL
 					some_custom_arg : 'custom arg' // Custom argument
