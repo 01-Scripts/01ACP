@@ -340,7 +340,10 @@ var ImageDialog = {
 		if (f.width.value == "" || f.height.value == "")
 			return;
 
-		tp = (parseInt(f.width.value) / parseInt(t.preloadImg.width)) * t.preloadImg.height;
+		//tp = (parseInt(f.width.value) / parseInt(t.preloadImg.width)) * t.preloadImg.height;
+		var tempImg = new Image();
+		tempImg.src = t.preloadImg.src;
+		tp = (parseInt(f.width.value) / parseInt(tempImg.width)) * tempImg.height;
 		f.height.value = tp.toFixed(0);
 	},
 
@@ -354,7 +357,10 @@ var ImageDialog = {
 		if (f.width.value == "" || f.height.value == "")
 			return;
 
-		tp = (parseInt(f.height.value) / parseInt(t.preloadImg.height)) * t.preloadImg.width;
+		//tp = (parseInt(f.height.value) / parseInt(t.preloadImg.height)) * t.preloadImg.width;
+		var tempImg = new Image();
+		tempImg.src = t.preloadImg.src;		
+		tp = (parseInt(f.height.value) / parseInt(tempImg.height)) * tempImg.width;
 		f.width.value = tp.toFixed(0);
 	},
 
