@@ -25,32 +25,17 @@ function parse_str(str, array){
 }
 
 function getSize(){
-var f = document.forms[0], nl = f.elements, ed = tinyMCEPopup.editor, dom = ed.dom, n = ed.selection.getNode();
-//nl.src.value = dom.getAttrib(n, 'src');
-var adressstring = dom.getAttrib(n, 'src');
+var adressstring = document.getElementById('src').value;
 var queryarray = [];
 
 queryarray = parse_str(adressstring);
-//alert(queryarray['size']);
 
 if(isNaN(queryarray['size'])){
 	document.getElementById('sizetr01').style.display = 'none';
-	//dom.setStyle(sizetr01, 'display', 'none');
 	}
 else{
-	//document.getElementById('olddimensions').style.display = 'none';
-	//document.getElementById('size01').value = queryarray['size'];
-	//dom.setStyle('olddimensions', 'display', 'none');
-	//dom.setAttrib('size01', 'value', queryarray['size']);
-	
-	count = f.length;
-	for(i=0;i<count;i++){
-		if((f.elements[i].name == "size01")){
-			//alert(f.elements[i].value);
-			f.elements[i].value = '300';
-			//alert(f.elements[i].value);
-			}
-		}
+	document.getElementById('olddimensions').style.display = 'none';
+	document.getElementById('size01').value = queryarray['size']; 
 	}
 }
 
