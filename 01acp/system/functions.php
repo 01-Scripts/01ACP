@@ -490,7 +490,7 @@ function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="
 
     // Bestimmten Dateinamen verwenden? (== bestehende Datei überschreiben)
     if(!empty($destname)){
-		$split = split('[.]', $destname);
+		$split = explode(".", $destname,2);
 		$filename = $split[0];
 		
 		// Thumbnails löschen
@@ -580,7 +580,7 @@ RETURN: TRUE/FALSE
 function delfile($dir,$file){
 global $mysql_tables;
 
-$split = split('[.]', strtolower($file));
+$split = explode(".", strtolower($file),2);
 
 mysql_query("DELETE FROM ".$mysql_tables['files']." WHERE name='".mysql_real_escape_string($file)."' LIMIT 1");
 
@@ -642,7 +642,7 @@ else{
 function showpic($sourcefile,$resize){
 global $_GLOBALS;
 
-$split = split('[.]', strtolower($sourcefile));
+$split = explode(".", strtolower($sourcefile),2);
 $filename = $split[0];
 $fileType = $split[1];
 
@@ -931,7 +931,7 @@ $list = mysql_query($query);
 while($row = mysql_fetch_array($list)){
 	if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
 	
-	$timestamp = split('[.]', $row['name']);
+	$timestamp = explode(".", strtolower($row['name']),2);
 	switch($row['type']){
 	  case "pic":
 	    $popuph = 400;
@@ -947,7 +947,7 @@ while($row = mysql_fetch_array($list)){
 		$return .= "<td class=\"".$class."\" align=\"center\">";
 		
 		if($row['type'] == "pic"){
-			$split = split('[.]', strtolower($row['name']));
+			$split = explode(".", strtolower($row['name']),2);
 			$filename = $split[0];
 			$fileType = $split[1];
 			if(file_exists($picuploaddir.$filename."_tb_".ACP_TB_WIDTH.".".$fileType))
@@ -1833,6 +1833,7 @@ RETURN: true
   */
 function getFileVerz_Rek($parentid,$deep=0,$maxdeep=-1,$callfunction="",$givedeeperparam=""){
 global $mysql_tables;
+$return = "";
 
 // Abbruch, falls $deep = 0 erreicht wurde
 if($maxdeep == 0) return true;
