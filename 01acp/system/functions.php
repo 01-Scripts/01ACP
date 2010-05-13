@@ -352,6 +352,7 @@ return $return;
 /*$row[]			Array mit Datensatz aus MySQL-Tabelle
   $class			CSS-Classe für Tabellenzeile (tra, trab)
   &$count			CSS-Classen-"Counter" für Tabellenzeilen (tra, trab)
+  $jscssclass		CSS-Klasse für <tr> um Ein/Ausblenden per JS zu ermöglichen
   
 RETURN: geparste Dateifelder in entsprechenden Tabellenzellen
   */

@@ -634,7 +634,7 @@ isset($_REQUEST['action']) && $_REQUEST['action'] == "profil" && $userdata['prof
 		
 			$count = 0;
 			if($case == "edit"){
-				// CASE: BENUTZER BEARBEITEN
+// CASE: BENUTZER BEARBEITEN
 				echo "<tr>
 					<td class=\"trb\"><b>Passwort &auml;ndern</b></td>
 					<td class=\"trb\">
@@ -747,7 +747,7 @@ isset($_REQUEST['action']) && $_REQUEST['action'] == "profil" && $userdata['prof
 		    </tr>";
 				}
 			else{
-				// CASE: PROFIL
+// CASE: PROFIL
 				$modul_temp = $modul;
 				$modul = $userdata['startpage'];
 
@@ -781,7 +781,7 @@ isset($_REQUEST['action']) && $_REQUEST['action'] == "profil" && $userdata['prof
 					$row['wert'] = $datarow[$row['idname']];
 					
 					// MySQL-Daten verarbeiten
-					echo parse_dynFieldtypes($row,$class,$count);
+					echo parse_dynFieldtypes($row,$class,$count,"01acp");
 					}
 
 				if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
