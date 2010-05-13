@@ -1543,10 +1543,66 @@ RETURN: $message mit Erfolgs/Fehler-Nummer
   */
 function insert_Comment($autor,$email_form,$url_form,$comment,$antispam,$deaktivieren,$postid,$uid,$subpostid=0){
 global $mysql_tables,$settings,$_SESSION,$modul,$filename,$names,$flag_utf8;
+$zcount = $zcount2 = $zcount1 = 0;
+
+// Zensur-Funktion
+if($settings['comments_zensur'] == 1 && !empty($settings['comments_badwords']) &&
+   isset($comment) && !empty($comment)){
+   	$badwords = array();
+	$badwords = explode("\n",$settings['comments_badwords']);	
+	foreach ($badwords as &$badword){
+		$badword = trim($badword);
+		}
+	
+	$comment = str_replace($badwords, '***', $comment,$zcount1);
+	
+   	$specialchars = array(
+        'A' => '(A|4|@|\?|^)',
+        'B' => '(B|8|\|3|ß|b|l³|\|>|13)',
+        'C' => '(C|\(|\[|\<|©|¢)',
+        'D' => '(D|\|\)|\|\]|Ð|1\))',
+        'E' => '(E|3|€|&|£)',
+        'F' => '(F|\|=|PH|\|\*\|\-\||\|\"|ƒ|l²)',
+        'G' => '(G|6|&|9)',
+        'H' => '(H|\|\-\||#|\}\{|\]\-\[|\/\-\/)',
+        'I' => '(I|\!|1|\||\]\[)',
+        'J' => '(J|_\||¿)',
+        'K' => '(K|\|\<|\|\{|\|\(|X)',
+        'L' => '(L|1|\|_|£|\||\]\[_)',
+        'M' => '(M|\/\\\/\\|\/v\\|\|V\||\]V\[|\|\\\/\||AA|\[\]V\[\]|\|11|\/\|\\|\^\^|\(V\)|\|Y\|)',
+        'N' => '(N|\|\\\||\/\\\/|\/V|\|V|\/\\\\\/|\|1|2|?|\(\\\))',
+        'O' => '(O|0|9|\(\)|\[\]|\*|\°|\<\>|ø|\{\[\]\})',
+        'P' => '(P|\|°|\|\>|\|\*|\[\]D|\]\[D|\|²|\|\?|\|D)',
+        'Q' => '(Q|0_|0)',
+        'R' => '(R|2|\|2|\1²|®|\?)',
+        'S' => '(S|5|\$|§|\?)',
+        'T' => '(T|7|\+|†|\'\]\[\'|\|)',
+        'U' => '(U|\|_\||µ|\[_\]|v)',
+        'V' => '(V|\\\/|\|\/|\\\||\\\')',
+        'W' => '(W|\\\/\\\/|VV|\\A\/|\\\\\'|uu|\\\^\/|\\\|\/)',
+        'X' => '(X|\>\<|\)\(|\}\{|\%|\?|\]\[)',
+        'Y' => '(Y|\`\/|°\/|9|¥)',
+        'Z' => '(Z|2|\"\/_)',
+        'Ä' => '(Ä|43|°A°)',
+        'Ö' => '(Ö|03|°O°)',
+        'Ü' => '(Ü|\|_\|3|°U°)',
+		);
+   	
+   	foreach ($badwords as &$badword){
+		$parts = str_split($badword, 1);
+		$parts = str_ireplace(array_keys($specialchars), $specialchars, $parts);
+		$badword = '/(?<=\b)('.implode('\W*',$parts).')(?=\b)/im';
+		}	
+
+	$comment = trim(preg_replace($badwords, '***', $comment,-1,$zcount2));
+	
+	$zcount = $zcount1+$zcount2;
+   	}
 
 if(isset($autor) && !empty($autor) && 
    isset($comment) && !empty($comment) && 
-   (isset($antispam) && md5($antispam) == $_SESSION['antispam01'] && $settings['spamschutz'] == 1 || $settings['spamschutz'] == 0)){
+   (isset($antispam) && md5($antispam) == $_SESSION['antispam01'] && $settings['spamschutz'] == 1 || $settings['spamschutz'] == 0) &&
+   ($settings['comments_zensur'] == 0 || empty($settings['comments_badwords']) || ($settings['comments_zensur'] == 1 && !empty($settings['comments_badwords']) && ($settings['comments_zensurlimit'] == "-1" || $zcount < $settings['comments_zensurlimit'])))){
 
 	if(check_mail($email_form)) $email = mysql_real_escape_string($email_form); else $email = "";
 	if($settings['commentfreischaltung'] == 1) $frei = 0; else $frei = 1;
