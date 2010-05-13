@@ -81,8 +81,10 @@ if(strchr($_SERVER['HTTP_USER_AGENT'],"MSIE 6.0") && $flag_showIE6Warning)
 			echo "        <li><a href=\"index.php?action=logout\" title=\"Aus dem ACP ausloggen\"><img src=\"images/icons/menue_abmelden.gif\" alt=\"Abmelden\" title=\"Aus dem ACP ausloggen\" style=\"border:0; margin-right:3px;\" align=\"left\" /> Abmelden</a></li>\n";
 		else
 			echo "        <li>&nbsp;</li>\n";
-		if(isset($userdata['id']) && $userdata['id'] >= 1 && $userdata['profil'] == 1)
-			echo "        <li><a href=\"users.php?action=profil\" accesskey=\"4\" title=\"Eigenes Profil bearbeiten\" style=\"margin-right:40px;\"><img src=\"images/icons/menue_profil.gif\" alt=\"Profil\" title=\"Eigenes Profil\" style=\"border:0; margin-right:3px;\" align=\"left\" /> Profil</a></li>\n";
+		if(isset($userdata['id']) && $userdata['id'] >= 1 && $userdata['profil'] == 1){
+			echo "        <li><a href=\"users.php?action=profil\" accesskey=\"4\" title=\"Eigenes Profil bearbeiten\"><img src=\"images/icons/menue_profil.gif\" alt=\"Profil\" title=\"Eigenes Profil\" style=\"border:0; margin-right:3px;\" align=\"left\" /> Profil</a></li>\n";
+			echo "        <li><a href=\"javascript:popup('notepad','','','',500,400);\" accesskey=\"5\" title=\"Notizblock aufrufen\" style=\"margin-right:40px;\"><img src=\"images/icons/notebook.png\" alt=\"Notizblock\" title=\"Notizblock aufrufen\" style=\"border:0;\" align=\"left\" /></a></li>\n";
+			}
 		if(isset($userdata['id']) && $userdata['settings'] == 1) 
 			echo "        <li><a href=\"settings.php?action=settings\" accesskey=\"1\" title=\"Einstellungen ändern\"><img src=\"images/icons/menue_einstellungen.gif\" alt=\"Einstellungen\" title=\"Einstellungen\" style=\"border:0; margin-right:3px;\" align=\"left\" /> Einstellungen</a></li>\n";
 		if(isset($userdata['id']) && $userdata['userverwaltung'] >= 1) 

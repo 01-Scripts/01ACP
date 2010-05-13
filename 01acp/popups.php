@@ -107,6 +107,33 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "change_pw"){
 		}
 	}// Ende: Profil: Passwort ändern
 	
+// PROFIL: Notizblock anzeigen
+if(isset($_REQUEST['action']) && $_REQUEST['action'] == "notepad" && $userdata['profil'] == 1){
+	if(isset($_POST['send']) && $_POST['send'] == 1)
+	    mysql_query("UPDATE ".$mysql_tables['user']." SET 01acp_notepad='".mysql_real_escape_string($_POST['notepad'])."' WHERE id='".$userdata['id']."' LIMIT 1");
+
+	$list = mysql_query("SELECT id,01acp_notepad FROM ".$mysql_tables['user']." WHERE id='".mysql_real_escape_string($userdata['id'])."' LIMIT 1");
+	while($row = mysql_fetch_assoc($list)){
+		$notepad_text = stripslashes($row['01acp_notepad']);
+		}
+?>
+	<h2><img src="images/icons/notebook.png" alt="Icon: Notizblock" title="Notizblock" /> Pers&ouml;nlicher Notizblock</h2>
+
+	<form action="<?PHP echo $filename; ?>" method="post">
+	<p>
+
+		<textarea name="notepad" rows="15" cols="61" style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; font-style: normal;"><?php echo $notepad_text; ?></textarea>
+		<br /><br />
+		<input type="reset" value="Reset" class="input" style="margin-right: 340px;" />
+		<input type="submit" value="Speichern" class="input" />
+
+		<input type="hidden" name="action" value="notepad" />
+		<input type="hidden" name="send" value="1" />
+	</p>
+	</form>
+<?PHP	
+	}// Ende: Profil: Notizblock
+	
 // TinyMCE-UPLOADER-POPUP
 if(isset($_REQUEST['action']) && $_REQUEST['action'] == "tiny_uploader"){
 	if(!isset($_REQUEST['type'])) $_REQUEST['type'] = $_REQUEST['var1'];
