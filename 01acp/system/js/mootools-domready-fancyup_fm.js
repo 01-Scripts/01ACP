@@ -1,19 +1,14 @@
 	// our uploader instance
 
-	var up = new FancyUpload2($('fancy-status'), $('fancy-list'), { // options object
+	up = new FancyUpload2($('fancy-status'), $('fancy-list'), { // options object
 		// we console.log infos, remove that in production!!
-		verbose: false,
+		verbose: true,
 
 		// url is read from the form, so you just have to change one place
 		url: $('fancy-form').action,
 
 		// path to the SWF file
 		path: 'system/js/Swiff.Uploader.swf',
-
-		// remove that line to select all files, or edit it, add more items
-		typeFilter: {
-			'Images (*.jpg, *.jpeg, *.gif, *.png)': '*.jpg; *.jpeg; *.gif; *.png'
-		},
 
 		// this is our browse button, *target* is overlayed with the Flash movie
 		target: 'fancy-browse',
@@ -58,7 +53,7 @@
 		},
 
 		// Edit the following lines, it is your custom event handling
-
+		
 		/**
 		 * Is called when files were not added, "files" is an array of invalid File classes.
 		 *
@@ -90,10 +85,10 @@
 
 			if (json.get('status') == '1') {
 				file.element.addClass('file-success');
-				file.info.set('html', 'Bild wurde hochgeladen (' + json.get('width') + ' x ' + json.get('height') + 'px)');
+				file.info.set('html', 'Datei wurde hochgeladen (' + json.get('width') + ' x ' + json.get('height') + 'px)');
 			} else {
 				file.element.addClass('file-failed');
-				file.info.set('html', 'Es trat ein Fehler auf ' + (json.get('error') ? (json.get('error') + ' #' + json.get('code')) : response));
+				file.info.set('html', 'Es trat ein Fehler auf ' + (json.get('error') ? (json.get('error')) : response));
 			}
 		},
 

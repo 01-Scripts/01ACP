@@ -451,9 +451,10 @@ return $return;
 RETURN: Array(success,name,orgname,size,endung,fileart,msg);
   */
 function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="",$dirid=0){
-    global $db,$userdata,$picuploaddir,$catuploaddir,$attachmentuploaddir,$mysql_tables,$settings,$picendungen,$picsize,$attachmentendungen,$attachmentsize;
+    global $db,$userdata,$picuploaddir,$catuploaddir,$attachmentuploaddir,$mysql_tables,$settings,$picendungen,$picsize,$attachmentendungen,$attachmentsize,$instnr;
 
-    $time = time();    
+    mt_srand((double)microtime()*1000000);
+	$new_filename = substr(md5($instnr.time().microtime().mt_rand(10000,99999999)),0,15);    
     $endung = getEndung($fname);
 	
 	if(empty($dirid) || !is_numeric($dirid)) $dirid = 0;
@@ -510,9 +511,9 @@ function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="
 		@chmod($dir.$filename.".".$endung, 0777);
         }
     else
-        $filename = $time;
+        $filename = $new_filename;
 
-	if(isset($is_file) && $is_file == 1 || isset($is_pic) && $is_pic == 1 ){
+	if(isset($is_file) && $is_file == 1 || isset($is_pic) && $is_pic == 1){
         if($fsize <= $size){
             if(move_uploaded_file($tname,$dir.$filename.".".$endung)){
                 $fupload = array("success" 	=> 	1,
@@ -537,9 +538,10 @@ function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="
 					}
 
                 //Eintragung in Datenbank vornehmen:
-                $sql_insert = "INSERT INTO ".$mysql_tables['files']." (type,modul,dir,orgname,name,size,ext,uid) VALUES (
+                $sql_insert = "INSERT INTO ".$mysql_tables['files']." (type,modul,timestamp,dir,orgname,name,size,ext,uid) VALUES (
 							'".mysql_real_escape_string($fupload['fileart'])."',
 							'".mysql_real_escape_string($modul)."',
+							'".time()."',
 							'".mysql_real_escape_string($dirid)."',
 							'".mysql_real_escape_string($fupload['orgname'])."',
 							'".mysql_real_escape_string($fupload['name'])."', 
@@ -549,16 +551,19 @@ function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="
                 mysql_query($sql_insert) OR die(mysql_error());
                 }
             else{
-                $fupload['msg'] = "Ein unbekannter Fehler ist aufgetreten oder es wurde keine Datei hochgeladen.";
+                $fupload['success'] = 0;
+				$fupload['msg'] = "Ein unbekannter Fehler ist aufgetreten oder es wurde keine Datei hochgeladen.";
                 }
             }
         else{
             //Wenn Dateigröße zu groß ist
+			$fupload['success'] = 0;
 			$fupload['msg'] = "Die gew&auml;hlte Datei ist zu gro&szlig;.";
             }
         }
     else{
         //Wenn keine passende Endung gewählt wurde
+		$fupload['success'] = 0;
 		$fupload['msg'] = "Die gew&auml;hlte Datei besitzt keine der erlaubten Dateiendungen.";
         }
     
@@ -932,7 +937,6 @@ $list = mysql_query($query);
 while($row = mysql_fetch_array($list)){
 	if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
 	
-	$timestamp = explode(".", strtolower($row['name']),2);
 	switch($row['type']){
 	  case "pic":
 	    $popuph = 400;
@@ -985,7 +989,7 @@ while($row = mysql_fetch_array($list)){
 	
 	$return .= "<td class=\"".$class."\">".$drag_start.$link1.substr(stripslashes($row['orgname']),0,40).$link2.$drag_ende."</td>\n    ";
 	$return .= "<td class=\"".$class."\" align=\"center\">".parse_size($row['size'],"KB")." KB</td>\n    ";
-	if($show_date) $return .= "<td class=\"".$class."\" align=\"center\">".date("d.m.Y",$timestamp[0])."</td>\n    ";
+	if($show_date) $return .= "<td class=\"".$class."\" align=\"center\">".date("d.m.Y",$row['timestamp'])."</td>\n    ";
 	if($show_username) $return .= "<td class=\"".$class."\"><a href=\"".$url."&amp;uid=".$row['uid']."\">".$usernames[$row['uid']]."</a></td>\n    ";
 	
 	if($show_edit){
@@ -1990,5 +1994,55 @@ return "<img src=\"".$subfolder."01acp/system/set_a_cookie.php?cookiename=".$coo
 
 }
 
-// 01ACP Copyright 2008 by Michael Lorer - 01-Scripts.de
+
+
+
+
+
+
+
+
+
+// Benötigte Mootool und JS-Dateien / DOM ggf. laden
+/*$mootools_use		Array, der die zu ladenden Bestandteile enthält
+  $cookiewert		Gewünschter Wert für den Cookie
+
+RETURN: true
+  */
+function load_js_and_moo($mootools_use){
+global $mootools,$domready;
+
+// Benötigte MooTools laden
+if(isset($mootools_use) && is_array($mootools_use)){
+	foreach($mootools_use as $use){
+		if(isset($mootools[$use])){
+			foreach($mootools[$use] as $include){
+				echo $include."\n";
+				}
+			}
+		}
+	}
+
+// DOMReady ausgeben
+if(isset($mootools_use) && is_array($mootools_use)){
+	echo "<script type=\"text/javascript\">
+	window.addEvent('domready',function(){
+	";
+	foreach($mootools_use as $use){
+		if(isset($domready[$use])){
+			foreach($domready[$use] as $include){
+				include_once($include);
+				echo "\n\n";
+				}
+			}
+		}
+	include("system/js/domready-javas.js");
+	echo "
+    });
+</script>\n";
+	}
+
+return true;
+}
+
 ?>

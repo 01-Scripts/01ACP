@@ -5,7 +5,25 @@
 */
 if(!$update_ok) exit;
 
-if(isset($_POST['update']) && $_POST['update'] == "1100_zu_1101"){
+if(isset($_POST['update']) && $_POST['update'] == "1101_zu_1200"){
+	
+	// Extra Feld für Timestamp hinzufügen und mit Werten aus "name" füllen
+	mysql_query("ALTER TABLE `".$mysql_tables['files']."` ADD `timestamp` INT( 10 ) NULL AFTER `modul`");	
+	$list = mysql_query("SELECT id,name FROM ".$mysql_tables['files']."");
+	while($row = mysql_fetch_array($list)){
+		$split = explode(".",$row['name'],2);
+		mysql_query("UPDATE ".$mysql_tables['files']." SET timestamp = '".mysql_real_escape_string($split[0])."' WHERE id = '".$row['id']."' LIMIT 1");
+		}
+	
+	mysql_query("UPDATE ".$mysql_tables['settings']." SET standardwert = '1.2.0.0', wert = '1.2.0.0' WHERE idname = 'acpversion' LIMIT 1");
+?>
+<p class="meldung_ok">
+	<b>Herzlichen Gl&uuml;ckwunsch!</b><br />
+	Das Update auf Version 1.2.0.0 des <b>01acp</b> wurde erfolgreich beendet.
+</p>
+<?PHP
+	}
+elseif(isset($_POST['update']) && $_POST['update'] == "1100_zu_1101"){
 	mysql_query("UPDATE ".$mysql_tables['settings']." SET standardwert = '1.1.0.1', wert = '1.1.0.1' WHERE idname = 'acpversion' LIMIT 1");
 ?>
 <p class="meldung_ok">

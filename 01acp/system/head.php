@@ -9,7 +9,7 @@
 	
 	Modul:		01ACP
 	Dateiinfo:	Layout für ACP
-	#fv.1102#
+	#fv.1200#
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -23,34 +23,8 @@
 
 <?PHP
 // Benötigte MooTools laden
-if(isset($mootools_use) && is_array($mootools_use)){
-	foreach($mootools_use as $use){
-		if(isset($mootools[$use])){
-			foreach($mootools[$use] as $include){
-				echo $include."\n";
-				}
-			}
-		}
-	}
-	
-// DOMReady ausgeben
-if(isset($mootools_use) && is_array($mootools_use)){
-	echo "<script type=\"text/javascript\">
-	window.addEvent('domready',function(){
-	";
-	foreach($mootools_use as $use){
-		if(isset($domready[$use])){
-			foreach($domready[$use] as $include){
-				include_once($include);
-				echo "\n\n";
-				}
-			}
-		}
-	include("system/js/domready-javas.js");
-	echo "
-    });
-</script>\n";
-	}
+if(!isset($mootools_use)) $mootools_use = array();
+load_js_and_moo($mootools_use);
 ?>
 <script src="system/js/javas.js" type="text/javascript"></script>
 <!-- 2559ad821dde361560dbf967c3406f51 -->

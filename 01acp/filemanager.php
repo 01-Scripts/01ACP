@@ -6,7 +6,7 @@
 	
 	Modul:		01ACP
 	Dateiinfo:	Datei- & Bildverwaltung (Hochgeladenen Bilder und andere Dateien verwalten sowie neue Dateien hochladen)
-	#fv.1010#
+	#fv.1200#
 */
 
 $menuecat = "01acp_filemanager";
@@ -48,7 +48,8 @@ if(isset($userdata['id']) && $userdata['id'] > 0 && $userdata['dateimanager'] >=
 	// Berechtigung für Upload vorhanden?
 	if($userdata['upload'] == 1){
 ?>
-	<a href="javascript: hide_unhide('uploadbox');" class="actionbutton">
+	<!-- <a href="javascript: hide_unhide('uploadbox');" class="actionbutton"> -->
+	<a href="javascript:popup('fmanageruploader','','','',620,480);" class="actionbutton">
 		<img src="images/icons/icon_upload.gif" alt="Neue Datei/Bild hochladen" style="border:0; margin-right:10px;" />Neue Datei / Bild hochladen
 	</a>
 	<?PHP } ?>
@@ -100,24 +101,6 @@ ShowAjaxError('<b>Fehler:</b><br />Sie haben nicht alle ben&ouml;tigen Felder au
 
 <?PHP
 		}
-	// Berechtigung für Upload vorhanden?
-	if($userdata['upload'] == 1){
-?>
-
-<div id="uploadbox" style="display:none;">
-
-<div style="position:relative; left:550px; top:50px; width:50px;">
-<a href="javascript: hide_unhide('uploadbox');"><img src="images/icons/icon_exit.gif" alt="Standby-Icon" title="Upload-Formular ausblenden" /></a>
-</div>
-
-<iframe src="_path.php?include=uploader&amp;returnvalue=php&amp;look=upload" width="610" height="300" name="Dateiupload" scrolling="auto" frameborder="0">
-	<p>Ihr Browser kann leider keine eingebetteten Frames anzeigen:
-	Sie k&ouml;nnen die eingebettete Seite &uuml;ber den folgenden Verweis
-	aufrufen: <a href="javascript:popup('fmanageruploader','','','',620,480);">Dateiupload</a></p>
-</iframe>
-</div>
-<?PHP
-		}
 
 	if(isset($_GET['sort']) && $_GET['sort'] == "desc") $sortorder = "DESC";
 	else{ $sortorder = "ASC"; $_GET['sort'] = "ASC"; }
@@ -144,10 +127,10 @@ ShowAjaxError('<b>Fehler:</b><br />Sie haben nicht alle ben&ouml;tigen Felder au
 	    $orderby = "size+0 ".$sortorder.",orgname,id";
 	  break;
 	  case "date":
-	    $orderby = "name+0 ".$sortorder.",orgname,id";
+	    $orderby = "timestamp ".$sortorder.",orgname,id";
 	  break;  
 	  default:
-	    $orderby = "name+0 DESC,orgname,id";
+	    $orderby = "timestamp DESC,orgname,id";
 	  break;
 	  }
 

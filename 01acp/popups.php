@@ -34,12 +34,20 @@ include("system/main.php");
 <?PHP
 // Funktionen für TinyMCE-Editor
 if(isset($_REQUEST['action']) && $_REQUEST['action'] == "tiny_uploader"){
-	?>
+?>
 	<script language="javascript" type="text/javascript" src="system/tiny_mce/tiny_mce_popup.js"></script>
 	<script language="javascript" type="text/javascript" src="system/tiny_mce/plugins/filemanager/js/filemanager.js"></script>
-	<?PHP
+<?PHP
 	}
-	?>
+// Mootools / Fancyup für Filemanager-Popup
+elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "fmanageruploader"){
+	$mootools_use[] = "moo_core";
+	$mootools_use[] = "moo_more";
+	$mootools_use[] = "moo_request";
+	$mootools_use[] = "moo_fancyup_fm";
+	load_js_and_moo($mootools_use);
+	}
+?>
 </head>
 
 <body style="padding:0 10px;">
@@ -60,7 +68,7 @@ if(isset($userdata['id']) && $userdata['id'] > 0){
 // Modul-Popup ?
 if(isset($modul) && $modul != "01acp" && !empty($modul) && file_exists($modulpath."_popup.php") && !is_dir($modulpath."_popup.php") && $userdata[$modul] == 1){
 
-include_once($modulpath."_popup.php");
+	include_once($modulpath."_popup.php");
 
 }
 else{

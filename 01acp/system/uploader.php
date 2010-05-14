@@ -6,7 +6,7 @@
 	
 	Modul:		01ACP
 	Dateiinfo:	Formular & Logik für Dateiupload
-	#fv.1101#
+	#fv.1200#
 */
 
 if(!isset($filename)) $filename = $_SERVER['PHP_SELF'];
@@ -212,6 +212,41 @@ if(isset($_REQUEST['delfileid']) && !empty($_REQUEST['delfileid'])){
 	}
 ?>
 
+<?php if(!strchr($_SERVER['HTTP_USER_AGENT'],"MSIE 6.0") && !$flag_oldfileupload &&
+		 isset($_REQUEST['action']) && $_REQUEST['action'] == "fmanageruploader"){ ?>
+<form action="_ajaxloader.php?SID=<?php echo htmlspecialchars(session_id()); ?>&amp;modul=01acp&amp;ajaxaction=fancyupload" method="post" enctype="multipart/form-data" id="fancy-form">
+
+<div id="fancy-status" class="hide">
+<p>
+	<a href="#" id="fancy-browse">Dateien ausw&auml;hlen</a> |
+	<a href="#" id="fancy-clear">Warteschlange l&ouml;schen</a> |
+	<a href="#" id="fancy-upload">Dateien jetzt hochladen</a>
+</p>
+<p>
+	<select name="filedirid" id="filedirid" size="1" class="input_select" onchange="up.setOptions({data: 'filedirid=' + $('filedirid').get('value'),})">
+		<option value="0">Kein Unterverzeichnis</option>
+		<?PHP echo getFileVerz_Rek(0,0,-1,"echo_FileVerz_select",0); ?>
+	</select>
+</p>
+<div>
+	<strong class="overall-title"></strong><br />
+	<img src="images/fancy/bar.gif" class="progress overall-progress" />
+</div>
+<div>
+	<strong class="current-title"></strong><br />
+	<img src="images/fancy/bar.gif" class="progress current-progress" />
+</div>
+
+<div class="current-text"></div>
+</div>
+
+<ul id="fancy-list"></ul>
+
+</form>
+<?php } ?>
+
+<!-- Fallback-Lösung! -->
+<div id="fancy-fallback">
 <form enctype="multipart/form-data" action="<?PHP echo $filename; ?>" method="post">
 	<p>Bitte w&auml;hlen Sie auf Ihrer Festplatte eine Datei aus:<br />
 	<input type="file" name="new_datei" class="input_text" />&nbsp;&nbsp;
@@ -246,6 +281,7 @@ if(isset($_REQUEST['delfileid']) && !empty($_REQUEST['delfileid'])){
 		<input type="hidden" name="upload" value="1" />
 	</p>
 </form>
+</div>
 
 <?PHP
 	}// Ende: $flag_showformular
@@ -257,11 +293,11 @@ if($flag_showlist && (isset($_REQUEST['look']) && ($_REQUEST['look'] == "list" |
 	else{ $_REQUEST['dir'] = 0; $where = " AND dir = '0' "; }
 	
 	$sites = 0;
-	if($userdata['dateimanager'] == 1) $query = "SELECT * FROM ".$mysql_tables['files']." WHERE type='".mysql_real_escape_string($_REQUEST['type'])."' AND uid='".$userdata['id']."'".$where." ORDER BY name+0 DESC,orgname,id";
-	elseif($userdata['dateimanager'] == 2) $query = "SELECT * FROM ".$mysql_tables['files']." WHERE type='".mysql_real_escape_string($_REQUEST['type'])."'".$where." ORDER BY name+0 DESC,orgname,id";
+	if($userdata['dateimanager'] == 1) $query = "SELECT * FROM ".$mysql_tables['files']." WHERE type='".mysql_real_escape_string($_REQUEST['type'])."' AND uid='".$userdata['id']."'".$where." ORDER BY timestamp DESC,orgname,id";
+	elseif($userdata['dateimanager'] == 2) $query = "SELECT * FROM ".$mysql_tables['files']." WHERE type='".mysql_real_escape_string($_REQUEST['type'])."'".$where." ORDER BY timestamp DESC,orgname,id";
 	$query = makepages($query,$sites,"site",ACP_PER_PAGE);
 ?>
-<table border="0" align="center" width="95%" cellpadding="3" cellspacing="5" class="rundrahmen">
+<table border="0" align="center" width="95%" cellpadding="3" cellspacing="5" class="rundrahmen" style="margin-top: 10px;">
 
     <tr>
 		<td class="tra" width="70" align="center"><img src="images/icons/refresh.gif" alt="Refresh-Icon" title="Seite neu laden" onclick="document.location.reload(true);" /></td>
@@ -281,5 +317,4 @@ echo echopages($sites,"80%","site","dir=".$_REQUEST['dir'])."<br />";
 
 }else echo "<p class=\"meldung_error\">Fehler: Sie haben keine Berechtigung diesen Bereich zu betreten.</p>";
 
-// 01ACP Copyright 2008 by Michael Lorer - 01-Scripts.de
 ?>

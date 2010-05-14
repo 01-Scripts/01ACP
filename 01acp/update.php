@@ -14,11 +14,13 @@ $sitetitle = "01ACP aktualisieren";
 $filename = $_SERVER['PHP_SELF'];
 $flag_acp = TRUE;
 $flag_nofunctions = TRUE;
-$flag_loginerror = FALSE; 
+$flag_loginerror = FALSE;
+$mootools_use = array(); 
 
 // Dummy-Functions
 function create_ModulDropDown($para) { return ""; }
 function create_menue($para,$para2) { return ""; }
+function load_js_and_moo($mootools_use) { return ""; }
 
 // Config-Dateien
 include("system/headinclude.php");

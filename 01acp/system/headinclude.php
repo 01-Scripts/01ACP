@@ -57,6 +57,7 @@ $flag_credits       = TRUE;
 $flag_showIE6Warning= TRUE;
 $flag_indivstorage	= TRUE;
 $stid				= 0;						// Formular-ID für Storage-Formlare (automatisches ++)
+$flag_oldfileupload = FALSE;					// Alten Datei-Upload für Filemanager nutzen?
 $inst_module 		= array();
 if(!isset($flag_nofunctions)) $flag_nofunctions = FALSE;
 $forbidden_chars = array("ä","Ä","ö","Ö","ü","Ü","ß","-",".",";",",","_","/","\$","(",")","=","?","´","`","#","+","*","'","\\"," ");
@@ -83,31 +84,35 @@ define('STORAGE_MAX', 100);
 // Verfügbare MooTools
 /*	MooTools, die verwendet werden sollen im Array $mootools_use[] übergeben.
 	Die entsprechenden .js und .css-Files für die Module werden dann in der head.php automatisch integriert. */
-$mootools['moo_core'][] 	= "<script src=\"system/js/mootools-core.js\" type=\"text/javascript\"></script>";		// V 1.2.3
-$mootools['moo_more'][] 	= "<script src=\"system/js/mootools-more.js\" type=\"text/javascript\"></script>";		// V 1.2.3.1
-$mootools['moo_request'][]	= "<script src=\"system/js/mootools-request.js\" type=\"text/javascript\"></script>";
-$mootools['moo_calendar'][] = "<script src=\"system/js/mootools-calendar.js\" type=\"text/javascript\"></script>";
-$mootools['moo_calendar'][] = "<link rel=\"stylesheet\" type=\"text/css\" href=\"system/js/mootools-calendar.css\" />";
-$mootools['moo_remooz'][] 	= "<script src=\"system/js/mootools-remooz.js\" type=\"text/javascript\"></script>";
-$mootools['moo_remooz'][] 	= "<link rel=\"stylesheet\" type=\"text/css\" href=\"system/js/mootools-remooz.css\" />";
-$mootools['moo_fancyup'][] = "<script src=\"system/js/Swiff.Uploader.js\" type=\"text/javascript\"></script>";
-$mootools['moo_fancyup'][] = "<script src=\"system/js/Fx.ProgressBar.js\" type=\"text/javascript\"></script>";
-$mootools['moo_fancyup'][] = "<script src=\"system/js/mootools-more-lang.js\" type=\"text/javascript\"></script>";
-$mootools['moo_fancyup'][] = "<script src=\"system/js/FancyUpload2.js\" type=\"text/javascript\"></script>";
-$mootools['moo_rainbow'][] = "<script src=\"system/js/mooRainbow.1.2b2.js\" type=\"text/javascript\"></script>";
-$mootools['moo_rainbow'][] = "<link rel=\"stylesheet\" type=\"text/css\" href=\"system/js/mootools-rainbow.css\" />";
+$mootools['moo_core'][] 		= "<script src=\"system/js/mootools-core.js\" type=\"text/javascript\"></script>";		// V 1.2.3
+$mootools['moo_more'][] 		= "<script src=\"system/js/mootools-more.js\" type=\"text/javascript\"></script>";		// V 1.2.3.1
+$mootools['moo_request'][]		= "<script src=\"system/js/mootools-request.js\" type=\"text/javascript\"></script>";
+$mootools['moo_calendar'][] 	= "<script src=\"system/js/mootools-calendar.js\" type=\"text/javascript\"></script>";
+$mootools['moo_calendar'][] 	= "<link rel=\"stylesheet\" type=\"text/css\" href=\"system/js/mootools-calendar.css\" />";
+$mootools['moo_remooz'][] 		= "<script src=\"system/js/mootools-remooz.js\" type=\"text/javascript\"></script>";
+$mootools['moo_remooz'][] 		= "<link rel=\"stylesheet\" type=\"text/css\" href=\"system/js/mootools-remooz.css\" />";
+$mootools['moo_fancyup'][]	 	= "<script src=\"system/js/Swiff.Uploader.js\" type=\"text/javascript\"></script>";
+$mootools['moo_fancyup'][]	 	= "<script src=\"system/js/Fx.ProgressBar.js\" type=\"text/javascript\"></script>";
+$mootools['moo_fancyup'][] 		= "<script src=\"system/js/mootools-more-lang.js\" type=\"text/javascript\"></script>";
+$mootools['moo_fancyup'][] 		= "<script src=\"system/js/FancyUpload2.js\" type=\"text/javascript\"></script>";
+$mootools['moo_fancyup_fm'][] 	= "<script src=\"system/js/Swiff.Uploader.js\" type=\"text/javascript\"></script>";
+$mootools['moo_fancyup_fm'][] 	= "<script src=\"system/js/Fx.ProgressBar.js\" type=\"text/javascript\"></script>";
+$mootools['moo_fancyup_fm'][] 	= "<script src=\"system/js/mootools-more-lang.js\" type=\"text/javascript\"></script>";
+$mootools['moo_fancyup_fm'][] 	= "<script src=\"system/js/FancyUpload2.js\" type=\"text/javascript\"></script>";
+$mootools['moo_rainbow'][]	 	= "<script src=\"system/js/mooRainbow.1.2b2.js\" type=\"text/javascript\"></script>";
+$mootools['moo_rainbow'][] 		= "<link rel=\"stylesheet\" type=\"text/css\" href=\"system/js/mootools-rainbow.css\" />";
 
 // DOMReady-Code
 /*	Dateinamen der Dateien, die in den DOMReady-Bereich includiert werden sollen */
-$domready['moo_rainbow'][]  = "system/js/mootools-domready-rainbow.js";			// Color Picker
-$domready['moo_calendar'][] = "system/js/mootools-domready-calendar.js";		// Date Picker
-$domready['moo_slidev'][]	= "system/js/mootools-domready-slidev.js";			// Verikaler Slide-Effekt
-$domready['moo_slideh'][]	= "system/js/mootools-domready-slideh.js";			// Horizontaler Slide-Effekt
-$domready['moo_fancy'][]	= "system/js/mootools-domready-fancy.js";			// Fancy-Upload
-$domready['moo_remooz'][]	= "system/js/mootools-domready-remooz.js";			// Remooz (Lightbox)
-$domready['moo_sortable'][]	= "system/js/mootools-domready-sortables.js";		// Sortable (Listen sortieren))
-$domready['moo_dragdrop'][]	= "system/js/mootools-domready-dragdrop.js";		// Drag & Drop
-$domready['moo_fancyup'][]	= "system/js/mootools-domready-fancyup.js";			// Fancy Upload
+$domready['moo_rainbow'][]  	= "system/js/mootools-domready-rainbow.js";			// Color Picker
+$domready['moo_calendar'][] 	= "system/js/mootools-domready-calendar.js";		// Date Picker
+$domready['moo_slidev'][]		= "system/js/mootools-domready-slidev.js";			// Verikaler Slide-Effekt
+$domready['moo_slideh'][]		= "system/js/mootools-domready-slideh.js";			// Horizontaler Slide-Effekt
+$domready['moo_remooz'][]		= "system/js/mootools-domready-remooz.js";			// Remooz (Lightbox)
+$domready['moo_sortable'][]		= "system/js/mootools-domready-sortables.js";		// Sortable (Listen sortieren))
+$domready['moo_dragdrop'][]		= "system/js/mootools-domready-dragdrop.js";		// Drag & Drop
+$domready['moo_fancyup'][]		= "system/js/mootools-domready-fancyup.js";			// Fancy Upload
+$domready['moo_fancyup_fm'][]	= "system/js/mootools-domready-fancyup_fm.js";		// Fancy Upload (für Filemanager)
 
 
 /* Verbindung zur MySQL-Datenbank aufbauen */
