@@ -19,6 +19,8 @@ $mootools_use = array("moo_core","moo_more","moo_remooz","moo_request","moo_drag
 include("system/main.php");
 include("system/head.php");
 
+if(!isset($_REQUEST['uid'])) $_REQUEST['uid'] = "";
+
 // Sicherheitsabfrage: Login & Benutzerrechte für Dateimanager
 if(isset($userdata['id']) && $userdata['id'] > 0 && $userdata['dateimanager'] >= 1){
 
@@ -120,6 +122,9 @@ ShowAjaxError('<b>Fehler:</b><br />Sie haben nicht alle ben&ouml;tigen Felder au
 
 	if(!isset($_GET['orderby'])) $_GET['orderby'] = "";
 	switch($_GET['orderby']){
+	  case "downloads":
+	    $orderby = "downloads+0 ".$sortorder.",orgname,id";
+	  break;
 	  case "filename":
 	    $orderby = "orgname,id";
 	  break;
@@ -164,6 +169,10 @@ ShowAjaxError('<b>Fehler:</b><br />Sie haben nicht alle ben&ouml;tigen Felder au
         <td class="tra"><b>Dateiname</b>
 			<a href="<?PHP echo $filename2."&amp;uid=".$_REQUEST['uid']; ?>&amp;sort=asc&amp;orderby=filename"><img src="images/icons/sort_asc.gif" alt="Icon: Pfeil nach oben" title="Aufsteigend sortieren" /></a>
 			<a href="<?PHP echo $filename2."&amp;uid=".$_REQUEST['uid']; ?>&amp;sort=desc&amp;orderby=filename"><img src="images/icons/sort_desc.gif" alt="Icon: Pfeil nach unten" title="Absteigend sortieren (DESC)" /></a>
+			<span style="float:right;">
+			<a href="<?PHP echo $filename2."&amp;uid=".$_REQUEST['uid']; ?>&amp;sort=asc&amp;orderby=downloads"><img src="images/icons/sort_asc.gif" alt="Icon: Pfeil nach oben" title="Aufsteigend sortieren" /></a>
+			<a href="<?PHP echo $filename2."&amp;uid=".$_REQUEST['uid']; ?>&amp;sort=desc&amp;orderby=downloads"><img src="images/icons/sort_desc.gif" alt="Icon: Pfeil nach unten" title="Absteigend sortieren (DESC)" /></a>
+			</span>
 		</td>
 		<td class="tra" width="90"><b>Größe</b>			
 			<a href="<?PHP echo $filename2."&amp;uid=".$_REQUEST['uid']; ?>&amp;sort=asc&amp;orderby=size"><img src="images/icons/sort_asc.gif" alt="Icon: Pfeil nach oben" title="Aufsteigend sortieren" /></a>

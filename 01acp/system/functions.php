@@ -931,7 +931,7 @@ while($row = mysql_fetch_assoc($list)){
 	}
 
 
-$drag_start = $drag_ende = "";
+$downloads = $drag_start = $drag_ende = "";
 // "Normale Dateien" auflisten
 $list = mysql_query($query);
 while($row = mysql_fetch_array($list)){
@@ -961,7 +961,7 @@ while($row = mysql_fetch_array($list)){
 				$return .= "<a href=\"".$picuploaddir.$row['name']."\" target=\"_blank\" class=\"lightbox\"><img src=\"".$picuploaddir."showpics.php?img=".$row['name']."&amp;size=".ACP_TB_WIDTH."&amp;hidegif=normal\" alt=\"Hochgeladenes Bild\" /></a>";
 			}
 		else
-			$return .= "<a href=\"".$attachmentuploaddir.$row['name']."\" target=\"_blank\">".filetypes($row['ext'])."</a>";
+			$return .= "<a href=\"".$attachmentuploaddir."download.php?fileid=".$row['id']."&amp;nocount=1\">".filetypes($row['ext'])."</a>";
 		
 		$return .= "</td>\n    ";
 		}
@@ -971,7 +971,7 @@ while($row = mysql_fetch_array($list)){
 		$link2 = "</a>";
 		}
 	elseif($insert == "tinymce" && $row['type'] == "file"){
-		$link1 = "<a href=\"javascript:FileDialog.insertfile('".$attachmentuploaddir."','".stripslashes($row['name'])."','".stripslashes($row['orgname'])."');\">";
+		$link1 = "<a href=\"javascript:FileDialog.insertfile('".$attachmentuploaddir."','".$row['id']."','".stripslashes($row['orgname'])."');\">";
 		$link2 = "</a>";
 		}
 	elseif($insert == "js" && !empty($_REQUEST['formname']) && !empty($_REQUEST['formfield'])){
@@ -983,11 +983,15 @@ while($row = mysql_fetch_array($list)){
 		}
 	
 	if($show_edit && $userdata['dateimanager'] == 2){
+		if($row['type'] == "file")
+			$downloads = "<span style=\"float:right;\">".$row['downloads']."</span>";
+		else
+			$downloads = "<span style=\"float:right;\">-</span>";
 		$drag_start = "<div id=\"file_".$row['id']."\" class=\"dragable\">";
 		$drag_ende = "</div>";
 		}
 	
-	$return .= "<td class=\"".$class."\">".$drag_start.$link1.substr(stripslashes($row['orgname']),0,40).$link2.$drag_ende."</td>\n    ";
+	$return .= "<td class=\"".$class."\">".$drag_start.$link1.substr(stripslashes($row['orgname']),0,40).$downloads.$link2.$drag_ende."</td>\n    ";
 	$return .= "<td class=\"".$class."\" align=\"center\">".parse_size($row['size'],"KB")." KB</td>\n    ";
 	if($show_date) $return .= "<td class=\"".$class."\" align=\"center\">".date("d.m.Y",$row['timestamp'])."</td>\n    ";
 	if($show_username) $return .= "<td class=\"".$class."\"><a href=\"".$url."&amp;uid=".$row['uid']."\">".$usernames[$row['uid']]."</a></td>\n    ";

@@ -85,7 +85,7 @@
 
 			if (json.get('status') == '1') {
 				file.element.addClass('file-success');
-				file.info.set('html', 'Datei wurde hochgeladen (' + json.get('width') + ' x ' + json.get('height') + 'px)');
+				file.info.set('html', 'Datei wurde erfolgreich hochgeladen');
 			} else {
 				file.element.addClass('file-failed');
 				file.info.set('html', 'Es trat ein Fehler auf ' + (json.get('error') ? (json.get('error')) : response));

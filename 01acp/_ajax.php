@@ -18,21 +18,13 @@ if(isset($_GET['ajaxaction']) && $_GET['ajaxaction'] == "fancyupload" && $userda
 		// Our processing, we get a hash value from the file
 		$return['hash'] = md5_file($_FILES['Filedata']['tmp_name']);
 		if(!isset($_REQUEST['filedirid'])) $_REQUEST['filedirid'] = 0;
-		$fupload = uploadfile($_FILES['Filedata']['name'],$_FILES['Filedata']['size'],$_FILES['Filedata']['tmp_name'],"","01acp","",$_REQUEST['filedirid']);
+		$fupload = uploadfile(utf8_decode($_FILES['Filedata']['name']),$_FILES['Filedata']['size'],$_FILES['Filedata']['tmp_name'],"","01acp","",$_REQUEST['filedirid']);
 		}
 
 	// Ausgabe der Meldungen / Rückgabewerte
 	if($fupload['success'] == 1){
 		$return = array('status' => '1',
 						'name' => $_FILES['Filedata']['name']);
-						
-		if($fupload['fileart'] == "pic"){
-			$info = @getimagesize($picuploaddir.$fupload['name']);
-			if($info){
-				$return['width'] = $info[0];
-				$return['height'] = $info[1];
-				}
-			}
 		}
 	else{
 		$return = array('status' => '0',
