@@ -579,7 +579,6 @@ function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="
 // Datei oder Bild löschen
 /*$dir				Verzeichnis in dem sich die zu löschende Datei befindet
   $file				Datei (inkl. Endung), die gelöscht werden soll
-  $type				Handelt es sich um ein Bild oder eine Datei?
 
 RETURN: TRUE/FALSE
   */
@@ -587,8 +586,6 @@ function delfile($dir,$file){
 global $mysql_tables;
 
 $split = explode(".", strtolower($file),2);
-
-mysql_query("DELETE FROM ".$mysql_tables['files']." WHERE name='".mysql_real_escape_string($file)."' LIMIT 1");
 
 if(file_exists($dir.$split[0]."_tb_".ACP_TB_WIDTH.".".$split[1])){
 	@clearstatcache();  
@@ -604,7 +601,10 @@ if(file_exists($dir.$split[0]."_tb_".ACP_TB_WIDTH200.".".$split[1])){
 
 @clearstatcache();  
 @chmod($dir.$file, 0777);
-if(unlink($dir.$file)) return TRUE;
+if(unlink($dir.$file)){
+	mysql_query("DELETE FROM ".$mysql_tables['files']." WHERE name='".mysql_real_escape_string($file)."' LIMIT 1");
+	return TRUE;
+	}
 else return FALSE;
 }
 
@@ -842,7 +842,7 @@ return $return;
 RETURN: Tabellenzeilen mit den entsprechenden Spalten
   */
 function getFilelist($query,$url,$show_edit,$show_tb,$show_date,$show_username,$insert){
-global $mysql_tables,$attachmentuploaddir,$picuploaddir,$_REQUEST,$userdata;
+global $mysql_tables,$attachmentuploaddir,$picuploaddir,$_REQUEST,$userdata,$filename2;
 
 $return = "";
 
@@ -884,6 +884,7 @@ while($row = mysql_fetch_assoc($list)){
 	if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
 	
 	$return .= "<tr id=\"dirid".$row['id']."\">\n    ";
+	if($show_edit) $return .= "<td align=\"center\" class=\"".$class."\"></td>";
 	if($show_tb) $return .= "<td align=\"center\" class=\"".$class."\"><a href=\"".$url."&amp;dir=".$row['id']."\"><img src=\"images/icons/folder.gif\" alt=\"PC-Verzeichnis\" title=\"Verzeichnis ausw&auml;hlen\" /></a></td>";
 	if($show_edit && $userdata['dateimanager'] == 2){
 		$return .= "<td class=\"".$class."\" colspan=\"".$colspan."\">";
@@ -930,6 +931,8 @@ while($row = mysql_fetch_assoc($list)){
 	
 	}
 
+	if($show_edit)
+	    $return .= "\n<form action=\"".$filename2."\" method=\"post\" id=\"multidelform0815\">\n";
 
 $downloads = $drag_start = $drag_ende = "";
 // "Normale Dateien" auflisten
@@ -947,6 +950,9 @@ while($row = mysql_fetch_array($list)){
 	  }
 	
 	$return .= "<tr id=\"id".$row['id']."\">\n    ";
+
+	if($show_edit)	
+		$return .= "<td class=\"".$class."\" align=\"center\"><input type=\"checkbox\"  name=\"delfiles[]\" value=\"".$row['id']."\" /></td>";
 	
 	if($show_tb){
 		$return .= "<td class=\"".$class."\" align=\"center\">";
@@ -1109,6 +1115,8 @@ RETURN: Komplette Liste (HTML)
 function getCommentList($query,$option){
 global $_GET,$module,$modul,$filename;
 
+if(!isset($_GET['site'])) $_GET['site'] = "";
+
 $return = "<form action=\"".$filename."&amp;postid=".$_GET['postid']."&amp;site=".$_GET['site']."\" method=\"post\">\n";
 $return .= "<table border=\"0\" align=\"center\" width=\"100%\" cellpadding=\"3\" cellspacing=\"5\" class=\"rundrahmen\">
 
@@ -1173,6 +1181,8 @@ RETURN: Liste in kompletter HTML-Tabelle
 function getCommentPostList($query,$parent_child="parent"){
 global $filename,$modul,$module,$mysql_tables,$_GET;
 
+if(!isset($_GET['commentsites'])) $_GET['commentsites'] = "";
+
 if($parent_child == "child"){
 	$postid = "subpostid";
 	$functionname = "Child";
@@ -1197,6 +1207,7 @@ $subcmenge	= 0;
 $list = mysql_query($query);
 while($row = mysql_fetch_array($list)){
 	if(!isset($row['postid']) || isset($row['postid']) && empty($row['postid'])) $row['postid'] = $_GET['postid'];
+	if(!isset($row['subpostid'])) $row['subpostid'] = "";
 
 	if($parent_child == "child")
 		$listcountcomments = mysql_query("SELECT id FROM ".$mysql_tables['comments']." WHERE frei = '1' AND modul='".mysql_real_escape_string($modul)."' AND subpostid='".$row['subpostid']."'");

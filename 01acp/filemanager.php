@@ -1,6 +1,6 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2010 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
@@ -87,6 +87,40 @@ Success_standard();
 ShowAjaxError('<b>Fehler:</b><br />Sie haben nicht alle ben&ouml;tigen Felder ausgef&uuml;llt!');
 </script>";		
 		}
+		
+	// Markierte Dateien löschen
+	if(isset($_POST['delselected']) && $_POST['delselected'] == 1 &&
+	   isset($_POST['delfiles'])){
+		if(!is_array($_POST['delfiles']))
+		    $_POST['delfiles'] = array($_POST['delfiles']);
+		
+		$cup = 0;
+		foreach($_POST['delfiles'] as $fileid){    
+			$list = mysql_query("SELECT type,name,uid FROM ".$mysql_tables['files']." WHERE id='".mysql_real_escape_string($fileid)."' LIMIT 1");
+			while($row = mysql_fetch_assoc($list)){
+				
+				if($userdata['dateimanager'] == 2 || $userdata['dateimanager'] == 1 && $row['uid'] == $userdata['id']){
+					switch($row['type']){
+					  case "pic":
+					    if(delfile($picuploaddir,$row['name']))
+					        $cup++;
+					    break;
+					  case "file":
+					    if(delfile($attachmentuploaddir,$row['name']))
+					        $cup++;
+					    break;
+					  }
+					}
+				}
+		    }
+		echo "<p class=\"meldung_erfolg\">
+		Es wurden ".$cup." Dateien erfolgreich gel&ouml;scht.
+		</p>";
+		}
+	elseif(isset($_POST['delfiles']))
+	    echo "<p class=\"meldung_hinweis\">
+		<b>Bitte markieren Sie die <span style=\"color:#B00;\">Checkbox</span> unten, um die Dateien wirklich zu l&ouml;schen!</b>
+		</p>";
 ?>
 
 <div id="adddir" style="display: <?PHP echo $display; ?>;">
@@ -165,6 +199,7 @@ ShowAjaxError('<b>Fehler:</b><br />Sie haben nicht alle ben&ouml;tigen Felder au
 <table border="0" align="center" width="100%" cellpadding="3" cellspacing="5" class="rundrahmen">
 
     <tr>
+		<td class="tra" width="10" align="center"><!--Mehrfach-Löschen--></td>
 		<td class="tra" width="70" align="center"><img src="images/icons/refresh.gif" alt="Refresh-Icon" title="Seite neu laden" onclick="document.location.reload(true);" /></td>
         <td class="tra"><b>Dateiname</b>
 			<a href="<?PHP echo $filename2."&amp;uid=".$_REQUEST['uid']; ?>&amp;sort=asc&amp;orderby=filename"><img src="images/icons/sort_asc.gif" alt="Icon: Pfeil nach oben" title="Aufsteigend sortieren" /></a>
@@ -184,13 +219,22 @@ ShowAjaxError('<b>Fehler:</b><br />Sie haben nicht alle ben&ouml;tigen Felder au
 		</td>
 		<td class="tra" width="130"><b>Benutzer</b></td>
 		<td class="tra" width="20">&nbsp;<!--Ersetzen--></td>
-		<td class="tra" width="20" align="center"><!--Löschen--><img src="images/icons/icon_trash.gif" alt="M&uuml;lleimer" title="Benutzer l&ouml;schen" /></td>
+		<td class="tra" width="20" align="center"><!--Löschen--><img src="images/icons/icon_trash.gif" alt="M&uuml;lleimer" title="Datei l&ouml;schen" /></td>
     </tr>
 
 <?PHP
 echo getFilelist($query,$filename2."&amp;sort=".$_GET['sort']."&amp;orderby=".$_GET['orderby']."",TRUE,TRUE,TRUE,TRUE,"");
 ?>
 
+    <tr>
+		<td class="tra" align="center" style="border: 1px solid #B00;"><input type="checkbox" name="delselected" value="1" /></td>
+		<td class="tra" colspan="7" align="left">
+			<input type="submit" name="sending" value="Markierte Dateien l&ouml;schen" class="input" />
+			Es erfolgt <b>keine</b> weitere Abfrage!
+		</td>
+	</tr>
+
+</form>
 </table>
 <br />
 
@@ -200,5 +244,4 @@ echo echopages($sites,"80%","site","search=".$_GET['search']."&amp;type=".$_GET[
 }else $flag_loginerror = true;
 include("system/foot.php");
 
-// 01ACP Copyright 2008 by Michael Lorer - 01-Scripts.de
 ?>
