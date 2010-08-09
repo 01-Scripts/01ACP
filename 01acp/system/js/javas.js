@@ -98,6 +98,23 @@ else{
 
 }
 
+function hide_unhide_tr_byclass(elementClass){
+var allElems = document.getElementsByTagName('tr');
+
+for(var i = 0; i < allElems.length; i++){
+	var thisElem = allElems[i];
+	if(thisElem.className && thisElem.className == elementClass){
+		if(thisElem.style.display == 'none'){
+			try { thisElem.style.display = 'table-row'; } 	catch(e) {
+			thisElem.style.display = 'inline'; };
+			}
+		else{
+			thisElem.style.display = 'none';
+			}
+		}
+	}
+}
+
 function moo_hide_unhide_tr(elementClass){
 var temp = $$('tr.'+elementClass);
 //var test = temp.getStyle('display')[0];
