@@ -21,7 +21,7 @@ include("system/head.php");
 
 // Sicherheitsabfrage: Login
 if(isset($userdata['id']) && $userdata['id'] > 0){
-include_once("system/tt.php");
+include_once("system/includes/tt.php");
 
 // 01-Scripts.de RSS-Feed neu vom Server holen
 if($settings['cachetime']+CACHE_TIME_01RSS < time() && $flag_showacpRSS){
