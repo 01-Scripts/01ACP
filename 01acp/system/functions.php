@@ -803,8 +803,8 @@ switch($barlook){
 	$return .= "table_cell_styles : \"Header 1=header1;Header 2=header2;Header 3=header3;Table Cell=tableCel1\",
 	table_row_styles : \"Header 1=header1;Header 2=header2;Header 3=header3;Table Row=tableRow1\",
 	table_cell_limit : 100,
-	table_row_limit : 10,
-	table_col_limit : 10,";
+	table_row_limit : 25,
+	table_col_limit : 25,";
 	
 	$plugins = "advimage,filemanager,paste,table,emotions,media";
   break;
