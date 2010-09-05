@@ -1547,9 +1547,9 @@ if(isset($autor) && !empty($autor) &&
    isset($comment) && !empty($comment) && 
    (isset($antispam) && md5($antispam) == $_SESSION['antispam01'] && $settings['spamschutz'] == 1 || $settings['spamschutz'] == 0)){
 
-	if(check_mail($email_form)) $email = mysql_real_escape_string($email_form); else $email = "";
+	if(check_mail($email_form)) $email = mysql_real_escape_string(strip_tags($email_form)); else $email = "";
 	if($settings['commentfreischaltung'] == 1) $frei = 0; else $frei = 1;
-	if(!empty($url_form) && $url_form != "http://") $url = mysql_real_escape_string($url_form); else $url = "";
+	if(!empty($url_form) && $url_form != "http://") $url = mysql_real_escape_string(strip_tags($url_form)); else $url = "";
 	if($deaktivieren == 1){ $c_bbc = 0; $c_smilies = 0; }else{ $c_bbc = 1; $c_smilies = 1; }
 
 	$clist = mysql_query("SELECT id,postid,uid,comment FROM ".$mysql_tables['comments']." WHERE postid='".mysql_real_escape_string($postid)."' AND uid='".mysql_real_escape_string($uid)."' OR postid='".mysql_real_escape_string($postid)."' AND comment='".mysql_real_escape_string(htmlentities($comment))."'");
@@ -1566,10 +1566,10 @@ if(isset($autor) && !empty($autor) &&
 						'".$frei."',
 						'".time()."',
 						'".mysql_real_escape_string($_SERVER['REMOTE_ADDR'])."',
-						'".mysql_real_escape_string($autor)."',
+						'".mysql_real_escape_string(strip_tags($autor))."',
 						'".$email."',
 						'".$url."',
-						'".mysql_real_escape_string($comment)."',
+						'".mysql_real_escape_string(htmlentities($comment))."',
 						'".$c_smilies."',
 						'".$c_bbc."'
 						)";
