@@ -806,7 +806,7 @@ switch($barlook){
 	table_row_limit : 25,
 	table_col_limit : 25,";
 	
-	$plugins = "advimage,filemanager,paste,table,emotions,media";
+	$plugins = "advimage,filemanager,paste,table,emotions,media,imagealignhelper";
   break;
   case "none":
     $return .= "theme_advanced_buttons1 : \"".$bar_own."\",";
