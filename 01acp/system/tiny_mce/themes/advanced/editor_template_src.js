@@ -125,7 +125,7 @@
 					ed.onNodeChange.add(t._nodeChanged, t);
 
 				if (ed.settings.content_css !== false)
-					ed.dom.loadCSS(ed.baseURI.toAbsolute("themes/advanced/skins/" + ed.settings.skin + "/content.css"));
+					ed.dom.loadCSS(ed.baseURI.toAbsolute(url + "/skins/" + ed.settings.skin + "/content.css"));
 			});
 
 			ed.onSetProgressState.add(function(ed, b, ti) {
@@ -203,7 +203,7 @@
 
 					ed.formatter.register(name, {
 						inline : 'span',
-						classes : o['class'],
+						attributes : {'class' : o['class']},
 						selector : '*'
 					});
 
@@ -219,7 +219,24 @@
 			ctrl = ctrlMan.createListBox('styleselect', {
 				title : 'advanced.style_select',
 				onselect : function(name) {
-					ed.execCommand('mceToggleFormat', false, name);
+					var matches, formatNames = [];
+
+					each(ctrl.items, function(item) {
+						formatNames.push(item.value);
+					});
+
+					ed.focus();
+					ed.undoManager.add();
+
+					// Toggle off the current format
+					matches = ed.formatter.matchAll(formatNames);
+					if (!name || matches[0] == name)
+						ed.formatter.remove(matches[0]);
+					else
+						ed.formatter.apply(name);
+
+					ed.undoManager.add();
+					ed.nodeChanged();
 
 					return false; // No auto select
 				}
@@ -251,7 +268,8 @@
 
 							ed.formatter.register(name, {
 								inline : 'span',
-								classes : val
+								classes : val,
+								selector : '*'
 							});
 
 							ctrl.add(t.editor.translate(key), name);
@@ -282,7 +300,20 @@
 			c = ed.controlManager.createListBox('fontselect', {
 				title : 'advanced.fontdefault',
 				onselect : function(v) {
+					var cur = c.items[c.selectedIndex];
+
+					if (!v && cur) {
+						ed.execCommand('FontName', false, cur.value);
+						return;
+					}
+
 					ed.execCommand('FontName', false, v);
+
+					// Fake selection, execCommand will fire a nodeChange and update the selection
+					c.select(function(sv) {
+						return v == sv;
+					});
+
 					return false; // No auto select
 				}
 			});
@@ -300,16 +331,35 @@
 			var t = this, ed = t.editor, c, i = 0, cl = [];
 
 			c = ed.controlManager.createListBox('fontsizeselect', {title : 'advanced.font_size', onselect : function(v) {
-				if (v.fontSize)
-					ed.execCommand('FontSize', false, v.fontSize);
-				else {
-					each(t.settings.theme_advanced_font_sizes, function(v, k) {
-						if (v['class'])
-							cl.push(v['class']);
-					});
+				var cur = c.items[c.selectedIndex];
 
-					ed.editorCommands._applyInlineStyle('span', {'class' : v['class']}, {check_classes : cl});
+				if (!v && cur) {
+					cur = cur.value;
+
+					if (cur['class']) {
+						ed.formatter.toggle('fontsize_class', {value : cur['class']});
+						ed.undoManager.add();
+						ed.nodeChanged();
+					} else {
+						ed.execCommand('FontSize', false, cur.fontSize);
+					}
+
+					return;
 				}
+
+				if (v['class']) {
+					ed.focus();
+					ed.undoManager.add();
+					ed.formatter.toggle('fontsize_class', {value : v['class']});
+					ed.undoManager.add();
+					ed.nodeChanged();
+				} else
+					ed.execCommand('FontSize', false, v.fontSize);
+
+				// Fake selection, execCommand will fire a nodeChange and update the selection
+				c.select(function(sv) {
+					return v == sv;
+				});
 
 				return false; // No auto select
 			}});
@@ -1027,7 +1077,7 @@
 			var ed = this.editor;
 
 			ed.windowManager.open({
-				url : tinymce.baseURL + '/themes/advanced/anchor.htm',
+				url : this.url + '/anchor.htm',
 				width : 320 + parseInt(ed.getLang('advanced.anchor_delta_width', 0)),
 				height : 90 + parseInt(ed.getLang('advanced.anchor_delta_height', 0)),
 				inline : true
@@ -1040,7 +1090,7 @@
 			var ed = this.editor;
 
 			ed.windowManager.open({
-				url : tinymce.baseURL + '/themes/advanced/charmap.htm',
+				url : this.url + '/charmap.htm',
 				width : 550 + parseInt(ed.getLang('advanced.charmap_delta_width', 0)),
 				height : 250 + parseInt(ed.getLang('advanced.charmap_delta_height', 0)),
 				inline : true
@@ -1053,7 +1103,7 @@
 			var ed = this.editor;
 
 			ed.windowManager.open({
-				url : tinymce.baseURL + '/themes/advanced/about.htm',
+				url : this.url + '/about.htm',
 				width : 480,
 				height : 380,
 				inline : true
@@ -1068,7 +1118,7 @@
 			v = v || {};
 
 			ed.windowManager.open({
-				url : tinymce.baseURL + '/themes/advanced/color_picker.htm',
+				url : this.url + '/color_picker.htm',
 				width : 375 + parseInt(ed.getLang('advanced.colorpicker_delta_width', 0)),
 				height : 250 + parseInt(ed.getLang('advanced.colorpicker_delta_height', 0)),
 				close_previous : false,
@@ -1084,7 +1134,7 @@
 			var ed = this.editor;
 
 			ed.windowManager.open({
-				url : tinymce.baseURL + '/themes/advanced/source_editor.htm',
+				url : this.url + '/source_editor.htm',
 				width : parseInt(ed.getParam("theme_advanced_source_editor_width", 720)),
 				height : parseInt(ed.getParam("theme_advanced_source_editor_height", 580)),
 				inline : true,
@@ -1103,7 +1153,7 @@
 				return;
 
 			ed.windowManager.open({
-				url : tinymce.baseURL + '/themes/advanced/image.htm',
+				url : this.url + '/image.htm',
 				width : 355 + parseInt(ed.getLang('advanced.image_delta_width', 0)),
 				height : 275 + parseInt(ed.getLang('advanced.image_delta_height', 0)),
 				inline : true
@@ -1116,7 +1166,7 @@
 			var ed = this.editor;
 
 			ed.windowManager.open({
-				url : tinymce.baseURL + '/themes/advanced/link.htm',
+				url : this.url + '/link.htm',
 				width : 310 + parseInt(ed.getLang('advanced.link_delta_width', 0)),
 				height : 200 + parseInt(ed.getLang('advanced.link_delta_height', 0)),
 				inline : true
