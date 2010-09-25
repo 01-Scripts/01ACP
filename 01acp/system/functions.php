@@ -1,6 +1,6 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2009 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2010 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
@@ -2059,6 +2059,46 @@ if(isset($mootools_use) && is_array($mootools_use)){
 	}
 
 return true;
+}
+
+
+
+
+
+
+
+
+
+
+// Leere Link-Parameter aus Links entfernen
+/*$link				Link, der bereinigt werden soll
+
+RETURN: Bereinigter Link
+  */
+function parse_cleanerlinks($link,$js=false){
+
+$url = parse_url($link);
+
+$params = explode("&",$url['query']);
+
+$url_parameter = array();
+foreach($params as $param){
+	$value = $key = "";
+	list($key, $value) = explode("=", $param,2);
+	
+	if(!empty($value) && !empty($key)) $url_parameter[$key] = $value;
+	}
+	
+$makelink = "";
+if(isset($url['scheme']) && !empty($url['scheme'])) $makelink .= $url['scheme']."://";
+if(isset($url['host']) && !empty($url['host'])) $makelink .= $url['host'];
+if(isset($url['path']) && !empty($url['path'])) $makelink .= $url['path'];
+if(!$js) $makelink .= "?".http_build_query($url_parameter, '', '&amp;');
+  else	 $makelink .= "?".http_build_query($url_parameter, '', '&');
+if(isset($url['fragment']) && !empty($url['fragment'])) $makelink .= "#".$url['fragment']; 
+
+return $makelink;
+
 }
 
 ?>

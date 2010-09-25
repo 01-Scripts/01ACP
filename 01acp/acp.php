@@ -111,6 +111,4 @@ echo "<p align=\"center\"><b>Tipp:</b> ".$tt[$rand_tt]."</p>";
 
 }else $flag_loginerror = true;
 include("system/foot.php");
-
-// 01ACP Copyright 2008 by Michael Lorer - 01-Scripts.de
 ?>
