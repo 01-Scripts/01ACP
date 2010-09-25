@@ -2,7 +2,7 @@
 
 	var up = new FancyUpload2($('fancy-status'), $('fancy-list'), { // options object
 		// we console.log infos, remove that in production!!
-		verbose: true,
+		verbose: false,
 
 		// url is read from the form, so you just have to change one place
 		url: $('fancy-form').action,

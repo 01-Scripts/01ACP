@@ -21,7 +21,7 @@ include("system/head.php");
 
 // Sicherheitsabfrage: Login
 if(isset($userdata['id']) && $userdata['id'] > 0){
-include_once("system/tt.php");
+include_once("system/includes/tt.php");
 
 // 01-Scripts.de RSS-Feed neu vom Server holen
 if($settings['cachetime']+CACHE_TIME_01RSS < time() && $flag_showacpRSS){
@@ -111,6 +111,4 @@ echo "<p align=\"center\"><b>Tipp:</b> ".$tt[$rand_tt]."</p>";
 
 }else $flag_loginerror = true;
 include("system/foot.php");
-
-// 01ACP Copyright 2008 by Michael Lorer - 01-Scripts.de
 ?>

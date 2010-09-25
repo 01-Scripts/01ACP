@@ -39,7 +39,7 @@ tinyMCEPopup.requireLangPack();
 		insertfile : function(path,file,orgname) {
 			// Insert the contents from the input into the document
 
-			var inhalt = '<a href="'+path+file+'" target="_blank">'+orgname+' herunterladen</a> <br />';
+			var inhalt = '<a href="'+path+'download.php?fileid='+file+'">'+orgname+' herunterladen</a> <br />';
 
 			tinyMCEPopup.editor.execCommand('mceInsertContent', false, inhalt);
 			tinyMCEPopup.close();

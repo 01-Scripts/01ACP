@@ -1,16 +1,52 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2009 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2010 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo: 	Bearbeitung von eingehenden Ajax-Requests
-	#fv.1101#
+	#fv.1200#
 */
 
+// Fancy-Upload (Dateien hochladen)
+if(isset($_GET['ajaxaction']) && $_GET['ajaxaction'] == "fancyupload" && $userdata['upload'] == 1){
+	if(!isset($_FILES['Filedata']) || !is_uploaded_file($_FILES['Filedata']['tmp_name'])){
+		$error = 'Invalid Upload';
+		}
+	else{
+		// Our processing, we get a hash value from the file
+		$return['hash'] = md5_file($_FILES['Filedata']['tmp_name']);
+		if(!isset($_REQUEST['filedirid'])) $_REQUEST['filedirid'] = 0;
+		$fupload = uploadfile(utf8_decode($_FILES['Filedata']['name']),$_FILES['Filedata']['size'],$_FILES['Filedata']['tmp_name'],"","01acp","",$_REQUEST['filedirid']);
+		}
+
+	// Ausgabe der Meldungen / Rückgabewerte
+	if($fupload['success'] == 1){
+		$return = array('status' => '1',
+						'name' => $_FILES['Filedata']['name']);
+		}
+	else{
+		$return = array('status' => '0',
+						'error' =>$fupload['msg']);
+		}
+	
+	// Return
+	if(isset($_REQUEST['response']) && $_REQUEST['response'] == 'xml'){
+		// header('Content-type: text/xml');
+		echo "<response>";
+		foreach ($return as $key => $value){
+			echo "<$key><![CDATA[$value]]></$key>";
+			}
+		echo "</response>";
+		}
+	else{
+		//header('Content-type: application/json');
+		echo json_encode($return);
+		}
+	}
 // Verzeichnisse umbenennen (Filemanager)
-if(isset($_REQUEST['ajaxaction']) && $_REQUEST['ajaxaction'] == "savefiledir" &&
+elseif(isset($_REQUEST['ajaxaction']) && $_REQUEST['ajaxaction'] == "savefiledir" &&
    isset($_REQUEST['id']) && !empty($_REQUEST['id']) && is_numeric($_REQUEST['id']) && 
    isset($_REQUEST['dirname']) && !empty($_REQUEST['dirname']) && 
    isset($_REQUEST['dir']) && is_numeric($_REQUEST['dir']) && $userdata['dateimanager'] == 2){

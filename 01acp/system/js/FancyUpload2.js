@@ -9,6 +9,8 @@
  *
  * @author		Harald Kirschner <http://digitarald.de>
  * @copyright	Authors
+ * 
+ * translation2german: 100514 by 01-Scripts.de - Michael Lorer
  */
 
 var FancyUpload2 = new Class({
@@ -184,7 +186,7 @@ FancyUpload2.File = new Class({
 	onComplete: function() {
 		this.element.removeClass('file-uploading');
 		
-		this.base.currentText.set('html', 'Upload completed');
+		this.base.currentText.set('html', 'Upload komplett');
 		this.base.currentProgress.start(100);
 		
 		if (this.response.error) {
@@ -217,20 +219,20 @@ FancyUpload2.File = new Class({
 // Avoiding MooTools.lang dependency
 (function() {
 	var phrases = {
-		'progressOverall': 'Overall Progress ({total})',
-		'currentTitle': 'File Progress',
-		'currentFile': 'Uploading "{name}"',
-		'currentProgress': 'Upload: {bytesLoaded} with {rate}, {timeRemaining} remaining.',
+		'progressOverall': 'Fortschritt (gesamt): {total}',
+		'currentTitle': 'Aktuelle Datei',
+		'currentFile': 'Upload...: "{name}"',
+		'currentProgress': 'Upload: {bytesLoaded} mit {rate}, {timeRemaining} verbleibend.',
 		'fileName': '{name}',
-		'remove': 'Remove',
-		'removeTitle': 'Click to remove this entry.',
-		'fileError': 'Upload failed',
+		'remove': 'Entfernen',
+		'removeTitle': 'Klicken Sie hier um diese Datei zu entfernen',
+		'fileError': 'Upload fehlgeschlagen',
 		'validationErrors': {
-			'duplicate': 'File <em>{name}</em> is already added, duplicates are not allowed.',
-			'sizeLimitMin': 'File <em>{name}</em> (<em>{size}</em>) is too small, the minimal file size is {fileSizeMin}.',
-			'sizeLimitMax': 'File <em>{name}</em> (<em>{size}</em>) is too big, the maximal file size is <em>{fileSizeMax}</em>.',
-			'fileListMax': 'File <em>{name}</em> could not be added, amount of <em>{fileListMax} files</em> exceeded.',
-			'fileListSizeMax': 'File <em>{name}</em> (<em>{size}</em>) is too big, overall filesize of <em>{fileListSizeMax}</em> exceeded.'
+			'duplicate': 'Datei <em>{name}</em> ist bereits in der Warteschlange. Doppelte Dateien sind nicht erlaubt.',
+			'sizeLimitMin': 'Datei <em>{name}</em> (<em>{size}</em>) ist zu klein, minimale Dateigr&ouml;&szlig;e: {fileSizeMin}.',
+			'sizeLimitMax': 'Datei <em>{name}</em> (<em>{size}</em>) ist zu gro&szlig;, maximale Dateigr&ouml;&szlig;e: <em>{fileSizeMax}</em>.',
+			'fileListMax': 'Datei <em>{name}</em> konnte nicht hinzugef&uuml;gt werden. Maximale Listengr&ouml;&szlig;e von <em>{fileListMax} Dateien</em> erreicht.',
+			'fileListSizeMax': 'Datei <em>{name}</em> (<em>{size}</em>) ist zu gro&szlig;. Gesamtdateigr&ouml;&szlig;e von <em>{fileListSizeMax}</em> erreicht.'
 		},
 		'errors': {
 			'httpStatus': 'Server returned HTTP-Status <code>#{code}</code>',

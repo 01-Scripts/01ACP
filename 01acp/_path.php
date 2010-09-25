@@ -6,6 +6,7 @@
 	
 	Modul:		01ACP
 	Dateiinfo:	Lädt Dateien aus Unterverzeichnissen, damit die Pfadangaben auf den normalen 01acp-Ordner bezogen werden können. Für Popup und IFrames
+	#fv.1200#
 */
 
 // Session starten:
@@ -21,10 +22,22 @@
 <meta http-equiv="content-type" content="text/html;charset=iso-8859-1" />
 <meta http-equiv="Content-Language" content="de" />
 <?PHP
+switch($_REQUEST['include']){
+  case "uploader":
+	$mootools_use[] = "moo_core";
+	$mootools_use[] = "moo_more";
+	$mootools_use[] = "moo_request";
+	$mootools_use[] = "moo_fancyup_fm";
+  break;
+  }
+
 // Config-Dateien
 include("system/main.php");
 ?>
 <link rel="stylesheet" type="text/css" href="system/default.css" />
+<?PHP
+load_js_and_moo($mootools_use);
+?>
 
 </head>
 

@@ -9,7 +9,7 @@
 	
 	Modul:		01ACP
 	Dateiinfo:	Layout für ACP
-	#fv.1102#
+	#fv.1200#
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -23,34 +23,8 @@
 
 <?PHP
 // Benötigte MooTools laden
-if(isset($mootools_use) && is_array($mootools_use)){
-	foreach($mootools_use as $use){
-		if(isset($mootools[$use])){
-			foreach($mootools[$use] as $include){
-				echo $include."\n";
-				}
-			}
-		}
-	}
-	
-// DOMReady ausgeben
-if(isset($mootools_use) && is_array($mootools_use)){
-	echo "<script type=\"text/javascript\">
-	window.addEvent('domready',function(){
-	";
-	foreach($mootools_use as $use){
-		if(isset($domready[$use])){
-			foreach($domready[$use] as $include){
-				include_once($include);
-				echo "\n\n";
-				}
-			}
-		}
-	include("system/js/domready-javas.js");
-	echo "
-    });
-</script>\n";
-	}
+if(!isset($mootools_use)) $mootools_use = array();
+load_js_and_moo($mootools_use);
 ?>
 <script src="system/js/javas.js" type="text/javascript"></script>
 <!-- 2559ad821dde361560dbf967c3406f51 -->
@@ -81,8 +55,10 @@ if(strchr($_SERVER['HTTP_USER_AGENT'],"MSIE 6.0") && $flag_showIE6Warning)
 			echo "        <li><a href=\"index.php?action=logout\" title=\"Aus dem ACP ausloggen\"><img src=\"images/icons/menue_abmelden.gif\" alt=\"Abmelden\" title=\"Aus dem ACP ausloggen\" style=\"border:0; margin-right:3px;\" align=\"left\" /> Abmelden</a></li>\n";
 		else
 			echo "        <li>&nbsp;</li>\n";
-		if(isset($userdata['id']) && $userdata['id'] >= 1 && $userdata['profil'] == 1)
-			echo "        <li><a href=\"users.php?action=profil\" accesskey=\"4\" title=\"Eigenes Profil bearbeiten\" style=\"margin-right:40px;\"><img src=\"images/icons/menue_profil.gif\" alt=\"Profil\" title=\"Eigenes Profil\" style=\"border:0; margin-right:3px;\" align=\"left\" /> Profil</a></li>\n";
+		if(isset($userdata['id']) && $userdata['id'] >= 1 && $userdata['profil'] == 1){
+			echo "        <li><a href=\"users.php?action=profil\" accesskey=\"4\" title=\"Eigenes Profil bearbeiten\"><img src=\"images/icons/menue_profil.gif\" alt=\"Profil\" title=\"Eigenes Profil\" style=\"border:0; margin-right:3px;\" align=\"left\" /> Profil</a></li>\n";
+			echo "        <li><a href=\"javascript:popup('notepad','','','',500,400);\" accesskey=\"5\" title=\"Notizblock aufrufen\" style=\"margin-right:40px;\"><img src=\"images/icons/notebook.png\" alt=\"Notizblock\" title=\"Notizblock aufrufen\" style=\"border:0;\" align=\"left\" /></a></li>\n";
+			}
 		if(isset($userdata['id']) && $userdata['settings'] == 1) 
 			echo "        <li><a href=\"settings.php?action=settings\" accesskey=\"1\" title=\"Einstellungen ändern\"><img src=\"images/icons/menue_einstellungen.gif\" alt=\"Einstellungen\" title=\"Einstellungen\" style=\"border:0; margin-right:3px;\" align=\"left\" /> Einstellungen</a></li>\n";
 		if(isset($userdata['id']) && $userdata['userverwaltung'] >= 1) 

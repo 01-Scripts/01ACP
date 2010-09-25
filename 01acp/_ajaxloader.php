@@ -14,7 +14,6 @@ if(isset($_GET['SID']) && !empty($_GET['SID']))
 	session_id($_GET['SID']);		// Session-ID aus URL-String für Fancy-Uploader
 @session_start();
 
-
 // Config-Dateien
 include("system/main.php");
 

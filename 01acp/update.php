@@ -1,11 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2009 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2010 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	01ACP-Updates durchführen
+	#fv.1200#
 */
 
 $menuecat = "01acp_start";
@@ -13,25 +14,31 @@ $sitetitle = "01ACP aktualisieren";
 $filename = $_SERVER['PHP_SELF'];
 $flag_acp = TRUE;
 $flag_nofunctions = TRUE;
+$flag_loginerror = FALSE;
+$mootools_use = array(); 
 
 // Dummy-Functions
 function create_ModulDropDown($para) { return ""; }
 function create_menue($para,$para2) { return ""; }
+function load_js_and_moo($mootools_use) { return ""; }
 
 // Config-Dateien
 include("system/headinclude.php");
 include("system/head.php");
 
 $xml = simplexml_load_file("_info.xml",NULL,LIBXML_NOCDATA);
-
+?>
+<h1>ACP aktualisieren</h1>
+<?PHP
 // Update durchführen
 if(isset($_POST['action']) && $_POST['action'] == "update" &&
    isset($_POST['update']) && !empty($_POST['update']) &&
    $xml->version > $settings['acpversion']){
     $update_ok = TRUE;
-	include_once("updates.php");
+	include_once("_up_data.php");
 	
-	echo "<p class=\"meldung_error\"><b>Bitte löschen Sie die Datei updates.php von Ihrem Server!</b></p>";
+	echo "<p class=\"meldung_error\"><b>Bitte löschen Sie die Datei _up_data.php von Ihrem Server!</b></p>";
+	echo "<p class=\"meldung_erfolg\"><a href=\"index.php\">Weiter zum Administrationsbereich &rdquo;</a></p>";
 	}
 else{
 	if($xml->version > $settings['acpversion']){
@@ -73,6 +80,4 @@ else{
 	}
 
 include("system/foot.php");
-
-// 01ACP Copyright 2008-2009 by Michael Lorer - 01-Scripts.de
 ?>

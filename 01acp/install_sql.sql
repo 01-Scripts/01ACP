@@ -4,7 +4,7 @@
 
 -- Modul:		01acp
 -- Dateiinfo:	SQL-Befehle für die Erstinstallation des 01acp
--- #fv.1101#
+-- #fv.1200#
 --  **  **  **  **  **  **  **  **  **  **  **  **  **  **  **  **  *  *
 
 -- --------------------------------------------------------
@@ -19,23 +19,23 @@ START TRANSACTION;
 -- Tabellenstruktur für Tabelle `01prefix_comments`
 --
 
-CREATE TABLE IF NOT EXISTS `01prefix_comments` (
-  `id` int(10) NOT NULL auto_increment,
-  `modul` varchar(25) NOT NULL,
-  `postid` varchar(255) NOT NULL,
+CREATE TABLE IF NOT EXISTS `01_1_comments` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `modul` varchar(25) DEFAULT NULL,
+  `postid` varchar(255) NOT NULL DEFAULT '0',
   `subpostid` varchar(255) NOT NULL DEFAULT '0',
-  `uid` varchar(32) NOT NULL,
-  `frei` tinyint(1) NOT NULL,
-  `timestamp` int(10) NOT NULL,
-  `ip` varchar(15) NOT NULL,
-  `autor` varchar(50) NOT NULL,
-  `email` varchar(75) NOT NULL,
-  `url` varchar(100) NOT NULL,
-  `comment` text NOT NULL,
-  `smilies` tinyint(1) NOT NULL,
-  `bbc` tinyint(1) NOT NULL,
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+  `uid` varchar(32) NOT NULL DEFAULT '0',
+  `frei` tinyint(1) NOT NULL DEFAULT '0',
+  `timestamp` int(10) NOT NULL DEFAULT '0',
+  `ip` varchar(15) DEFAULT NULL,
+  `autor` varchar(50) DEFAULT NULL,
+  `email` varchar(75) DEFAULT NULL,
+  `url` varchar(100) DEFAULT NULL,
+  `comment` text,
+  `smilies` tinyint(1) NOT NULL DEFAULT '0',
+  `bbc` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1;
 
 -- --------------------------------------------------------
 
@@ -45,8 +45,8 @@ CREATE TABLE IF NOT EXISTS `01prefix_comments` (
 
 CREATE TABLE IF NOT EXISTS `01prefix_files` (
   `id` int(10) NOT NULL auto_increment,
-  `type` varchar(4) NOT NULL COMMENT 'Dateityp "pic" oder "file"',
-  `modul` varchar(25) NOT NULL,
+  `type` varchar(4) NULL COMMENT 'Dateityp "pic" oder "file"',
+  `modul` varchar(25) NULL,
   `dir` int(10) NOT NULL default '0',
   `orgname` varchar(50) default NULL,
   `name` varchar(25) NOT NULL default '',
@@ -66,10 +66,10 @@ CREATE TABLE IF NOT EXISTS `01prefix_files` (
 
 CREATE TABLE IF NOT EXISTS `01prefix_filedirs` (
   `id` INT( 10 ) NOT NULL AUTO_INCREMENT,
-  `parentid` INT( 10 ) NOT NULL ,
-  `timestamp` INT( 10 ) NOT NULL ,
-  `name` VARCHAR( 50 ) NOT NULL ,
-  `uid` INT( 10 ) NOT NULL ,
+  `parentid` INT( 10 ) NOT NULL default '0',
+  `timestamp` INT( 10 ) NOT NULL default '0',
+  `name` VARCHAR( 50 ) NULL,
+  `uid` INT( 10 ) NOT NULL default '0',
   `hide` TINYINT( 1 ) NOT NULL DEFAULT '0',
   `sperre` TINYINT( 1 ) NOT NULL DEFAULT '0',
   PRIMARY KEY  (`id`)
@@ -83,14 +83,14 @@ CREATE TABLE IF NOT EXISTS `01prefix_filedirs` (
 
 CREATE TABLE IF NOT EXISTS `01prefix_menue` (
   `id` int(10) NOT NULL auto_increment,
-  `name` varchar(50) NOT NULL,
-  `link` varchar(100) NOT NULL,
-  `modul` varchar(25) NOT NULL,
-  `sicherheitslevel` int(3) NOT NULL,
-  `rightname` varchar(40) NOT NULL,
-  `rightvalue` varchar(255) NOT NULL,
-  `sortorder` int(3) NOT NULL,
-  `subof` int(10) NOT NULL,
+  `name` varchar(50) NULL,
+  `link` varchar(100) NULL,
+  `modul` varchar(25) NULL,
+  `sicherheitslevel` int(3) NOT NULL default '0',
+  `rightname` varchar(40) NULL,
+  `rightvalue` varchar(255) NULL,
+  `sortorder` int(3) NOT NULL default '0',
+  `subof` int(10) NOT NULL default '0',
   `hide` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM AUTO_INCREMENT=21 ;
@@ -129,13 +129,13 @@ INSERT INTO `01prefix_menue` (`id`, `name`, `link`, `modul`, `sicherheitslevel`,
 
 CREATE TABLE IF NOT EXISTS `01prefix_module` (
   `id` int(10) NOT NULL auto_increment,
-  `nr` int(3) NOT NULL,
+  `nr` int(3) NOT NULL default '0',
   `aktiv` tinyint(1) NOT NULL default '1',
   `modulname` varchar(25) NOT NULL COMMENT 'Gibt die Modulart z.B. "01news" "01gallery" an.',
-  `instname` varchar(50) NOT NULL COMMENT 'Individueller, vom Benutzer eingegebene Name',
-  `idname` varchar(25) NOT NULL COMMENT 'entspricht dem Verzeichnisnamen',
-  `version` varchar(10) NOT NULL,
-  `serialized_data` mediumtext NOT NULL COMMENT 'use unserialize() to get data back',
+  `instname` varchar(50) NULL COMMENT 'Individueller, vom Benutzer eingegebene Name',
+  `idname` varchar(25) NULL COMMENT 'entspricht dem Verzeichnisnamen',
+  `version` varchar(10) NULL,
+  `serialized_data` MEDIUMBLOB NULL DEFAULT NULL COMMENT 'use unserialize() to get data back',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `idname` (`idname`)
 ) TYPE=MyISAM AUTO_INCREMENT=1 ;
@@ -148,15 +148,15 @@ CREATE TABLE IF NOT EXISTS `01prefix_module` (
 
 CREATE TABLE IF NOT EXISTS `01prefix_rights` (
   `id` int(5) NOT NULL auto_increment,
-  `modul` varchar(25) NOT NULL,
+  `modul` varchar(25) NULL,
   `is_cat` tinyint(1) NOT NULL default '0',
-  `catid` tinyint(2) NOT NULL,
+  `catid` tinyint(2) NOT NULL default '0',
   `sortid` int(5) default NULL,
-  `idname` varchar(40) NOT NULL COMMENT 'rightname',
+  `idname` varchar(40) NULL COMMENT 'rightname',
   `name` varchar(50) default NULL,
   `exp` text,
-  `formename` text NOT NULL,
-  `formwerte` varchar(255) NOT NULL,
+  `formename` text NULL,
+  `formwerte` varchar(255) NULL,
   `input_exp` varchar(50) default NULL,
   `standardwert` text,
   `nodelete` tinyint(1) NOT NULL default '0',
@@ -195,15 +195,15 @@ INSERT INTO `01prefix_rights` (`id`, `modul`, `is_cat`, `catid`, `sortid`, `idna
 
 CREATE TABLE IF NOT EXISTS `01prefix_settings` (
   `id` int(5) NOT NULL auto_increment,
-  `modul` varchar(25) NOT NULL,
+  `modul` varchar(25) NULL,
   `is_cat` tinyint(1) NOT NULL default '0',
-  `catid` tinyint(2) NOT NULL,
+  `catid` tinyint(2) NOT NULL default '0',
   `sortid` int(5) default NULL,
-  `idname` varchar(25) NOT NULL,
+  `idname` varchar(25) NULL,
   `name` varchar(50) default NULL,
   `exp` text,
-  `formename` text NOT NULL,
-  `formwerte` varchar(255) NOT NULL,
+  `formename` text NULL,
+  `formwerte` varchar(255) NULL,
   `input_exp` varchar(50) default NULL,
   `standardwert` text,
   `wert` text,
@@ -239,7 +239,7 @@ INSERT INTO `01prefix_settings` (`id`, `modul`, `is_cat`, `catid`, `sortid`, `id
 (19, '01acp', 0, 4, 1, 'rss_aktiv', 'RSS-Feed aktivieren?', 'Hat Auswirkungen auf die RSS-Feeds <b>aller</b> installierter Module!', 'Ja|Nein', '1|0', '', '1', '1', 0, 0),
 (20, '01acp', 0, 4, 2, 'rss_sprache', 'Sprache', 'In welcher Sprache stellen Sie Ihre Informationen bereit? Eine &Uuml;bersicht der Sprachk&uuml;rzel finden Sie <a href=\\"http://de.selfhtml.org/diverses/sprachenkuerzel.htm\\" target=\\"_blank\\">hier</a>.', 'text', '10', '', 'de-de', 'de-de', 0, 0),
 (21, '01acp', 0, 4, 3, 'rss_copyright', 'Copyright-Informationen', '', 'textarea', '5|50', '', 'Die Inhalte werden unter einer Creative-Commons-Lizenz veröffentlicht, die <a href=\\"http://creativecommons.org/licenses/by-nc-sa/3.0/de/\\" target=\\"_blank\\">hier</a> einsehbar ist.', 'Die Inhalte werden unter einer Creative-Commons-Lizenz veröffentlicht, die unter folgender URL einsehbar ist:\r\nhttp://creativecommons.org/licenses/by-nc-sa/3.0/de/', 0, 0),
-(22, '01acp', 0, 1, 0, 'acpversion', 'ACP-Version', '', 'text', '10', '', '1.1.0.1', '1.1.0.1', 0, 1),
+(22, '01acp', 0, 1, 0, 'acpversion', 'ACP-Version', '', 'text', '10', '', '#01ACP_VERSION_NR#', '#01ACP_VERSION_NR#', 0, 1),
 (23, '01acp', 0, 1, 0, 'cachetime', 'Cachetime (XML)', '', 'text', '10', '', '', '0', 0, 1),
 (24, '01acp', 0, 1, 0, 'installed', 'installiert', '', 'text', '10', '', '1', '0', 0, 1);
 
@@ -251,10 +251,10 @@ INSERT INTO `01prefix_settings` (`id`, `modul`, `is_cat`, `catid`, `sortid`, `id
 
 CREATE TABLE IF NOT EXISTS `01prefix_user` (
   `id` int(10) NOT NULL auto_increment,
-  `username` varchar(50) NOT NULL,
-  `mail` varchar(50) NOT NULL,
-  `password` varchar(40) NOT NULL,
-  `level` int(3) NOT NULL,
+  `username` varchar(50) NULL,
+  `mail` varchar(50) NULL,
+  `password` varchar(40) NULL,
+  `level` int(3) NOT NULL default '0',
   `lastlogin` int(10) NOT NULL default '0',
   `startpage` varchar(25) NOT NULL DEFAULT '01acp',
   `cookiehash` varchar(32) NULL DEFAULT NULL,

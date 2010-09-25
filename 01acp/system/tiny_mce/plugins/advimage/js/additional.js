@@ -6,17 +6,17 @@ function parse_str(str, array){
     // *     returns 1: { first: 'foo', second: 'bar' }
     // *     example 2: parse_str('str_a=Jack+and+Jill+didn%27t+see+the+well.');
     // *     returns 2: { str_a: "Jack and Jill didn't see the well." }
- 
+
     var glue1 = '=';
     var glue2 = '&';
- 
+
     var array2 = str.split(glue2);
     var array3 = [];
     for(var x=0; x<array2.length; x++){
         var tmp = array2[x].split(glue1);
         array3[unescape(tmp[0])] = unescape(tmp[1]).replace(/[+]/g, ' ');
     }
- 
+
     if(array){
         array = array3;
     } else{
@@ -25,9 +25,8 @@ function parse_str(str, array){
 }
 
 function getSize(){
-
-var adressstring = document.getElementsByName('src')[0].value;
-var queryarray = []
+var adressstring = document.getElementById('src').value;
+var queryarray = [];
 
 queryarray = parse_str(adressstring);
 
@@ -36,19 +35,18 @@ if(isNaN(queryarray['size'])){
 	}
 else{
 	document.getElementById('olddimensions').style.display = 'none';
-	document.getElementsByName('size01')[0].value = queryarray['size'];
+	document.getElementById('size01').value = queryarray['size']; 
 	}
-
 }
 
 function writeSizeBack(){
-var size = document.getElementsByName('size01')[0].value;
-var adressstring = document.getElementsByName('src')[0].value;
+var size = document.getElementById('size01').value;
+var adressstring = document.getElementById('src').value;
 
 if(!isNaN(size)){
 	var temparray = adressstring.split('&size=');
 	}
-	
+
 var newadress = temparray[0]+'&size='+size;
-document.getElementsByName('src')[0].value = newadress;
+document.getElementById('src').value = newadress;
 }

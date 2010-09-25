@@ -1,6 +1,6 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2009 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2010 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
@@ -352,6 +352,7 @@ return $return;
 /*$row[]			Array mit Datensatz aus MySQL-Tabelle
   $class			CSS-Classe für Tabellenzeile (tra, trab)
   &$count			CSS-Classen-"Counter" für Tabellenzeilen (tra, trab)
+  $jscssclass		CSS-Klasse für <tr> um Ein/Ausblenden per JS zu ermöglichen
   
 RETURN: geparste Dateifelder in entsprechenden Tabellenzellen
   */
@@ -450,9 +451,10 @@ return $return;
 RETURN: Array(success,name,orgname,size,endung,fileart,msg);
   */
 function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="",$dirid=0){
-    global $db,$userdata,$picuploaddir,$catuploaddir,$attachmentuploaddir,$mysql_tables,$settings,$picendungen,$picsize,$attachmentendungen,$attachmentsize;
+    global $db,$userdata,$picuploaddir,$catuploaddir,$attachmentuploaddir,$mysql_tables,$settings,$picendungen,$picsize,$attachmentendungen,$attachmentsize,$instnr;
 
-    $time = time();    
+    mt_srand((double)microtime()*1000000);
+	$new_filename = substr(md5($instnr.time().microtime().mt_rand(10000,99999999)),0,15);    
     $endung = getEndung($fname);
 	
 	if(empty($dirid) || !is_numeric($dirid)) $dirid = 0;
@@ -490,7 +492,7 @@ function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="
 
     // Bestimmten Dateinamen verwenden? (== bestehende Datei überschreiben)
     if(!empty($destname)){
-		$split = split('[.]', $destname);
+		$split = explode(".", $destname,2);
 		$filename = $split[0];
 		
 		// Thumbnails löschen
@@ -509,9 +511,9 @@ function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="
 		@chmod($dir.$filename.".".$endung, 0777);
         }
     else
-        $filename = $time;
+        $filename = $new_filename;
 
-	if(isset($is_file) && $is_file == 1 || isset($is_pic) && $is_pic == 1 ){
+	if(isset($is_file) && $is_file == 1 || isset($is_pic) && $is_pic == 1){
         if($fsize <= $size){
             if(move_uploaded_file($tname,$dir.$filename.".".$endung)){
                 $fupload = array("success" 	=> 	1,
@@ -536,9 +538,10 @@ function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="
 					}
 
                 //Eintragung in Datenbank vornehmen:
-                $sql_insert = "INSERT INTO ".$mysql_tables['files']." (type,modul,dir,orgname,name,size,ext,uid) VALUES (
+                $sql_insert = "INSERT INTO ".$mysql_tables['files']." (type,modul,timestamp,dir,orgname,name,size,ext,uid) VALUES (
 							'".mysql_real_escape_string($fupload['fileart'])."',
 							'".mysql_real_escape_string($modul)."',
+							'".time()."',
 							'".mysql_real_escape_string($dirid)."',
 							'".mysql_real_escape_string($fupload['orgname'])."',
 							'".mysql_real_escape_string($fupload['name'])."', 
@@ -548,16 +551,19 @@ function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="
                 mysql_query($sql_insert) OR die(mysql_error());
                 }
             else{
-                $fupload['msg'] = "Ein unbekannter Fehler ist aufgetreten oder es wurde keine Datei hochgeladen.";
+                $fupload['success'] = 0;
+				$fupload['msg'] = "Ein unbekannter Fehler ist aufgetreten oder es wurde keine Datei hochgeladen.";
                 }
             }
         else{
             //Wenn Dateigröße zu groß ist
+			$fupload['success'] = 0;
 			$fupload['msg'] = "Die gew&auml;hlte Datei ist zu gro&szlig;.";
             }
         }
     else{
         //Wenn keine passende Endung gewählt wurde
+		$fupload['success'] = 0;
 		$fupload['msg'] = "Die gew&auml;hlte Datei besitzt keine der erlaubten Dateiendungen.";
         }
     
@@ -573,16 +579,13 @@ function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="
 // Datei oder Bild löschen
 /*$dir				Verzeichnis in dem sich die zu löschende Datei befindet
   $file				Datei (inkl. Endung), die gelöscht werden soll
-  $type				Handelt es sich um ein Bild oder eine Datei?
 
 RETURN: TRUE/FALSE
   */
 function delfile($dir,$file){
 global $mysql_tables;
 
-$split = split('[.]', strtolower($file));
-
-mysql_query("DELETE FROM ".$mysql_tables['files']." WHERE name='".mysql_real_escape_string($file)."' LIMIT 1");
+$split = explode(".", strtolower($file),2);
 
 if(file_exists($dir.$split[0]."_tb_".ACP_TB_WIDTH.".".$split[1])){
 	@clearstatcache();  
@@ -598,7 +601,10 @@ if(file_exists($dir.$split[0]."_tb_".ACP_TB_WIDTH200.".".$split[1])){
 
 @clearstatcache();  
 @chmod($dir.$file, 0777);
-if(unlink($dir.$file)) return TRUE;
+if(unlink($dir.$file)){
+	mysql_query("DELETE FROM ".$mysql_tables['files']." WHERE name='".mysql_real_escape_string($file)."' LIMIT 1");
+	return TRUE;
+	}
 else return FALSE;
 }
 
@@ -642,7 +648,7 @@ else{
 function showpic($sourcefile,$resize){
 global $_GLOBALS;
 
-$split = split('[.]', strtolower($sourcefile));
+$split = explode(".", strtolower($sourcefile),2);
 $filename = $split[0];
 $fileType = $split[1];
 
@@ -797,10 +803,10 @@ switch($barlook){
 	$return .= "table_cell_styles : \"Header 1=header1;Header 2=header2;Header 3=header3;Table Cell=tableCel1\",
 	table_row_styles : \"Header 1=header1;Header 2=header2;Header 3=header3;Table Row=tableRow1\",
 	table_cell_limit : 100,
-	table_row_limit : 10,
-	table_col_limit : 10,";
+	table_row_limit : 25,
+	table_col_limit : 25,";
 	
-	$plugins = "advimage,filemanager,inlinepopups,table,emotions,media";
+	$plugins = "advimage,filemanager,paste,table,emotions,media,imagealignhelper";
   break;
   case "none":
     $return .= "theme_advanced_buttons1 : \"".$bar_own."\",";
@@ -836,7 +842,7 @@ return $return;
 RETURN: Tabellenzeilen mit den entsprechenden Spalten
   */
 function getFilelist($query,$url,$show_edit,$show_tb,$show_date,$show_username,$insert){
-global $mysql_tables,$attachmentuploaddir,$picuploaddir,$_REQUEST,$userdata;
+global $mysql_tables,$attachmentuploaddir,$picuploaddir,$_REQUEST,$userdata,$filename2;
 
 $return = "";
 
@@ -867,6 +873,7 @@ if($dirid > 0){
 	if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
 	
 	$return .= "<tr>\n    ";
+	if($show_edit) $return .= "<td align=\"center\" class=\"".$class."\"></td>";
 	if($show_tb) $return .= "<td align=\"center\" class=\"".$class."\"><a href=\"".$url."&amp;dir=".$dirup['parentid']."\"><img src=\"images/icons/dir_up.gif\" alt=\"PC-Verzeichnis mit Pfeil nach oben\" title=\"Verzeichnis aufw&auml;rts\" /></a></td>";
 	$return .= "<td class=\"".$class."\" colspan=\"".($colspan+2)."\"><div id=\"dir_".$dirup['parentid']."\" class=\"droppable\"><a href=\"".$url."&amp;dir=".$dirup['parentid']."\">Verzeichnis Aufw&auml;rts</a> | Sie befinden sich hier: <i>".stripslashes($dirup['name'])."</i></div></td>";
 	$return .= "</tr>";	
@@ -878,6 +885,7 @@ while($row = mysql_fetch_assoc($list)){
 	if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
 	
 	$return .= "<tr id=\"dirid".$row['id']."\">\n    ";
+	if($show_edit) $return .= "<td align=\"center\" class=\"".$class."\"></td>";
 	if($show_tb) $return .= "<td align=\"center\" class=\"".$class."\"><a href=\"".$url."&amp;dir=".$row['id']."\"><img src=\"images/icons/folder.gif\" alt=\"PC-Verzeichnis\" title=\"Verzeichnis ausw&auml;hlen\" /></a></td>";
 	if($show_edit && $userdata['dateimanager'] == 2){
 		$return .= "<td class=\"".$class."\" colspan=\"".$colspan."\">";
@@ -924,14 +932,15 @@ while($row = mysql_fetch_assoc($list)){
 	
 	}
 
+	if($show_edit)
+	    $return .= "\n<form action=\"".$filename2."\" method=\"post\" id=\"multidelform0815\">\n";
 
-$drag_start = $drag_ende = "";
+$downloads = $drag_start = $drag_ende = "";
 // "Normale Dateien" auflisten
 $list = mysql_query($query);
 while($row = mysql_fetch_array($list)){
 	if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
 	
-	$timestamp = split('[.]', $row['name']);
 	switch($row['type']){
 	  case "pic":
 	    $popuph = 400;
@@ -942,12 +951,15 @@ while($row = mysql_fetch_array($list)){
 	  }
 	
 	$return .= "<tr id=\"id".$row['id']."\">\n    ";
+
+	if($show_edit)	
+		$return .= "<td class=\"".$class."\" align=\"center\"><input type=\"checkbox\"  name=\"delfiles[]\" value=\"".$row['id']."\" /></td>";
 	
 	if($show_tb){
 		$return .= "<td class=\"".$class."\" align=\"center\">";
 		
 		if($row['type'] == "pic"){
-			$split = split('[.]', strtolower($row['name']));
+			$split = explode(".", strtolower($row['name']),2);
 			$filename = $split[0];
 			$fileType = $split[1];
 			if(file_exists($picuploaddir.$filename."_tb_".ACP_TB_WIDTH.".".$fileType))
@@ -956,7 +968,7 @@ while($row = mysql_fetch_array($list)){
 				$return .= "<a href=\"".$picuploaddir.$row['name']."\" target=\"_blank\" class=\"lightbox\"><img src=\"".$picuploaddir."showpics.php?img=".$row['name']."&amp;size=".ACP_TB_WIDTH."&amp;hidegif=normal\" alt=\"Hochgeladenes Bild\" /></a>";
 			}
 		else
-			$return .= "<a href=\"".$attachmentuploaddir.$row['name']."\" target=\"_blank\">".filetypes($row['ext'])."</a>";
+			$return .= "<a href=\"".$attachmentuploaddir."download.php?fileid=".$row['id']."&amp;nocount=1\">".filetypes($row['ext'])."</a>";
 		
 		$return .= "</td>\n    ";
 		}
@@ -966,7 +978,7 @@ while($row = mysql_fetch_array($list)){
 		$link2 = "</a>";
 		}
 	elseif($insert == "tinymce" && $row['type'] == "file"){
-		$link1 = "<a href=\"javascript:FileDialog.insertfile('".$attachmentuploaddir."','".stripslashes($row['name'])."','".stripslashes($row['orgname'])."');\">";
+		$link1 = "<a href=\"javascript:FileDialog.insertfile('".$attachmentuploaddir."','".$row['id']."','".stripslashes($row['orgname'])."');\">";
 		$link2 = "</a>";
 		}
 	elseif($insert == "js" && !empty($_REQUEST['formname']) && !empty($_REQUEST['formfield'])){
@@ -978,13 +990,17 @@ while($row = mysql_fetch_array($list)){
 		}
 	
 	if($show_edit && $userdata['dateimanager'] == 2){
+		if($row['type'] == "file")
+			$downloads = "<span style=\"float:right;\">".$row['downloads']."</span>";
+		else
+			$downloads = "<span style=\"float:right;\">-</span>";
 		$drag_start = "<div id=\"file_".$row['id']."\" class=\"dragable\">";
 		$drag_ende = "</div>";
 		}
 	
-	$return .= "<td class=\"".$class."\">".$drag_start.$link1.substr(stripslashes($row['orgname']),0,40).$link2.$drag_ende."</td>\n    ";
+	$return .= "<td class=\"".$class."\">".$drag_start.$link1.substr(stripslashes($row['orgname']),0,40).$downloads.$link2.$drag_ende."</td>\n    ";
 	$return .= "<td class=\"".$class."\" align=\"center\">".parse_size($row['size'],"KB")." KB</td>\n    ";
-	if($show_date) $return .= "<td class=\"".$class."\" align=\"center\">".date("d.m.Y",$timestamp[0])."</td>\n    ";
+	if($show_date) $return .= "<td class=\"".$class."\" align=\"center\">".date("d.m.Y",$row['timestamp'])."</td>\n    ";
 	if($show_username) $return .= "<td class=\"".$class."\"><a href=\"".$url."&amp;uid=".$row['uid']."\">".$usernames[$row['uid']]."</a></td>\n    ";
 	
 	if($show_edit){
@@ -1100,6 +1116,8 @@ RETURN: Komplette Liste (HTML)
 function getCommentList($query,$option){
 global $_GET,$module,$modul,$filename;
 
+if(!isset($_GET['site'])) $_GET['site'] = "";
+
 $return = "<form action=\"".$filename."&amp;postid=".$_GET['postid']."&amp;site=".$_GET['site']."\" method=\"post\">\n";
 $return .= "<table border=\"0\" align=\"center\" width=\"100%\" cellpadding=\"3\" cellspacing=\"5\" class=\"rundrahmen\">
 
@@ -1164,6 +1182,8 @@ RETURN: Liste in kompletter HTML-Tabelle
 function getCommentPostList($query,$parent_child="parent"){
 global $filename,$modul,$module,$mysql_tables,$_GET;
 
+if(!isset($_GET['commentsites'])) $_GET['commentsites'] = "";
+
 if($parent_child == "child"){
 	$postid = "subpostid";
 	$functionname = "Child";
@@ -1188,6 +1208,7 @@ $subcmenge	= 0;
 $list = mysql_query($query);
 while($row = mysql_fetch_array($list)){
 	if(!isset($row['postid']) || isset($row['postid']) && empty($row['postid'])) $row['postid'] = $_GET['postid'];
+	if(!isset($row['subpostid'])) $row['subpostid'] = "";
 
 	if($parent_child == "child")
 		$listcountcomments = mysql_query("SELECT id FROM ".$mysql_tables['comments']." WHERE frei = '1' AND modul='".mysql_real_escape_string($modul)."' AND subpostid='".$row['subpostid']."'");
@@ -1542,10 +1563,66 @@ RETURN: $message mit Erfolgs/Fehler-Nummer
   */
 function insert_Comment($autor,$email_form,$url_form,$comment,$antispam,$deaktivieren,$postid,$uid,$subpostid=0){
 global $mysql_tables,$settings,$_SESSION,$modul,$filename,$names,$flag_utf8;
+$zcount = $zcount2 = $zcount1 = 0;
+
+// Zensur-Funktion
+if($settings['comments_zensur'] == 1 && !empty($settings['comments_badwords']) &&
+   isset($comment) && !empty($comment)){
+   	$badwords = array();
+	$badwords = explode("\n",$settings['comments_badwords']);	
+	foreach ($badwords as &$badword){
+		$badword = trim($badword);
+		}
+	
+	$comment = str_replace($badwords, '***', $comment,$zcount1);
+	
+   	$specialchars = array(
+        'A' => '(A|4|@|\?|^)',
+        'B' => '(B|8|\|3|ß|b|l³|\|>|13)',
+        'C' => '(C|\(|\[|\<|©|¢)',
+        'D' => '(D|\|\)|\|\]|Ð|1\))',
+        'E' => '(E|3|€|&|£)',
+        'F' => '(F|\|=|PH|\|\*\|\-\||\|\"|ƒ|l²)',
+        'G' => '(G|6|&|9)',
+        'H' => '(H|\|\-\||#|\}\{|\]\-\[|\/\-\/)',
+        'I' => '(I|\!|1|\||\]\[)',
+        'J' => '(J|_\||¿)',
+        'K' => '(K|\|\<|\|\{|\|\(|X)',
+        'L' => '(L|1|\|_|£|\||\]\[_)',
+        'M' => '(M|\/\\\/\\|\/v\\|\|V\||\]V\[|\|\\\/\||AA|\[\]V\[\]|\|11|\/\|\\|\^\^|\(V\)|\|Y\|)',
+        'N' => '(N|\|\\\||\/\\\/|\/V|\|V|\/\\\\\/|\|1|2|?|\(\\\))',
+        'O' => '(O|0|9|\(\)|\[\]|\*|\°|\<\>|ø|\{\[\]\})',
+        'P' => '(P|\|°|\|\>|\|\*|\[\]D|\]\[D|\|²|\|\?|\|D)',
+        'Q' => '(Q|0_|0)',
+        'R' => '(R|2|\|2|\1²|®|\?)',
+        'S' => '(S|5|\$|§|\?)',
+        'T' => '(T|7|\+|†|\'\]\[\'|\|)',
+        'U' => '(U|\|_\||µ|\[_\]|v)',
+        'V' => '(V|\\\/|\|\/|\\\||\\\')',
+        'W' => '(W|\\\/\\\/|VV|\\A\/|\\\\\'|uu|\\\^\/|\\\|\/)',
+        'X' => '(X|\>\<|\)\(|\}\{|\%|\?|\]\[)',
+        'Y' => '(Y|\`\/|°\/|9|¥)',
+        'Z' => '(Z|2|\"\/_)',
+        'Ä' => '(Ä|43|°A°)',
+        'Ö' => '(Ö|03|°O°)',
+        'Ü' => '(Ü|\|_\|3|°U°)',
+		);
+   	
+   	foreach ($badwords as &$badword){
+		$parts = str_split($badword, 1);
+		$parts = str_ireplace(array_keys($specialchars), $specialchars, $parts);
+		$badword = '/(?<=\b)('.implode('\W*',$parts).')(?=\b)/im';
+		}	
+
+	$comment = trim(preg_replace($badwords, '***', $comment,-1,$zcount2));
+	
+	$zcount = $zcount1+$zcount2;
+   	}
 
 if(isset($autor) && !empty($autor) && 
    isset($comment) && !empty($comment) && 
-   (isset($antispam) && md5($antispam) == $_SESSION['antispam01'] && $settings['spamschutz'] == 1 || $settings['spamschutz'] == 0)){
+   (isset($antispam) && md5($antispam) == $_SESSION['antispam01'] && $settings['spamschutz'] == 1 || $settings['spamschutz'] == 0) &&
+   ($settings['comments_zensur'] == 0 || empty($settings['comments_badwords']) || ($settings['comments_zensur'] == 1 && !empty($settings['comments_badwords']) && ($settings['comments_zensurlimit'] == "-1" || $zcount < $settings['comments_zensurlimit'])))){
 
 	if(check_mail($email_form)) $email = mysql_real_escape_string(strip_tags($email_form)); else $email = "";
 	if($settings['commentfreischaltung'] == 1) $frei = 0; else $frei = 1;
@@ -1718,6 +1795,7 @@ $dumpline = ereg_replace("01prefix_", "01_".$instnr."_", $dumpline);
 $dumpline = ereg_replace("01modulprefix_", "01_".$instnr."_".$modulnr."_", $dumpline);
 $dumpline = ereg_replace("#modul_idname#", $modulidname, $dumpline);
 $dumpline = ereg_replace("#UID_ADMIN_AKT#", $userdata['id'], $dumpline);
+$dumpline = ereg_replace("#01ACP_VERSION_NR#", _01ACP_VERSION_NR, $dumpline);
 
 return $dumpline;
 }
@@ -1832,6 +1910,7 @@ RETURN: true
   */
 function getFileVerz_Rek($parentid,$deep=0,$maxdeep=-1,$callfunction="",$givedeeperparam=""){
 global $mysql_tables;
+$return = "";
 
 // Abbruch, falls $deep = 0 erreicht wurde
 if($maxdeep == 0) return true;
@@ -1931,5 +2010,95 @@ return "<img src=\"".$subfolder."01acp/system/set_a_cookie.php?cookiename=".$coo
 
 }
 
-// 01ACP Copyright 2008 by Michael Lorer - 01-Scripts.de
+
+
+
+
+
+
+
+
+
+// Benötigte Mootool und JS-Dateien / DOM ggf. laden
+/*$mootools_use		Array, der die zu ladenden Bestandteile enthält
+  $cookiewert		Gewünschter Wert für den Cookie
+
+RETURN: true
+  */
+function load_js_and_moo($mootools_use){
+global $mootools,$domready;
+
+// Benötigte MooTools laden
+if(isset($mootools_use) && is_array($mootools_use)){
+	foreach($mootools_use as $use){
+		if(isset($mootools[$use])){
+			foreach($mootools[$use] as $include){
+				echo $include."\n";
+				}
+			}
+		}
+	}
+
+// DOMReady ausgeben
+if(isset($mootools_use) && is_array($mootools_use)){
+	echo "<script type=\"text/javascript\">
+	window.addEvent('domready',function(){
+	";
+	foreach($mootools_use as $use){
+		if(isset($domready[$use])){
+			foreach($domready[$use] as $include){
+				include_once($include);
+				echo "\n\n";
+				}
+			}
+		}
+	include("system/js/domready-javas.js");
+	echo "
+    });
+</script>\n";
+	}
+
+return true;
+}
+
+
+
+
+
+
+
+
+
+
+// Leere Link-Parameter aus Links entfernen
+/*$link				Link, der bereinigt werden soll
+
+RETURN: Bereinigter Link
+  */
+function parse_cleanerlinks($link,$js=false){
+
+$url = parse_url($link);
+
+$params = explode("&",$url['query']);
+
+$url_parameter = array();
+foreach($params as $param){
+	$value = $key = "";
+	list($key, $value) = explode("=", $param,2);
+	
+	if(!empty($value) && !empty($key)) $url_parameter[$key] = $value;
+	}
+	
+$makelink = "";
+if(isset($url['scheme']) && !empty($url['scheme'])) $makelink .= $url['scheme']."://";
+if(isset($url['host']) && !empty($url['host'])) $makelink .= $url['host'];
+if(isset($url['path']) && !empty($url['path'])) $makelink .= $url['path'];
+if(!$js) $makelink .= "?".http_build_query($url_parameter, '', '&amp;');
+  else	 $makelink .= "?".http_build_query($url_parameter, '', '&');
+if(isset($url['fragment']) && !empty($url['fragment'])) $makelink .= "#".$url['fragment']; 
+
+return $makelink;
+
+}
+
 ?>
