@@ -15,7 +15,8 @@
 //Session starten:
 @session_start();
 
-error_reporting(E_ALL);
+@error_reporting(E_ERROR | E_WARNING | E_PARSE);
+//error_reporting(E_ALL);
 //@ini_set('session.bug_compat_warn', "0");
 //@ini_set("register_globals", "0");
 
@@ -55,7 +56,7 @@ $flag_showacpRSS 	= TRUE;						// RSS-Feed auf der ACP-Startseite anzeigen?
 $flag_feedback		= TRUE;
 $flag_credits       = TRUE;
 $flag_showIE6Warning= TRUE;
-$flag_indivstorage	= TRUE;
+$flag_indivstorage	= FALSE;
 $stid				= 0;						// Formular-ID für Storage-Formlare (automatisches ++)
 $flag_oldfileupload = FALSE;					// Alten Datei-Upload für Filemanager nutzen?
 $inst_module 		= array();
@@ -183,5 +184,4 @@ $attachmentsize 		= $settings['attachment_size']*1000;
 // Storage-Daten aus DB holen
 if($flag_indivstorage && !$flag_nofunctions) $storage = getStorageData($modul);
 
-// 01ACP Copyright 2008-2010 by Michael Lorer - 01-Scripts.de
 ?>

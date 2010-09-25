@@ -1,4 +1,4 @@
--- 01ACP - Copyright 2008 by Michael Lorer - 01-Scripts.de
+-- 01ACP - Copyright 2008-2010 by Michael Lorer - 01-Scripts.de
 -- Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 -- Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 
@@ -19,7 +19,7 @@ START TRANSACTION;
 -- Tabellenstruktur für Tabelle `01prefix_comments`
 --
 
-CREATE TABLE IF NOT EXISTS `01_1_comments` (
+CREATE TABLE IF NOT EXISTS `01prefix_comments` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `modul` varchar(25) DEFAULT NULL,
   `postid` varchar(255) NOT NULL DEFAULT '0',
@@ -47,12 +47,14 @@ CREATE TABLE IF NOT EXISTS `01prefix_files` (
   `id` int(10) NOT NULL auto_increment,
   `type` varchar(4) NULL COMMENT 'Dateityp "pic" oder "file"',
   `modul` varchar(25) NULL,
+  `timestamp` int(10) NULL,
   `dir` int(10) NOT NULL default '0',
   `orgname` varchar(50) default NULL,
   `name` varchar(25) NOT NULL default '',
   `size` varchar(20) default NULL,
   `ext` varchar(5) default NULL,
   `uid` int(10) default NULL COMMENT 'uid=0 für gelöschte Benutzer',
+  `downloads` int(10) NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM AUTO_INCREMENT=1 ;
 
@@ -185,7 +187,8 @@ INSERT INTO `01prefix_rights` (`id`, `modul`, `is_cat`, `catid`, `sortid`, `idna
 (12, '01acp', 0, 3, 1, 'addsettings', 'Weitere Einstellungsm&ouml;glichkeiten', 'Benutzer mit Sicherheitslevel 10 k&ouml;nnen eigene, weitere Einstellungsm&ouml;glichkeiten f&uuml;r den Administrationsbereich oder einzelne Module anlegen.', 'Ja|Nein', '1|0', '', '0', 1, 0, 0),
 (13, '01acp', 1, 4, 3, 'cat_modulaccess', 'Modulzugriff', NULL, '', '', NULL, NULL, 1, 0, NULL),
 (14, '01acp', 0, 1, 3, 'module', 'Module verwalten', 'Module installieren und aktualisieren', 'Ja|Nein', '1|0', '', '0', 1, 0, 0),
-(15, '01acp', 0, 1, 2, 'editcomments', 'Kommentare bearbeiten &amp; freischalten', '', 'Ja|Nein', '1|0', '', '0', 0, 0, 0);
+(15, '01acp', 0, 1, 2, 'editcomments', 'Kommentare bearbeiten &amp; freischalten', '', 'Ja|Nein', '1|0', '', '0', 0, 0, 0),
+(16, '01acp', 0, 2, 3, 'notepad', 'Notizblock', '', 'textarea', '5|50', '', '', '0', '0', '1');
 
 -- --------------------------------------------------------
 
@@ -239,9 +242,12 @@ INSERT INTO `01prefix_settings` (`id`, `modul`, `is_cat`, `catid`, `sortid`, `id
 (19, '01acp', 0, 4, 1, 'rss_aktiv', 'RSS-Feed aktivieren?', 'Hat Auswirkungen auf die RSS-Feeds <b>aller</b> installierter Module!', 'Ja|Nein', '1|0', '', '1', '1', 0, 0),
 (20, '01acp', 0, 4, 2, 'rss_sprache', 'Sprache', 'In welcher Sprache stellen Sie Ihre Informationen bereit? Eine &Uuml;bersicht der Sprachk&uuml;rzel finden Sie <a href=\\"http://de.selfhtml.org/diverses/sprachenkuerzel.htm\\" target=\\"_blank\\">hier</a>.', 'text', '10', '', 'de-de', 'de-de', 0, 0),
 (21, '01acp', 0, 4, 3, 'rss_copyright', 'Copyright-Informationen', '', 'textarea', '5|50', '', 'Die Inhalte werden unter einer Creative-Commons-Lizenz veröffentlicht, die <a href=\\"http://creativecommons.org/licenses/by-nc-sa/3.0/de/\\" target=\\"_blank\\">hier</a> einsehbar ist.', 'Die Inhalte werden unter einer Creative-Commons-Lizenz veröffentlicht, die unter folgender URL einsehbar ist:\r\nhttp://creativecommons.org/licenses/by-nc-sa/3.0/de/', 0, 0),
-(22, '01acp', 0, 1, 0, 'acpversion', 'ACP-Version', '', 'text', '10', '', '#01ACP_VERSION_NR#', '#01ACP_VERSION_NR#', 0, 1),
+(22, '01acp', 0, 1, 0, 'acpversion', 'ACP-Version', '', 'text', '10', '', '1.2.0.0', '1.2.0.0', 0, 1),
 (23, '01acp', 0, 1, 0, 'cachetime', 'Cachetime (XML)', '', 'text', '10', '', '', '0', 0, 1),
-(24, '01acp', 0, 1, 0, 'installed', 'installiert', '', 'text', '10', '', '1', '0', 0, 1);
+(24, '01acp', 0, 1, 0, 'installed', 'installiert', '', 'text', '10', '', '1', '0', 0, 1),
+(25, '01acp', 0, 3, 7, 'comments_zensur','Zensur aktivieren?','','Ja|Nein','1|0','','0','1', 0, 0),
+(26, '01acp', 0, 3, 8, 'comments_badwords','Zu zensierende W&ouml;rter','Pro Zeile ein Wort eingeben, welches zensiert werden soll.','textarea','5|50','','','', 0, 0),
+(27, '01acp', 0, 3, 9, 'comments_zensurlimit','Kommentar abweisen ab','-1 weist keine Kommentare ab','text','4','erkannten W&ouml;rtern.','5','5', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -270,6 +276,7 @@ CREATE TABLE IF NOT EXISTS `01prefix_user` (
   `01acp_devmode` tinyint(1) NOT NULL default '0',
   `01acp_module` tinyint(1) NOT NULL default '0',
   `01acp_editcomments` tinyint(1) NOT NULL default '0',
+  `01acp_notepad` text NOT NULL default '',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `mail` (`mail`)

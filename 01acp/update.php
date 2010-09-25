@@ -15,6 +15,7 @@ $filename = $_SERVER['PHP_SELF'];
 $flag_acp = TRUE;
 $flag_nofunctions = TRUE;
 $flag_loginerror = FALSE;
+$flag_stopupdate = FALSE;
 $mootools_use = array(); 
 
 // Dummy-Functions
@@ -37,11 +38,13 @@ if(isset($_POST['action']) && $_POST['action'] == "update" &&
     $update_ok = TRUE;
 	include_once("_up_data.php");
 	
-	echo "<p class=\"meldung_error\"><b>Bitte löschen Sie die Datei _up_data.php von Ihrem Server!</b></p>";
-	echo "<p class=\"meldung_erfolg\"><a href=\"index.php\">Weiter zum Administrationsbereich &rdquo;</a></p>";
+	echo "<p class=\"meldung_error\"><b>Bitte löschen Sie die Datei _up_data.php von Ihrem Server!<br />
+	Leeren Sie den Cache ihres Browsers und starten Sie ihn ggf. neu!</b></p>";
+	echo "<p class=\"meldung_erfolg\"><a href=\"index.php\">Weiter zum Administrationsbereich &raquo;</a></p>";
 	}
 else{
 	if($xml->version > $settings['acpversion']){
+		$options = "";
 		foreach($xml->updates as $updates){
 			foreach($updates as $update){
 				if($update->startv == $settings['acpversion'])

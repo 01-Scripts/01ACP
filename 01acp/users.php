@@ -260,22 +260,24 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "edit_users" && $userdat
 		// Zusatzinformationen/Statistiken über Benutzer zusammentragen
 		$userstats = getUserstats($row['id']);
 
-		foreach($module as $modul_akt){
-		$modul = $modul_akt['idname'];
-		
-		if(file_exists($moduldir.$modul_akt['idname']."/_headinclude.php"))
-			include_once($moduldir.$modul_akt['idname']."/_headinclude.php");
-		if(file_exists($moduldir.$modul_akt['idname']."/_functions.php"))
-			include_once($moduldir.$modul_akt['idname']."/_functions.php");
-		if(function_exists("_".$modul_akt['modulname']."_getUserstats"))
-			$addstats = call_user_func("_".$modul_akt['modulname']."_getUserstats",$row['id']);
-		
-		if(isset($addstats) && is_array($addstats))
-			$userstats = array_merge($userstats,$addstats);
-		
-		unset($modul);
-		unset($addstats);
-		}
+		if(is_array($module)){
+			foreach($module as $modul_akt){
+				$modul = $modul_akt['idname'];
+				
+				if(file_exists($moduldir.$modul_akt['idname']."/_headinclude.php"))
+					include_once($moduldir.$modul_akt['idname']."/_headinclude.php");
+				if(file_exists($moduldir.$modul_akt['idname']."/_functions.php"))
+					include_once($moduldir.$modul_akt['idname']."/_functions.php");
+				if(function_exists("_".$modul_akt['modulname']."_getUserstats"))
+					$addstats = call_user_func("_".$modul_akt['modulname']."_getUserstats",$row['id']);
+				
+				if(isset($addstats) && is_array($addstats))
+					$userstats = array_merge($userstats,$addstats);
+				
+				unset($modul);
+				unset($addstats);
+				}
+			}
 
 		if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
 		
