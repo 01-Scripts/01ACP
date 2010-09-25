@@ -873,6 +873,7 @@ if($dirid > 0){
 	if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
 	
 	$return .= "<tr>\n    ";
+	if($show_edit) $return .= "<td align=\"center\" class=\"".$class."\"></td>";
 	if($show_tb) $return .= "<td align=\"center\" class=\"".$class."\"><a href=\"".$url."&amp;dir=".$dirup['parentid']."\"><img src=\"images/icons/dir_up.gif\" alt=\"PC-Verzeichnis mit Pfeil nach oben\" title=\"Verzeichnis aufw&auml;rts\" /></a></td>";
 	$return .= "<td class=\"".$class."\" colspan=\"".($colspan+2)."\"><div id=\"dir_".$dirup['parentid']."\" class=\"droppable\"><a href=\"".$url."&amp;dir=".$dirup['parentid']."\">Verzeichnis Aufw&auml;rts</a> | Sie befinden sich hier: <i>".stripslashes($dirup['name'])."</i></div></td>";
 	$return .= "</tr>";	
