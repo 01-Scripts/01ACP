@@ -15,9 +15,9 @@
 //Session starten:
 @session_start();
 
-@error_reporting(E_ERROR | E_WARNING | E_PARSE);
-//error_reporting(E_ALL);
-//@ini_set('session.bug_compat_warn', "0");
+//@error_reporting(E_ERROR | E_WARNING | E_PARSE);
+error_reporting(E_ALL);
+@ini_set('session.bug_compat_warn', "0");
 //@ini_set("register_globals", "0");
 
 //@error_reporting(E_ALL ^ E_NOTICE);
