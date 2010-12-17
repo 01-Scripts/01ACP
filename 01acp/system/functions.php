@@ -2079,7 +2079,10 @@ function parse_cleanerlinks($link,$js=false){
 
 $url = parse_url($link);
 
-$params = explode("&",$url['query']);
+if($js)
+	$params = explode("&",$url['query']);
+else
+	$params = explode("&amp;",$url['query']);
 
 $url_parameter = array();
 foreach($params as $param){
