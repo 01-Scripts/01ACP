@@ -7,12 +7,12 @@
 	Modul:		01ACP
 	Dateiinfo:	Globale PHP-Funktionen
 				Auf Funktionen kann nach dem Include der headinclude.php zugrgriffen werden
-	#fv.1200#
+	#fv.1201#
 */
 
 // E-Mail-Adresse auf äußerliche Gültigkeit überprüfen
 function check_mail($email){
-	if(eregi("[A-Za-z0-9\.!#\\$%&'\*+-/=\?\^_`{\|}~]{3,}@[a-z0-9]+([-_\.]?[a-z0-9])*\.[a-z]{2,4}", $email)) return TRUE;
+	if(filter_var($email, FILTER_VALIDATE_EMAIL)) return TRUE;
 	else return FALSE;
 }
 

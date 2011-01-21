@@ -537,10 +537,14 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 					<a href=\"users.php?action=edit_user&userid=".$_POST['userid']."\">Benutzer erneut bearbeiten &raquo;</a><br />
 					<a href=\"users.php?action=edit_users\">Zur&uuml;ck zur Benutzer-&Uuml;bersicht &raquo;</a></p>";
 				
-				if($pwerror)
+				if(isset($pwerror) && $pwerror)
 				    echo "<p class=\"meldung_error\">Das Passwort wurde <b>nicht</b> ge&auml;ndert.<br />
 							Bitte geben Sie ein Passwort mit mindestens ".PW_LAENGE." Zeichen ein!</p>";
 				}
+			else
+				echo "<p class=\"meldung_error\">Sie haben keine Berechtigung diesen Benutzer zu bearbeiten.<br />
+				Oder Sie haben keinen Benutzernamen bzw. eine Nicht-valide E-Mail-Adresse eingegeben.<br />
+				Bitte gehen Sie <a href=\"javascript:history.back();\">zur&uuml;ck</a>.</p>";
 		  break;
 		  case "profil":
 			if(isset($_POST['mail']) && !empty($_POST['mail']) && check_mail($_POST['mail'])){
@@ -561,7 +565,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 				
 				$query = "SELECT * FROM ".$mysql_tables['rights']." WHERE is_cat='0' AND hide='0' AND in_profile='1' ORDER BY catid,sortid";
 				$list = mysql_query($query);
-				unset($savequery);
+				$savequery = "";
 				while($row_save = mysql_fetch_assoc($list)){
 					if(isset($_POST[$row_save['modul']."_".$row_save['idname']]))
 						$savequery .= $row_save['modul']."_".$row_save['idname']."='".mysql_real_escape_string($_POST[$row_save['modul']."_".$row_save['idname']])."', ";
