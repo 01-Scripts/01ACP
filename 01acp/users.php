@@ -1,12 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2010 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2011 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Benutzerverwaltung (Benutzer hinzufügen und bearbeiten; Eigenes Profil)
-	#fv.1200#
+	#fv.1201#
 */
 
 $menuecat = "01acp_users";
@@ -469,7 +469,26 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 				isset($_POST['level']) && !empty($_POST['level']) && $_POST['level'] <= $userdata['level']){
 				
 				if(isset($_POST['sperre']) && $_POST['sperre'] != 1 || !isset($_POST['sperre'])) $_POST['sperre'] = 0;
-				mysql_query("UPDATE ".$mysql_tables['user']." SET username='".mysql_real_escape_string(trim($_POST['username']))."', mail='".mysql_real_escape_string($_POST['mail'])."', level='".mysql_real_escape_string($_POST['level'])."', sperre='".mysql_real_escape_string($_POST['sperre'])."' WHERE id='".mysql_real_escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
+				
+				// Überprüfen ob E-Mail-Adresse oder Benutzername schon vorhanden ist
+				$list = mysql_query("SELECT id FROM ".$mysql_tables['user']." WHERE username='".mysql_real_escape_string($_POST['username'])."'");
+				$row_u		= mysql_fetch_assoc($list);
+				$menge_u	= mysql_num_rows($list);
+				$list = mysql_query("SELECT id FROM ".$mysql_tables['user']." WHERE mail='".mysql_real_escape_string($_POST['mail'])."'");
+				$row_m		= mysql_fetch_assoc($list);
+				$menge_m	= mysql_num_rows($list);
+				
+				$add2query = "";    
+				if($menge_u < 1)
+				    $add2query .= "username='".mysql_real_escape_string(trim($_POST['username']))."', ";
+				elseif($row_u['id'] != $_POST['userid'])
+					echo "<p class=\"meldung_error\">Der <b>Benutzername</b> wurde nicht ge&auml;ndert, da bereits ein Benutzerkonto mit diesem Namen existiert.</p>";
+				if($menge_m < 1)
+				    $add2query .= "mail='".mysql_real_escape_string($_POST['mail'])."', ";
+				elseif($row_m['id'] != $_POST['userid'])
+					echo "<p class=\"meldung_error\">Die <b>E-Mail-Adresse</b> wurde nicht ge&auml;ndert, da bereits ein Benutzerkonto mit dieser Adresse existiert.</p>";
+				
+				mysql_query("UPDATE ".$mysql_tables['user']." SET ".$add2query."level='".mysql_real_escape_string($_POST['level'])."', sperre='".mysql_real_escape_string($_POST['sperre'])."' WHERE id='".mysql_real_escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
 
 				// Passwort ändern?
 				if(isset($_POST['changepw']) && $_POST['changepw'] == 1){
@@ -516,7 +535,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 				
 				echo "<p class=\"meldung_ok\">Benutzerdaten wurden gespeichert.<br />
 					<a href=\"users.php?action=edit_user&userid=".$_POST['userid']."\">Benutzer erneut bearbeiten &raquo;</a><br />
-					<a href=\"users.php?action=edit_users\">Zur&uuml;ck zur Benutzer-&Uuml;bersicht &raquo;</a></p>";#
+					<a href=\"users.php?action=edit_users\">Zur&uuml;ck zur Benutzer-&Uuml;bersicht &raquo;</a></p>";
 				
 				if($pwerror)
 				    echo "<p class=\"meldung_error\">Das Passwort wurde <b>nicht</b> ge&auml;ndert.<br />
@@ -525,7 +544,21 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 		  break;
 		  case "profil":
 			if(isset($_POST['mail']) && !empty($_POST['mail']) && check_mail($_POST['mail'])){
-				mysql_query("UPDATE ".$mysql_tables['user']." SET startpage='".mysql_real_escape_string($_POST['startpage'])."' WHERE id='".mysql_real_escape_string($userdata['id'])."' AND id != '0' LIMIT 1");
+				// Überprüfen ob E-Mail-Adresse schon vorhanden ist
+				$list = mysql_query("SELECT id FROM ".$mysql_tables['user']." WHERE mail='".mysql_real_escape_string($_POST['mail'])."'");
+				$menge_m = mysql_num_rows($list);
+
+				$add2query = "";
+				if($menge_m < 1)
+				    $add2query .= "mail='".mysql_real_escape_string($_POST['mail'])."', ";
+				elseif($userdata['mail'] != $_POST['mail']){
+					$save_error = true;
+					echo "<p class=\"meldung_error\">Die <b>E-Mail-Adresse</b> wurde nicht ge&auml;ndert, da bereits ein Benutzerkonto mit dieser Adresse existiert.</p>";
+					}
+				
+				mysql_query("UPDATE ".$mysql_tables['user']." SET ".$add2query."startpage='".mysql_real_escape_string($_POST['startpage'])."' WHERE id='".mysql_real_escape_string($userdata['id'])."' AND id != '0' LIMIT 1");
+				
+				
 				$query = "SELECT * FROM ".$mysql_tables['rights']." WHERE is_cat='0' AND hide='0' AND in_profile='1' ORDER BY catid,sortid";
 				$list = mysql_query($query);
 				unset($savequery);
@@ -538,7 +571,8 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 				
 				echo "<p class=\"meldung_ok\">Daten wurden gespeichert.<br />
 					<a href=\"users.php?action=profil\">Weiter &raquo;</a></p>";
-				echo "<script>redirect(\"users.php?action=profil&show=saved\");</script>";
+				if(!isset($save_error))
+					echo "<script>redirect(\"users.php?action=profil&show=saved\");</script>";
 				}
 			else{
 				echo "<p class=\"meldung_error\">Fehler: Sie haben keine oder eine fehlerhafte E-Mail-Adresse
