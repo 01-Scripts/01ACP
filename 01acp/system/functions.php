@@ -1424,7 +1424,7 @@ while($row = mysql_fetch_array($list)){
 
 if($login)
 	$list = mysql_query("SELECT id,username,mail,password,level,lastlogin,startpage,sperre,".implode(",",$loadrights)." FROM ".$mysql_tables['user']." WHERE id='".mysql_real_escape_string($_SESSION['01_idsession'])."' AND password='".mysql_real_escape_string($_SESSION['01_passsession'])."' LIMIT 1");
-elseif(!empty($uid) && $uid > 0 && is_numeric($uid))
+if(!empty($uid) && $uid > 0 && is_numeric($uid) && $login)
 	$list = mysql_query("SELECT id,username,mail,password,level,lastlogin,startpage,sperre,".implode(",",$loadrights)." FROM ".$mysql_tables['user']." WHERE id='".mysql_real_escape_string($uid)."' LIMIT 1");
 $fieldmenge = mysql_num_fields($list);
 while($row = mysql_fetch_array($list)){
