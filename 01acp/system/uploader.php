@@ -1,12 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2011 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Formular & Logik für Dateiupload
-	#fv.1200#
+	#fv.121#
 */
 
 if(!isset($filename)) $filename = $_SERVER['PHP_SELF'];
@@ -123,7 +123,7 @@ window.setTimeout(\"opener.document.getElementById('ers_erfolgsmeldung').style.d
 			elseif($fupload['fileart'] == "file" && $_REQUEST['returnvalue'] == "tinymce" && 
 				!empty($_REQUEST['formname']) && !empty($_REQUEST['formfield'])){
 				echo "<br /><b>Datei einf&uuml;gen:</b><br />
-				<input type=\"button\" value=\"Einf&uuml;gen\" class=\"input\" onclick=\"FileDialog.insertfile('".$attachmentuploaddir."','".$fupload['name']."','".$fupload['orgname']."');\" />
+				<input type=\"button\" value=\"Einf&uuml;gen\" class=\"input\" onclick=\"FileDialog.insertfile('".$attachmentuploaddir."','".$fupload['fileid']."','".$fupload['orgname']."');\" />
 				<br /><br />
 				
 				<a href=\"".$filename."&amp;deltype=file&amp;del=1&amp;file=".$fupload['name']."\" style=\"color:red;\"><img src=\"images/icons/icon_delete.gif\" alt=\"Icon: L&ouml;schen\" title=\"Datei l&ouml;schen\" style=\"border:0; margin-right:8px;\" />Datei l&ouml;schen</a><br />

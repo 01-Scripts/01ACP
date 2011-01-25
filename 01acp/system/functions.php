@@ -1,13 +1,13 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2010 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2011 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Globale PHP-Funktionen
 				Auf Funktionen kann nach dem Include der headinclude.php zugrgriffen werden
-	#fv.1201#
+	#fv.121#
 */
 
 // E-Mail-Adresse auf äußerliche Gültigkeit überprüfen
@@ -485,6 +485,7 @@ function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="
                          "size" 	=> 	0,
                          "endung" 	=> 	0,
                          "fileart" 	=> 	0,
+                         "fileid"	=>	0,
                          "msg" 		=> 	"Die Datei besitzt keine der erlaubten Dateiendungen oder
 										Sie haben keine Berechtigung diese Datei hochzuladen!"
                          );
@@ -549,6 +550,8 @@ function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="
 							'".mysql_real_escape_string($fupload['endung'])."', 
 							'".$userdata['id']."')";
                 mysql_query($sql_insert) OR die(mysql_error());
+                
+                $fupload['fileid'] = mysql_insert_id();
                 }
             else{
                 $fupload['success'] = 0;
