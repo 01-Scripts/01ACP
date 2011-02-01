@@ -2107,4 +2107,46 @@ return $makelink;
 
 }
 
+
+
+
+
+
+
+
+
+
+// Unserialize serialized Session-Daten für $_SESSION-Array
+/*$data				Serialisierte Session-Daten
+
+RETURN: Array mit unserialisierten Daten
+  */
+function unserializesession($data){
+if(strlen($data) == 0)
+    return array();
+
+// match all the session keys and offsets
+preg_match_all('/(^|;|\})([a-zA-Z0-9_]+)\|/i', $data, $matchesarray, PREG_OFFSET_CAPTURE);
+
+$return = array();
+
+$lastoffset = null;
+$currentkey = '';
+foreach ($matchesarray[2] as $value){
+    $offset = $value[1];
+    if(!is_null($lastoffset)){
+        $valuetext = substr($data,$lastoffset,$offset-$lastoffset);
+        $return[$currentkey] = unserialize($valuetext);
+    }
+    $currentkey = $value[0];
+
+    $lastoffset = $offset + strlen($currentkey)+1;
+	}
+
+$valuetext = substr($data,$lastoffset);
+$return[$currentkey] = unserialize($valuetext);
+
+return $return;
+}
+
 ?>

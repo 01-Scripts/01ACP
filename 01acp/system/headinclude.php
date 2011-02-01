@@ -1,6 +1,6 @@
 <?PHP
 /*
-	01ACP - Copyright 2008-2010 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2011 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 
@@ -9,11 +9,11 @@
 				auslesen, installierte Module auslesen, Modulspezifische Dateien includieren, Grundeinstellungen,
 				Pfadangaben, Funktionen includen
 				Datei wird sowohl im Frontpanel als auch im Adminbereich als erstes includiert
-	#fv.1200#
+	#fv.121#
 */
 
 //Session starten:
-@session_start();
+if(session_id() == "") @session_start();
 
 //@error_reporting(E_ERROR | E_WARNING | E_PARSE);
 error_reporting(E_ALL);
@@ -59,6 +59,7 @@ $flag_showIE6Warning= TRUE;
 $flag_indivstorage	= FALSE;
 $stid				= 0;						// Formular-ID für Storage-Formlare (automatisches ++)
 $flag_oldfileupload = FALSE;					// Alten Datei-Upload für Filemanager nutzen?
+$flag_sessionbugfix = TRUE;					// Workaround fuer Session-Bug im FnacyUp-Fileuploader
 $inst_module 		= array();
 if(!isset($flag_nofunctions)) $flag_nofunctions = FALSE;
 $forbidden_chars = array("ä","Ä","ö","Ö","ü","Ü","ß","-",".",";",",","_","/","\$","(",")","=","?","´","`","#","+","*","'","\\"," ");
