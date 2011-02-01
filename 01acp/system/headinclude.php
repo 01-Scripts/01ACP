@@ -59,7 +59,7 @@ $flag_showIE6Warning= TRUE;
 $flag_indivstorage	= FALSE;
 $stid				= 0;						// Formular-ID für Storage-Formlare (automatisches ++)
 $flag_oldfileupload = FALSE;					// Alten Datei-Upload für Filemanager nutzen?
-$flag_sessionbugfix = TRUE;					// Workaround fuer Session-Bug im FnacyUp-Fileuploader
+$flag_sessionbugfix = FALSE;					// Workaround fuer Session-Bug im FnacyUp-Fileuploader
 $inst_module 		= array();
 if(!isset($flag_nofunctions)) $flag_nofunctions = FALSE;
 $forbidden_chars = array("ä","Ä","ö","Ö","ü","Ü","ß","-",".",";",",","_","/","\$","(",")","=","?","´","`","#","+","*","'","\\"," ");
