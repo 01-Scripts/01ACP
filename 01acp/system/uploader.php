@@ -1,12 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2011 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Formular & Logik für Dateiupload
-	#fv.1200#
+	#fv.121#
 */
 
 if(!isset($filename)) $filename = $_SERVER['PHP_SELF'];
@@ -214,7 +214,7 @@ if(isset($_REQUEST['delfileid']) && !empty($_REQUEST['delfileid'])){
 
 <?php if(!strchr($_SERVER['HTTP_USER_AGENT'],"MSIE 6.0") && !$flag_oldfileupload &&
 		 isset($_REQUEST['action']) && $_REQUEST['action'] == "fmanageruploader"){ ?>
-<form action="_ajaxloader.php?SID=<?php echo htmlspecialchars(session_id()); ?>&amp;modul=01acp&amp;ajaxaction=fancyupload" method="post" enctype="multipart/form-data" id="fancy-form">
+<form action="_ajaxloader.php?SID=<?php echo htmlspecialchars(session_id()); ?>&amp;modul=01acp&amp;ajaxaction=fancyupload<?php if($flag_sessionbugfix){ echo "&amp;sessiondata=".urlencode(session_encode()); } ?>" method="post" enctype="multipart/form-data" id="fancy-form">
 
 <div id="fancy-status" class="hide">
 <p>
