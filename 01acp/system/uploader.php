@@ -209,6 +209,8 @@ if(isset($_REQUEST['delfileid']) && !empty($_REQUEST['delfileid'])){
 	<input type=\"submit\" class=\"input\" value=\"Verschieben\" />
 	</form></div>";
 	echo "<p class=\"meldung_hinweis\">W&auml;hlen Sie eine neue Datei aus um die Datei <b>".$_REQUEST['delfile']."</b> zu ersetzt:</p>";
+	
+	$flag_showlist = FALSE;
 	}
 ?>
 
