@@ -1,10 +1,10 @@
--- 01ACP - Copyright 2008-2010 by Michael Lorer - 01-Scripts.de
+-- 01ACP - Copyright 2008-2011 by Michael Lorer - 01-Scripts.de
 -- Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 -- Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 
 -- Modul:		01acp
 -- Dateiinfo:	SQL-Befehle für die Erstinstallation des 01acp
--- #fv.1200#
+-- #fv.121#
 --  **  **  **  **  **  **  **  **  **  **  **  **  **  **  **  **  *  *
 
 -- --------------------------------------------------------
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `01prefix_files` (
   `uid` int(10) default NULL COMMENT 'uid=0 für gelöschte Benutzer',
   `downloads` int(10) NOT NULL default '0',
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS `01prefix_filedirs` (
   `hide` TINYINT( 1 ) NOT NULL DEFAULT '0',
   `sperre` TINYINT( 1 ) NOT NULL DEFAULT '0',
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS `01prefix_menue` (
   `subof` int(10) NOT NULL default '0',
   `hide` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=21 ;
+) ENGINE=MyISAM AUTO_INCREMENT=21 ;
 
 --
 -- Daten für Tabelle `01_1_menue`
@@ -140,7 +140,7 @@ CREATE TABLE IF NOT EXISTS `01prefix_module` (
   `serialized_data` MEDIUMBLOB NULL DEFAULT NULL COMMENT 'use unserialize() to get data back',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `idname` (`idname`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -166,15 +166,15 @@ CREATE TABLE IF NOT EXISTS `01prefix_rights` (
   `in_profile` tinyint(1) default NULL COMMENT 'Right kann im Profil selber bearbeitet werden',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `modul` (`modul`,`idname`)
-) TYPE=MyISAM AUTO_INCREMENT=16 ;
+) ENGINE=MyISAM AUTO_INCREMENT=16 ;
 
 --
 -- Daten für Tabelle `01prefix_rights`
 --
 
 INSERT INTO `01prefix_rights` (`id`, `modul`, `is_cat`, `catid`, `sortid`, `idname`, `name`, `exp`, `formename`, `formwerte`, `input_exp`, `standardwert`, `nodelete`, `hide`, `in_profile`) VALUES
-(1, '01acp', 1, 1, 1, 'cat_global', 'Globale Berechtigungen', NULL, '', '', NULL, NULL, 1, 0, NULL),
-(2, '01acp', 1, 2, 2, 'cat_allgsettings', 'Allgemeine Einstellungen', NULL, '', '', NULL, NULL, 0, 0, NULL),
+(1, '01acp', 1, 1, 1, 'cat_global', 'Globale Berechtigungen', NULL, '', '', NULL, NULL, 1, 0, 0),
+(2, '01acp', 1, 2, 2, 'cat_allgsettings', 'Allgemeine Einstellungen', NULL, '', '', NULL, NULL, 0, 0, 0),
 (3, '01acp', 0, 2, 1, 'profil', 'Eigenes Profil bearbeiten', '', 'Ja|Nein', '1|0', '', '1', 0, 0, 0),
 (4, '01acp', 0, 1, 5, 'upload', 'Dateien &amp; Bilder hochladen', '', 'Darf Dateien &amp; Bilder hochladen|Darf nichts hochladen', '1|0', '', '1', 0, 0, 0),
 (5, '01acp', 0, 3, 3, 'devmode', 'Entwicklungsansicht', 'Ist die Entwicklungsansicht aktiviert werden im ACP f&uuml;r den entsprechenden Benutzer weitergehende Systeminformationen angezeigt.\r\nNUR F&Uuml;R MODULENTWICKLER / ZUR FEHLERBEHEBUNG EMPFOHLEN!', 'Aktivieren|Deaktivieren', '1|0', '', '0', 1, 0, 0),
@@ -182,13 +182,13 @@ INSERT INTO `01prefix_rights` (`id`, `modul`, `is_cat`, `catid`, `sortid`, `idna
 (7, '01acp', 0, 1, 1, 'settings', 'Einstellungen bearbeiten', 'Benutzer kann globale Einstellungen und Einstellungen für Module vornehmen.', 'Ja|Nein', '1|0', '', '0', 1, 0, 0),
 (8, '01acp', 0, 1, 4, 'userverwaltung', 'Benutzer anlegen / bearbeiten', '', 'Keine Berechtigung|Neuen Benutzer anlegen|Benutzer anlegen &amp; bearbeiten', '0|1|2', '', '0', 1, 0, 0),
 (9, '01acp', 0, 3, 2, 'rights', 'Weitere Benutzerrechte anlegen', 'Benutzer mit Sicherheitslevel 10 k&ouml;nnen eigene, weitere Benutzerrechte f&uuml;r den Administrationsbereich oder einzelne Module anlegen.', 'Ja|Nein', '1|0', '', '0', 1, 0, 0),
-(10, '01acp', 1, 3, 4, 'cat_higherrights', 'Erweiterte Berechtigungen', NULL, '', '', NULL, NULL, 1, 0, NULL),
+(10, '01acp', 1, 3, 4, 'cat_higherrights', 'Erweiterte Berechtigungen', NULL, '', '', NULL, NULL, 1, 0, 0),
 (11, '01acp', 0, 2, 2, 'signatur', 'Signatur', NULL, 'textarea', '5|50', NULL, NULL, 0, 0, 1),
 (12, '01acp', 0, 3, 1, 'addsettings', 'Weitere Einstellungsm&ouml;glichkeiten', 'Benutzer mit Sicherheitslevel 10 k&ouml;nnen eigene, weitere Einstellungsm&ouml;glichkeiten f&uuml;r den Administrationsbereich oder einzelne Module anlegen.', 'Ja|Nein', '1|0', '', '0', 1, 0, 0),
-(13, '01acp', 1, 4, 3, 'cat_modulaccess', 'Modulzugriff', NULL, '', '', NULL, NULL, 1, 0, NULL),
+(13, '01acp', 1, 4, 3, 'cat_modulaccess', 'Modulzugriff', NULL, '', '', NULL, NULL, 1, 0, 0),
 (14, '01acp', 0, 1, 3, 'module', 'Module verwalten', 'Module installieren und aktualisieren', 'Ja|Nein', '1|0', '', '0', 1, 0, 0),
 (15, '01acp', 0, 1, 2, 'editcomments', 'Kommentare bearbeiten &amp; freischalten', '', 'Ja|Nein', '1|0', '', '0', 0, 0, 0),
-(16, '01acp', 0, 2, 3, 'notepad', 'Notizblock', '', 'textarea', '5|50', '', '', '0', '0', '1');
+(16, '01acp', 0, 2, 3, 'notepad', 'Notizblock', '', 'textarea', '5|50', '', '', 0, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -214,7 +214,7 @@ CREATE TABLE IF NOT EXISTS `01prefix_settings` (
   `hide` tinyint(1) default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `modul` (`modul`,`idname`)
-) TYPE=MyISAM AUTO_INCREMENT=24 ;
+) ENGINE=MyISAM AUTO_INCREMENT=24 ;
 
 --
 -- Daten für Tabelle `01prefix_settings`
@@ -280,7 +280,7 @@ CREATE TABLE IF NOT EXISTS `01prefix_user` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `mail` (`mail`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM AUTO_INCREMENT=1 ;
 
 --
 -- Daten für Tabelle `01prefix_user`
@@ -292,5 +292,3 @@ INSERT INTO `01prefix_user` (`id`, `username`, `mail`, `password`, `level`, `las
 -- --------------------------------------------------------
 
 COMMIT;
-
--- 01ACP Copyright 2008 by Michael Lorer - 01-Scripts.de

@@ -1,12 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <!--
-	01ACP - Copyright 2008-2010 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2011 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Installationsdatei
-	#fv.1200#
+	#fv.121#
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -58,7 +58,7 @@ if(isset($_REQUEST['step']) && $_REQUEST['step'] == 7 &&
 						'".mysql_real_escape_string($_POST['email'])."',
 						'".pwhashing($_POST['passwort1'])."',
 						'10',
-						'',
+						'0',
 						'0',
 						'1',
 						'1',
