@@ -1,12 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2011 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Module verwalten
-	#fv.1102#
+	#fv.121#
 */
 
 $menuecat = "01acp_module";
@@ -315,8 +315,57 @@ elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "update" &&
 	include_once($moduldir.$_REQUEST['modul']."/_updates.php");
 	
 	}
+
+
+
+
+
+
+
+
+
+// MODUL LÖSCHEN (Abfrage)
+elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "delete" &&
+	isset($_REQUEST['modul']) && !empty($_REQUEST['modul']) &&
+	file_exists($moduldir.$_REQUEST['modul']."/_functions.php") &&
+	file_exists($moduldir.$_REQUEST['modul']."/_headinclude.php")){
 	
-	
+	if(function_exists("_".$modul."_DeleteModul"))	
+		echo "<p class=\"meldung_error\">M&ouml;chten Sie das Modul <b>".$_REQUEST['modul']."</b> wirklich komplett
+		und unwiderruflich l&ouml;schen?<br />
+		<br />
+		<b>Bitte beachten Sie: Dieser Vorgang kann nicht r&uuml;ckg&auml;ngig gemacht werden.<br />
+		Legen Sie ggf. vor dem Fortfahren ein Backup Ihrer Datenbank an!</b><br />
+		<br />
+		<a href=\"".$filename."?action=dodelete&amp;modul=".$_REQUEST['modul']."\">Ja, ich m&ouml;chte das ".$_REQUEST['modul']."-Modul unwiderruflich l&ouml;schen</a> | <b><a href=\"module.php\">Nein, abbrechen</a></b></p>";
+	else
+		echo "<p class=\"meldung_error\">F&uuml;r dieses Modul existiert leider noch keine L&ouml;sch-Routine.<br />
+		Diese Funktion wird mit dem n&auml;chsten Update des Moduls nachgeliefert.<br />
+		<br />
+		<a href=\"module.php\">&laquo; Zur&uuml;ck</a></p>";
+	}	
+// MODUL LÖSCHEN (Durchführen)
+elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "dodelete" &&
+	isset($_REQUEST['modul']) && !empty($_REQUEST['modul']) &&
+	file_exists($moduldir.$_REQUEST['modul']."/_functions.php") &&
+	file_exists($moduldir.$_REQUEST['modul']."/_headinclude.php")){
+
+	if(function_exists("_".$modul."_DeleteModul")){
+		call_user_func("_".$modul."_DeleteModul");
+		
+		echo "<p class=\"meldung_ok\">Das Modul <b>".$_REQUEST['modul']."</b> wurde erfolgreich
+		aus der Datenbank entfernt<br />
+		Sie k&ouml;nnen nun per FTP-Programm das Verzeichnis <i>01scripts/01module/".$modul."</i> l&ouml;schen.<br />
+		<br />
+		<a href=\"module.php\">Zur&uuml;ck zur Modul-&Uuml;bersicht</a></p>";
+		}
+	else
+		echo "<p class=\"meldung_error\">F&uuml;r dieses Modul existiert leider noch keine L&ouml;sch-Routine.<br />
+		Diese Funktion wird mit dem n&auml;chsten Update des Moduls nachgeliefert.<br />
+		<br />
+		<a href=\"module.php\">&laquo; Zur&uuml;ck</a></p>";
+	}
+		
 	
 	
 	
@@ -372,13 +421,14 @@ redirect('module.php')
 <table border="0" align="center" width="100%" cellpadding="3" cellspacing="5" class="rundrahmen">
 
     <tr>
-		<td class="tra" width="20" align="center">&nbsp;</td>
-		<td class="tra" width="35" align="center">&nbsp;</td>
-        <td class="tra" width="130"><b>Modul-ID-Name</b></td>
+		<td class="tra" style="width:20px;">&nbsp;</td>
+		<td class="tra" style="width:35px;">&nbsp;</td>
+        <td class="tra" style="width:130px;"><b>Modul-ID-Name</b></td>
 		<td class="tra"><b>Titel</b></td>
-		<td class="tra" width="100"><b>Version</b></td>
-		<td class="tra" width="30">&nbsp;</td>
-		<td class="tra" width="30">&nbsp;</td>
+		<td class="tra" style="width:100px;"><b>Version</b></td>
+		<td class="tra" style="width:30px;">&nbsp;<!-- Info --></td>
+		<td class="tra" style="width:30px;">&nbsp;<!-- Deaktivieren --></td>
+		<td class="tra" style="width:30px;">&nbsp;<!-- Löschen --></td>
 	</tr>
 
 <?PHP
@@ -412,9 +462,9 @@ while($dir = readdir($readverz)){
 			$version = $module[$dir]['version'];
 			$titel = $module[$dir]['instname'];
 			if($module[$dir]['aktiv'] == 1)
-				$deaktiv = "<a href=\"".$filename."?aktiv=0&amp;modul=".$dir."\"><img src=\"images/icons/icon_deaktivieren.gif\" alt=\"Icon\" title=\"Modul deaktivieren (wird im ACP nicht mehr angezeigt)\" /></a>";
+				$deaktiv = "<a href=\"".$filename."?aktiv=0&amp;modul=".$dir."\"><img src=\"images/icons/icon_deaktivieren.gif\" alt=\"Stop-Icon\" title=\"Modul deaktivieren (wird im ACP nicht mehr angezeigt)\" /></a>";
 			else
-				$deaktiv = "<a href=\"".$filename."?aktiv=1&amp;modul=".$dir."\"><img src=\"images/icons/icon_aktivieren.gif\" alt=\"Icon\" title=\"Modul aktivieren (wird im ACP wieder angezeigt)\" /></a>";
+				$deaktiv = "<a href=\"".$filename."?aktiv=1&amp;modul=".$dir."\"><img src=\"images/icons/icon_aktivieren.gif\" alt=\"Play-Icon\" title=\"Modul aktivieren (wird im ACP wieder angezeigt)\" /></a>";
 			}
 		elseif(in_array($dir,$inst_module) && $module[$dir]['version'] < $vinfoxml->$xml_modname->version){
 			$install = "<a href=\"".$vinfoxml->$xml_modname->updateurl."\" target=\"_blank\"><img src=\"images/icons/icon_update.gif\" alt=\"Plus-Symbol\" title=\"Modul ".$xml->titel." aktualisieren\" /></a>";
@@ -424,9 +474,9 @@ while($dir = readdir($readverz)){
 			$version = $module[$dir]['version'];
 			$titel = $module[$dir]['instname'];
 			if($module[$dir]['aktiv'] == 1)
-				$deaktiv = "<a href=\"".$filename."?aktiv=0&amp;modul=".$dir."\"><img src=\"images/icons/icon_deaktivieren.gif\" alt=\"Icon\" title=\"Modul deaktivieren (wird im ACP nicht mehr angezeigt)\" /></a>";
+				$deaktiv = "<a href=\"".$filename."?aktiv=0&amp;modul=".$dir."\"><img src=\"images/icons/icon_deaktivieren.gif\" alt=\"Stop-Icon\" title=\"Modul deaktivieren (wird im ACP nicht mehr angezeigt)\" /></a>";
 			else
-				$deaktiv = "<a href=\"".$filename."?aktiv=1&amp;modul=".$dir."\"><img src=\"images/icons/icon_aktivieren.gif\" alt=\"Icon\" title=\"Modul aktivieren (wird im ACP wieder angezeigt)\" /></a>";
+				$deaktiv = "<a href=\"".$filename."?aktiv=1&amp;modul=".$dir."\"><img src=\"images/icons/icon_aktivieren.gif\" alt=\"Play-Icon\" title=\"Modul aktivieren (wird im ACP wieder angezeigt)\" /></a>";
 			}
 		elseif(in_array($dir,$inst_module) && $module[$dir]['version'] >= $xml->version){
 			$install = "<a href=\"javascript:hide_unhide_tr('_".$module[$dir]['idname']."');\"><img src=\"images/icons/kreis_frage.gif\" alt=\"Fragezeichen\" title=\"Informationen zum Einbinden des Moduls ein/ausblenden\" /></a>";
@@ -436,9 +486,9 @@ while($dir = readdir($readverz)){
 			$version = $module[$dir]['version'];
 			$titel = $module[$dir]['instname'];
 			if($module[$dir]['aktiv'] == 1)
-				$deaktiv = "<a href=\"".$filename."?aktiv=0&amp;modul=".$dir."\"><img src=\"images/icons/icon_deaktivieren.gif\" alt=\"Icon\" title=\"Modul deaktivieren (wird im ACP nicht mehr angezeigt)\" /></a>";
+				$deaktiv = "<a href=\"".$filename."?aktiv=0&amp;modul=".$dir."\"><img src=\"images/icons/icon_deaktivieren.gif\" alt=\"Stop-Icon\" title=\"Modul deaktivieren (wird im ACP nicht mehr angezeigt)\" /></a>";
 			else
-				$deaktiv = "<a href=\"".$filename."?aktiv=1&amp;modul=".$dir."\"><img src=\"images/icons/icon_aktivieren.gif\" alt=\"Icon\" title=\"Modul aktivieren (wird im ACP wieder angezeigt)\" /></a>";
+				$deaktiv = "<a href=\"".$filename."?aktiv=1&amp;modul=".$dir."\"><img src=\"images/icons/icon_aktivieren.gif\" alt=\"Play-Icon\" title=\"Modul aktivieren (wird im ACP wieder angezeigt)\" /></a>";
 			}
 
 
@@ -451,10 +501,11 @@ while($dir = readdir($readverz)){
 		<td class=\"".$class."\" align=\"center\"><b class=\"".$vcolorclass."\">".$version."</b></td>
 		<td class=\"".$class."\" align=\"center\">".$install."</td>
 		<td class=\"".$class."\" align=\"center\">".$deaktiv."</td>
+		<td class=\"".$class."\" align=\"center\"><a href=\"".$filename."?action=delete&amp;modul=".$dir."\"><img src=\"images/icons/cancel.gif\" alt=\"Rotes X\" title=\"Modul l&ouml;schen\" /></a></td>
 </tr>";
 
 		echo "<tr id=\"_".$module[$dir]['idname']."\" style=\"display:none;\">
-		<td class=\"".$class."\" colspan=\"7\">".$xml->includeinfo."</td>
+		<td class=\"".$class."\" colspan=\"8\">".$xml->includeinfo."</td>
 </tr>";
         }
 	clearstatcache(); 
@@ -471,5 +522,4 @@ while($dir = readdir($readverz)){
 }else $flag_loginerror = true;
 include("system/foot.php");
 
-// 01ACP Copyright 2008 by Michael Lorer - 01-Scripts.de
 ?>
