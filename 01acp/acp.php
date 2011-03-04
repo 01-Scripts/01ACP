@@ -1,12 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2011 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Startseite des ACP-Bereich
-	#fv.1002#
+	#fv.121#
 */
 
 $menuecat = "01acp_start";
@@ -83,7 +83,7 @@ if($flag_showacpRSS && ACPSTART_RSSFEED_URL != "" && $rss01){
 	for($x=0;$x<4;$x++){
 		echo "<p>".substr($rss01->channel->item->$x->pubDate,0,25)."<br />";
 		echo "<a href=\"".$rss01->channel->item->$x->link."\" target=\"_blank\"><b>";
-		echo $rss01->channel->item->$x->title;
+		echo utf8_decode($rss01->channel->item->$x->title);
 		echo "</b></a></p>";
 		}
 	}
