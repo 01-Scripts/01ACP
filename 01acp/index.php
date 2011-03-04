@@ -37,9 +37,9 @@ if(isset($_GET['action']) && $_GET['action'] == "logout"){
 	$message = "<script type=\"text/javascript\">redirect(\"index.php?logout=1\");</script>";
     $message .= "<p class=\"meldung_hinweis\"><b>Sie werden weitergeleitet.</b><br />Falls Ihr Browser keine Weiterleitung unterstützt klicken Sie bitte <a href=\"index.php?logout=1\">hier</a>.</p>";
     }
-if(isset($_GET['logout']) && $_GET['logout'] == 1){
+if(isset($_GET['logout']) && $_GET['logout'] == 1)
     $message = "<p class=\"meldung_ok\"><b>Sie wurden erfolgreich abgemeldet.</b></p>";
-    }
+
 
 // Cookie vorhanden?
 if(isset($_COOKIE[$instnr.'_start_auth_01acp']) && !empty($_COOKIE[$instnr.'_start_auth_01acp']) && strlen($_COOKIE[$instnr.'_start_auth_01acp']) == 32 && !isset($_GET['action']) && !isset($_GET['logout'])){
@@ -65,43 +65,48 @@ if(isset($_COOKIE[$instnr.'_start_auth_01acp']) && !empty($_COOKIE[$instnr.'_sta
 	
 // Login wurde abgeschickt
 if(isset($_POST['send']) && $_POST['send'] == 1){
-    $loginpass = pwhashing($_POST['password']);
-	
-	$list = mysql_query("SELECT id,username,password,startpage,cookiehash FROM ".$mysql_tables['user']." WHERE username='".mysql_real_escape_string($_POST['username'])."' AND password='".$loginpass."' AND id != '0' LIMIT 1");
-	$menge = mysql_num_rows($list);
-	while($row = mysql_fetch_assoc($list)){
-		// Session erstellen
-		$_SESSION['01_idsession_'.$salt] = $row['id'];
-		$_SESSION['01_passsession_'.$salt] = $row['password'];
+
+	if($settings['acp_captcha4login'] == 0 || isset($_POST['antispam']) && md5($_POST['antispam']) == $_SESSION['antispam01'] && $settings['acp_captcha4login'] == 1){
+		$loginpass = pwhashing($_POST['password']);
 		
-		// Cookie erstellen
-		if(isset($_POST['setcookie']) && $_POST['setcookie'] == 1){
-			if(empty($row['cookiehash'])){
-				mt_srand((double)microtime()*1000000); 
-				$zahl = mt_rand(100000, 999999999999);	
-				$cookiehash = md5($zahl.time().$salt.$instnr);
-				
-				mysql_query("UPDATE ".$mysql_tables['user']." SET cookiehash='".$cookiehash."' WHERE id='".$row['id']."' LIMIT 1");
-				$row['cookiehash'] = $cookiehash;
+		$list = mysql_query("SELECT id,username,password,startpage,cookiehash FROM ".$mysql_tables['user']." WHERE username='".mysql_real_escape_string($_POST['username'])."' AND password='".$loginpass."' AND id != '0' LIMIT 1");
+		$menge = mysql_num_rows($list);
+		while($row = mysql_fetch_assoc($list)){
+			// Session erstellen
+			$_SESSION['01_idsession_'.$salt] = $row['id'];
+			$_SESSION['01_passsession_'.$salt] = $row['password'];
+			
+			// Cookie erstellen
+			if(isset($_POST['setcookie']) && $_POST['setcookie'] == 1){
+				if(empty($row['cookiehash'])){
+					mt_srand((double)microtime()*1000000); 
+					$zahl = mt_rand(100000, 999999999999);	
+					$cookiehash = md5($zahl.time().$salt.$instnr);
+					
+					mysql_query("UPDATE ".$mysql_tables['user']." SET cookiehash='".$cookiehash."' WHERE id='".$row['id']."' LIMIT 1");
+					$row['cookiehash'] = $cookiehash;
+					}
+				setcookie($instnr."_start_auth_01acp",$row['cookiehash'],time()+60*60*24*14);
 				}
-			setcookie($instnr."_start_auth_01acp",$row['cookiehash'],time()+60*60*24*14);
+			
+			// LastLogin in DB aktualisieren
+			mysql_query("UPDATE ".$mysql_tables['user']." SET lastlogin='".time()."' WHERE id='".$row['id']."' LIMIT 1");
+			
+			//Weiterleiten:
+			if($row['startpage'] == "01acp")
+				$message = "<script type=\"text/javascript\">redirect(\"acp.php\");</script>";
+			else
+				$message = "<script type=\"text/javascript\">redirect(\"_loader.php?modul=".$row['startpage']."\");</script>";
+			$message .= "<p class=\"meldung_ok\"><b>Login erfolgreich, Sie werden weitergeleitet.</b><br />Falls Ihr Browser keine Weiterleitung unterst&uuml;tzt klicken Sie bitte <a href=\"acp.php\">hier</a>.</p>";
 			}
-		
-		// LastLogin in DB aktualisieren
-		mysql_query("UPDATE ".$mysql_tables['user']." SET lastlogin='".time()."' WHERE id='".$row['id']."' LIMIT 1");
-		
-		//Weiterleiten:
-		if($row['startpage'] == "01acp")
-			$message = "<script type=\"text/javascript\">redirect(\"acp.php\");</script>";
-		else
-			$message = "<script type=\"text/javascript\">redirect(\"_loader.php?modul=".$row['startpage']."\");</script>";
-		$message .= "<p class=\"meldung_ok\"><b>Login erfolgreich, Sie werden weitergeleitet.</b><br />Falls Ihr Browser keine Weiterleitung unterst&uuml;tzt klicken Sie bitte <a href=\"acp.php\">hier</a>.</p>";
+			
+		if($menge < 1)
+			$message = "<p class=\"meldung_error\"><b>Login war nicht erfolgreich!</b><br />Bitte &uuml;berpr&uuml;fen Sie
+				Benutzernamen und Passwort und probieren Sie es erneut.</p>";
 		}
-		
-	if($menge < 1){
-		$message = "<p class=\"meldung_error\"><b>Login war nicht erfolgreich!</b><br />Bitte &uuml;berpr&uuml;fen Sie
-			Benutzernamen und Passwort und probieren Sie es erneut.</p>";
-		}
+	else
+		$message = "<p class=\"meldung_error\"><b>Login nicht m&ouml;glich!</b><br />
+			Bitte f&uuml;llen Sie das Captcha korrekt aus!</p>"; 
     }
 // Überprüfen des Passwort-Zusenden-Formulars
 elseif(isset($_POST['send']) && $_POST['send'] == 2){
@@ -123,10 +128,9 @@ elseif(isset($_POST['send']) && $_POST['send'] == 2){
         $message = "<p class=\"meldung_ok\"><b>Ein neues Passwort wurde an Ihre E-Mail-Adresse verschickt.</b></p>";
 		}
 
-	if($menge < 1){
+	if($menge < 1)
 		$message = "<p class=\"meldung_error\"><b>Passwort konnte nicht zugestellt werden!</b><br />Bitte &uuml;berpr&uuml;fen Sie
 			Benutzernamen / E-Mail-Adresse und probieren Sie es erneut.</p>";
-		}
     }
 
 
@@ -138,9 +142,12 @@ echo $message;
 <div class="box_centered" id="loginform" style="display:block;">
 	<h2>Login</h2>
 	
-	<p class="big">Benutzername: <input type="text" name="username" value="<?PHP echo $_POST['username']; ?>" size="20" /></p>
-	<p class="big"><span style="margin-right:38px;">Passwort:</span> <input type="password" name="password" size="20" /></p>
-	<p class="big"><span style="margin-right:18px;">2 Wochen eingeloggt bleiben?</span> <input type="checkbox" name="setcookie" value="1" /></p>
+	<p class="big"><label for="input_username">Benutzername:</label> <input type="text" name="username" value="<?PHP echo $_POST['username']; ?>" id="input_username" size="20" /></p>
+	<p class="big"><span style="margin-right:38px;"><label for="input_password">Passwort:</label></span> <input type="password" name="password" id="input_password" size="20" /></p>
+	<?php if($settings['acp_captcha4login'] == 1){ ?>
+	<p class="big"><span style="margin-right:18px;"><?php echo create_Captcha(); ?></span> <input type="text" name="antispam" size="20" /></p>
+	<?php } ?>
+	<p class="big"><span style="margin-right:18px;"><label for="input_cookie">2 Wochen eingeloggt bleiben?</label></span> <input type="checkbox" name="setcookie" id="input_cookie" value="1" /></p>
 	<p class="small"><a href="javascript: hide_unhide('loginform'); hide_unhide('passwordbox');">Passwort vergessen?</a></p>
 	<p align="right"><input type="submit" name="absenden" class="input" value="Einloggen &raquo;" /></p>
 
@@ -153,8 +160,8 @@ echo $message;
 	<h2>Passwort vergessen?</h2>
 	<p>Benutzername <b>ODER</b> E-Mail-Adresse eingeben:</p>
 	
-	<p class="big">Benutzername: <input type="text" name="username" value="<?PHP echo $_POST['username']; ?>" size="20" /></p>
-	<p class="big">E-Mail-Adresse: <input type="text" name="email" value="<?PHP echo $_POST['email']; ?>" size="20" /></p>
+	<p class="big"><label for="forgotpw_username">Benutzername:</label> <input type="text" name="username" value="<?PHP if(isset($_POST['username'])){ echo $_POST['username']; } ?>" id="forgotpw_username" size="20" /></p>
+	<p class="big"><label for="forgotpw_email">E-Mail-Adresse:</label> <input type="text" name="email" value="<?PHP if(isset($_POST['email'])){ echo $_POST['email']; } ?>" id="forgotpw_email" size="20" /></p>
 	<p class="small"><a href="javascript: hide_unhide('loginform'); hide_unhide('passwordbox');">&laquo; Zur&uuml;ck zum Login</a></p>
 	<p align="right"><input type="submit" name="absenden" class="input" value="Neues Passwort anfordern &raquo;" /></p>
 

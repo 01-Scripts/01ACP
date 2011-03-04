@@ -247,7 +247,8 @@ INSERT INTO `01prefix_settings` (`id`, `modul`, `is_cat`, `catid`, `sortid`, `id
 (24, '01acp', 0, 1, 0, 'installed', 'installiert', '', 'text', '10', '', '1', '0', 0, 1),
 (25, '01acp', 0, 3, 7, 'comments_zensur','Zensur aktivieren?','','Ja|Nein','1|0','','0','1', 0, 0),
 (26, '01acp', 0, 3, 8, 'comments_badwords','Zu zensierende W&ouml;rter','Pro Zeile ein Wort eingeben, welches zensiert werden soll.','textarea','5|50','','','', 0, 0),
-(27, '01acp', 0, 3, 9, 'comments_zensurlimit','Kommentar abweisen ab','-1 weist keine Kommentare ab','text','4','erkannten W&ouml;rtern.','5','5', 0, 0);
+(27, '01acp', 0, 3, 9, 'comments_zensurlimit','Kommentar abweisen ab','-1 weist keine Kommentare ab','text','4','erkannten W&ouml;rtern.','5','5', 0, 0),
+(28, '01acp', 0, 1, 4, 'acp_captcha4login', 'Captcha bei ACP-Login verwenden?', '', 'Ja|Nein', '1|0', '', '0', '0', 1, 0);
 
 -- --------------------------------------------------------
 
