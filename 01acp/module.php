@@ -351,6 +351,24 @@ elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "dodelete" &&
 	file_exists($moduldir.$_REQUEST['modul']."/_headinclude.php")){
 
 	if(function_exists("_".$modul."_DeleteModul")){
+		// Modul-Eintrag entfernen
+		mysql_query("DELETE FROM ".$mysql_tables['module']." WHERE idname = '".$modul."' LIMIT 1");
+		
+		// Menü-Einträge entfernen
+		mysql_query("DELETE FROM ".$mysql_tables['menue']." WHERE modul = '".$modul."'");
+		
+		// Settings entfernen
+		mysql_query("DELETE FROM ".$mysql_tables['settings']." WHERE modul = '".$modul."'");
+		
+		// Rechte entfernen
+		mysql_query("DELETE FROM ".$mysql_tables['rights']." WHERE modul = '".$modul."'");
+		mysql_query("DELETE FROM ".$mysql_tables['rights']." WHERE modul = '01acp' AND idname = '".$modul."' LIMIT 1");
+		mysql_query("ALTER TABLE `".$mysql_tables['user']."` DROP `01acp_".$modul."`");
+		
+		// ACP-Startseite ggf zurücksetzen
+		mysql_query("UPDATE ".$mysql_tables['user']." SET startpage = '01acp' WHERE startpage = '".$modul."'");
+		
+		// Modulspezifische Aufräumarbeiten
 		call_user_func("_".$modul."_DeleteModul");
 		
 		echo "<p class=\"meldung_ok\">Das Modul <b>".$_REQUEST['modul']."</b> wurde erfolgreich
