@@ -22,7 +22,7 @@ if($flag_sessionbugfix && isset($_GET['sessiondata']) && !empty($_GET['sessionda
 
 // Userberechtigungen in Array $userdata[] einlesen:
 if(!isset($hide_userdata)){
-	if(isset($_SESSION['01_idsession']) && isset($_SESSION['01_passsession'])){
+	if(isset($_SESSION['01_idsession_'.$salt]) && isset($_SESSION['01_passsession_'.$salt])){
 		$userdata = getUserdata("",TRUE);
 		if($userdata['sperre'] == 1){
 			$flag_loginerror = true;

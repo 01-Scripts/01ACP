@@ -1,12 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2009 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2011 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Layout / Framework für Popup-Fenster
-	#fv.1200#
+	#fv.121#
 */
 
 // Session starten:
@@ -83,7 +83,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "change_pw"){
 	isset($_POST['old_pw']) && pwhashing($_POST['old_pw']) == $userdata['password']){
 		// Passwort ändern, DB aktualisieren, Session aktualisieren
 		mysql_query("UPDATE ".$mysql_tables['user']." SET password='".pwhashing($_POST['new_pw1'])."', cookiehash='' WHERE id='".$userdata['id']."' LIMIT 1");
-		$_SESSION['01_passsession'] = pwhashing($_POST['new_pw1']);
+		$_SESSION['01_passsession_'.$salt] = pwhashing($_POST['new_pw1']);
 		
 		echo "<p class=\"meldung_ok\">Das Passwort wurde erfolgreich ge&auml;ndert.<br />
 			<a href=\"javascript:window.close();\">Fenster schlie&szlig;en</a></p>";
@@ -539,6 +539,5 @@ echo "<p class=\"meldung_error\">Fehler: Sie haben keine Berechtigung diesen Ber
 ?>
 </div>
 
-<!-- 01ACP Copyright 2008 by Michael Lorer - 01-Scripts.de -->
 </body>
 </html>

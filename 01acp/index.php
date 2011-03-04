@@ -1,12 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2011 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Login-Formular für ACP-Bereich
-	#fv.1002#
+	#fv.121#
 */
 
 $dontshow = true;
@@ -47,8 +47,8 @@ if(isset($_COOKIE[$instnr.'_start_auth_01acp']) && !empty($_COOKIE[$instnr.'_sta
 	$menge = mysql_num_rows($list);
 	while($row = mysql_fetch_assoc($list)){
 		// Session erstellen
-		$_SESSION['01_idsession'] = $row['id'];
-		$_SESSION['01_passsession'] = $row['password'];
+		$_SESSION['01_idsession_'.$salt] = $row['id'];
+		$_SESSION['01_passsession_'.$salt] = $row['password'];
 		
 		// LastLogin in DB aktualisieren
 		mysql_query("UPDATE ".$mysql_tables['user']." SET lastlogin='".time()."' WHERE id='".$row['id']."' LIMIT 1");
@@ -71,8 +71,8 @@ if(isset($_POST['send']) && $_POST['send'] == 1){
 	$menge = mysql_num_rows($list);
 	while($row = mysql_fetch_assoc($list)){
 		// Session erstellen
-		$_SESSION['01_idsession'] = $row['id'];
-		$_SESSION['01_passsession'] = $row['password'];
+		$_SESSION['01_idsession_'.$salt] = $row['id'];
+		$_SESSION['01_passsession_'.$salt] = $row['password'];
 		
 		// Cookie erstellen
 		if(isset($_POST['setcookie']) && $_POST['setcookie'] == 1){
@@ -180,6 +180,4 @@ if($menge < 1 && isset($_POST['send']) && $_POST['send'] == 2){
 
 <?PHP
 include("system/foot.php");
-
-// 01ACP Copyright 2008 by Michael Lorer - 01-Scripts.de
 ?>

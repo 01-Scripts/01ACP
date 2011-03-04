@@ -1414,7 +1414,7 @@ RETURN: Array mit den Userdaten. Name entspricht MySQL-Spaltennamen (ohne ModulP
 		Es werden nur globale Berechtigungenund die jeweiligen Modul-Berechtigungen geladen
   */
 function getUserdata($uid,$login=FALSE){
-global $modul,$mysql_tables;
+global $modul,$mysql_tables,$salt;
 
 $list = mysql_query("SELECT modul,idname FROM ".$mysql_tables['rights']." WHERE (modul = '01acp' OR modul='".mysql_real_escape_string($modul)."') AND is_cat='0'");
 while($row = mysql_fetch_array($list)){
@@ -1423,7 +1423,7 @@ while($row = mysql_fetch_array($list)){
 	}
 
 if($login)
-	$list = mysql_query("SELECT id,username,mail,password,level,lastlogin,startpage,sperre,".implode(",",$loadrights)." FROM ".$mysql_tables['user']." WHERE id='".mysql_real_escape_string($_SESSION['01_idsession'])."' AND password='".mysql_real_escape_string($_SESSION['01_passsession'])."' LIMIT 1");
+	$list = mysql_query("SELECT id,username,mail,password,level,lastlogin,startpage,sperre,".implode(",",$loadrights)." FROM ".$mysql_tables['user']." WHERE id='".mysql_real_escape_string($_SESSION['01_idsession_'.$salt])."' AND password='".mysql_real_escape_string($_SESSION['01_passsession_'.$salt])."' LIMIT 1");
 if(!empty($uid) && $uid > 0 && is_numeric($uid) && $login)
 	$list = mysql_query("SELECT id,username,mail,password,level,lastlogin,startpage,sperre,".implode(",",$loadrights)." FROM ".$mysql_tables['user']." WHERE id='".mysql_real_escape_string($uid)."' LIMIT 1");
 $fieldmenge = mysql_num_fields($list);
