@@ -16,7 +16,7 @@ tinyMCEPopup.requireLangPack();
 				}
 			else{ var link1 = ''; var link2 = ''; }
 			
-			var inhalt = link1+'<img src="'+path+'showpics.php?img='+file+'&amp;size='+size+'" alt="Hochgeladene Bilddatei" />'+link2+' <br />';
+			var inhalt = link1+'<img src="'+path+'showpics.php?img='+file+'&size='+size+'" alt="Hochgeladene Bilddatei" />'+link2+' <br />';
 
 			tinyMCEPopup.editor.execCommand('mceInsertContent', false, inhalt);
 			tinyMCEPopup.close();
