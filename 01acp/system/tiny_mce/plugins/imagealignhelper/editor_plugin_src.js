@@ -22,7 +22,6 @@
 
 					var float = tinymce.DOM.getStyle(node, "float");
 
-					dom.setStyle(node, "margin", "");
 					dom.removeClass(node, "justifyleft");
 					dom.removeClass(node, "justifyright");
 

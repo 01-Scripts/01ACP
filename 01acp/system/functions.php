@@ -769,6 +769,7 @@ else
 $return .= "
 <script language=\"javascript\" type=\"text/javascript\">
 tinyMCE.init({
+extended_valid_elements : 'img[!src|border:0|alt|title|width|height|style|class]a[name|href|target|title|onclick]',
 cleanup_on_startup : true,
 theme : 'advanced',
 language : 'de',
@@ -809,7 +810,7 @@ switch($barlook){
 	table_row_limit : 25,
 	table_col_limit : 25,";
 	
-	$plugins = "advimage,filemanager,paste,table,emotions,media,imagealignhelper";
+	$plugins = "advimage,filemanager,paste,table,emotions,media,imagealignhelper,inlinepopups";
   break;
   case "none":
     $return .= "theme_advanced_buttons1 : \"".$bar_own."\",";
