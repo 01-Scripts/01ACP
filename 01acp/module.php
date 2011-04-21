@@ -463,6 +463,7 @@ while($dir = readdir($readverz)){
 			$icon = "<img src=\"".$moduldir.$dir."/".$xml->icon."\" alt=\"Icon\" title=\"".$xml->titel."\" />";
 		else $icon = "";
 		
+		$del	 = "<a href=\"".$filename."?action=delete&amp;modul=".$dir."\"><img src=\"images/icons/cancel.gif\" alt=\"Rotes X\" title=\"Modul l&ouml;schen\" /></a>";
 		if(!in_array($dir,$inst_module)){
 			$install = "<a href=\"".$filename."?action=install&amp;modul=".$dir."&amp;step=1\"><img src=\"images/icons/icon_install.gif\" alt=\"Plus-Symbol\" title=\"Modul ".$xml->titel." installieren\" /></a>";
 			$installed = " <b class=\"red\">*nicht installiert*</b>";
@@ -471,6 +472,7 @@ while($dir = readdir($readverz)){
 			$version = $xml->version;
 			$titel = $xml->titel;
 			$deaktiv = "";
+			$del	 = "";
 			}
 		elseif(in_array($dir,$inst_module) && $module[$dir]['version'] < $xml->version){
 			$install = "<a href=\"".$filename."?action=update&amp;modul=".$dir."&amp;step=1\"><img src=\"images/icons/icon_update.gif\" alt=\"Plus-Symbol\" title=\"Modul ".$xml->titel." aktualisieren\" /></a>";
@@ -519,7 +521,7 @@ while($dir = readdir($readverz)){
 		<td class=\"".$class."\" align=\"center\"><b class=\"".$vcolorclass."\">".$version."</b></td>
 		<td class=\"".$class."\" align=\"center\">".$install."</td>
 		<td class=\"".$class."\" align=\"center\">".$deaktiv."</td>
-		<td class=\"".$class."\" align=\"center\"><a href=\"".$filename."?action=delete&amp;modul=".$dir."\"><img src=\"images/icons/cancel.gif\" alt=\"Rotes X\" title=\"Modul l&ouml;schen\" /></a></td>
+		<td class=\"".$class."\" align=\"center\">".$del."</td>
 </tr>";
 
 		echo "<tr id=\"_".$module[$dir]['idname']."\" style=\"display:none;\">

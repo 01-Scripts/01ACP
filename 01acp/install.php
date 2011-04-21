@@ -464,7 +464,7 @@ Halten Sie für die weitere Installations Ihr FTP-Programm sowie Ihre MySQL-Zugan
 $flag_error = FALSE;
 
 // PHP-Version
-if(PHP_VERSION >= 5)
+if(PHP_VERSION >= 5.2)
 	$phpv_class = "tr_green";
 else{
 	$phpv_class = "tr_red";
@@ -524,7 +524,7 @@ else{
 	</tr>
 	
 	<tr>
-		<td width="70%" class="<?PHP echo $phpv_class; ?>"><b>PHP-Version</b> (Version 5 oder höher)</td>
+		<td width="70%" class="<?PHP echo $phpv_class; ?>"><b>PHP-Version</b> (Version 5.2 oder höher)</td>
 		<td class="<?PHP echo $phpv_class; ?>"><b><?PHP echo PHP_VERSION; ?></b></td>
 	</tr>
 

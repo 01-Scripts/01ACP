@@ -1,0 +1,8 @@
+Alle JavaScript-Dateien finden Sie hier in unkomprimierter Form:
+https://gist.github.com/622911
+
+Das JavaScript-Framework ist hier zu finden:
+http://mootools.net/
+
+Zum Einsatz kommt die Core-Version 1.2.5
+und die More-Version 1.2.4.4
