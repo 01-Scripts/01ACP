@@ -5,7 +5,33 @@
 */
 if(!$update_ok) exit;
 
-if(isset($_POST['update']) && $_POST['update'] == "1101_zu_1200"){
+if(isset($_POST['update']) && $_POST['update'] == "1200_zu_121"){
+	// Neue Einstellung anlegen:
+	$sql_insert = "INSERT INTO ".$mysql_tables['settings']." (modul,is_cat,catid,sortid,idname,name,exp,formename,formwerte,input_exp,standardwert,wert,nodelete,hide) VALUES
+				('01acp', 0, 1, 4, 'acp_captcha4login', 'Captcha bei ACP-Login verwenden?', '', 'Ja|Nein', '1|0', '', '0', '0', 1, 0);";
+	$result = mysql_query($sql_insert) OR die(mysql_error());
+	
+	// Versionsnummer aktualisieren
+	mysql_query("UPDATE ".$mysql_tables['settings']." SET standardwert = '1.2.1', wert = '1.2.1' WHERE idname = 'acpversion' LIMIT 1");
+	
+?>
+<div class="meldung_ok">
+	<b>Herzlichen Gl&uuml;ckwunsch!</b><br />
+	Das Update auf <b>Version 1.2.1 des 01ACP</b> wurde erfolgreich beendet.<br />
+	<br />
+	<b>Folgende Dateien &amp; Verzeichnisse werden nicht mehr ben&ouml;tigt und k&ouml;nnen gel&ouml;scht werden:</b>
+	<ul>
+	<li>01acp/images/icons/f&auml;rben.txt</li>
+	<li>01acp/system/tiny_mce/plugins/layer/*</li>
+	<li>01acp/system/tiny_mce/plugins/nonbreaking/*</li>
+	<li>01acp/system/tiny_mce/plugins/style/*</li>
+	<li>01acp/system/tiny_mce/plugins/visualchars/*</li>
+	<li>01acp/system/tiny_mce/plugins/xhtmlxtras/*</li>
+	</ul>
+</div>
+<?PHP
+	}
+elseif(isset($_POST['update']) && $_POST['update'] == "1101_zu_1200"){
 	// Extra Feld für Timestamp hinzufügen und mit Werten aus "name" füllen
 	mysql_query("ALTER TABLE `".$mysql_tables['files']."` ADD `timestamp` INT( 10 ) NULL AFTER `modul`");
 	mysql_query("ALTER TABLE `".$mysql_tables['files']."` ADD `downloads` INT( 10 ) NOT NULL DEFAULT '0'");	
