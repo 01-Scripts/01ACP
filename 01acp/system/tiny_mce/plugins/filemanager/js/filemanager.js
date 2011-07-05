@@ -7,41 +7,38 @@ tinyMCEPopup.requireLangPack();
 
 		insertpic : function(path,file) {
 			// Insert the contents from the input into the document
-
-			var size = document.getElementsByName('maxsize')[0].value;
+			var ed = tinyMCEPopup.editor, dom = ed.dom;
+			var size = document.getElementsByName('maxsize')[0].value;			
+			var inhalt = '<img src="'+path+'showpics.php?img='+file+'&amp;size='+size+'" alt="Hochgeladene Bilddatei" />';
 				
 			if(document.getElementsByName('link')[0].checked == true){
-				var link1 = '<a href="'+path+file+'" target="_blank" class="lightbox">';
-				var link2 = '</a>';
+				tinyMCEPopup.execCommand('mceInsertContent', false, dom.createHTML('a', {href : path+file, target: '_blank', class: 'lightbox'}, inhalt ));
 				}
-			else{ var link1 = ''; var link2 = ''; }
+			else{
+				tinyMCEPopup.execCommand('mceInsertContent', false, dom.createHTML('img', {
+				src : path+'showpics.php?img='+file+'&size='+size,
+				alt : 'Hochgeladene Bilddatei',
+				border : 0
+				}));
+				}
 			
-			var inhalt = link1+'<img src="'+path+'showpics.php?img='+file+'&amp;size='+size+'" alt="Hochgeladene Bilddatei" />'+link2+' <br />';
-
-			tinyMCEPopup.editor.execCommand('mceInsertContent', false, inhalt);
 			tinyMCEPopup.close();
 		},
 		
 		insertpic_flist : function(path,file) {
 			// Insert the contents from the input into the document
+			var ed = tinyMCEPopup.editor, dom = ed.dom;
+			var inhalt = '<img src="'+path+'showpics.php?img='+file+'&amp;size=300" alt="Hochgeladene Bilddatei" />';
 
-			var link1 = '<a href="'+path+file+'" target="_blank" class="lightbox">';
-			var link2 = '</a>';
-			
-			var inhalt = link1+'<img src="'+path+'showpics.php?img='+file+'&size=300" alt="Hochgeladene Bilddatei" />'+link2+' <br />';
-
-			//var editorid = tinyMCE.selectedInstance.editorId;
-			//tinyMCE.execInstanceCommand(editorid,'mceInsertContent', false, inhalt);
-			tinyMCEPopup.editor.execCommand('mceInsertContent', false, inhalt);
+			tinyMCEPopup.execCommand('mceInsertContent', false, dom.createHTML('a', {href : path+file, target: '_blank', class: 'lightbox'}, inhalt ));
 			tinyMCEPopup.close();
 		},
 		
 		insertfile : function(path,file,orgname) {
 			// Insert the contents from the input into the document
-
-			var inhalt = '<a href="'+path+'download.php?fileid='+file+'">'+orgname+' herunterladen</a> <br />';
-
-			tinyMCEPopup.editor.execCommand('mceInsertContent', false, inhalt);
+			var ed = tinyMCEPopup.editor, dom = ed.dom;
+			
+			tinyMCEPopup.execCommand('mceInsertContent', false, dom.createHTML('a', {href : path+'download.php?fileid='+file, target: '_blank', class: 'lightbox'}, orgname+' herunterladen' ));
 			tinyMCEPopup.close();
 		}
 	};
