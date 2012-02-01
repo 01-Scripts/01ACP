@@ -1638,6 +1638,7 @@ if(isset($autor) && !empty($autor) &&
 	if(mysql_num_rows($clist) == 0){
 	
 		if($flag_utf8) $comment = utf8_decode(htmlentities($comment));
+        else $comment = htmlentities($comment);
 		// Eintragung in Datenbank vornehmen:
 		$sql_insert = "INSERT INTO ".$mysql_tables['comments']." (modul,postid,subpostid,uid,frei,timestamp,ip,autor,email,url,comment,smilies,bbc) VALUES (
 						'".mysql_real_escape_string($modul)."',
@@ -1650,7 +1651,7 @@ if(isset($autor) && !empty($autor) &&
 						'".mysql_real_escape_string(strip_tags($autor))."',
 						'".$email."',
 						'".$url."',
-						'".mysql_real_escape_string(htmlentities($comment))."',
+						'".mysql_real_escape_string($comment)."',
 						'".$c_smilies."',
 						'".$c_bbc."'
 						)";
