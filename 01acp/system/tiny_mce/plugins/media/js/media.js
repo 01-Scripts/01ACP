@@ -326,6 +326,17 @@
 					setVal('src', src);
 					setVal('media_type', data.type);
 				}
+				
+            	// Vimeo
+            	if (src.match(/^http:\/\/(?:www\.){0,1}vimeo\.com\/(\d+)$/) ) {
+            	    data.width = 400;
+            	    data.height = 225;
+					data.params.frameborder = '0';
+					data.type = 'iframe';
+            	    src = 'http://player.vimeo.com/video/' + src.match(/^http:\/\/(?:www\.){0,1}vimeo\.com\/(\d+)$/)[1] + '?title=0&amp;byline=0&amp;portrait=0';
+					setVal('src', src);
+					setVal('media_type', data.type);            	    
+            	}
 
 				if (data.type == 'video') {
 					if (!data.video.sources)
