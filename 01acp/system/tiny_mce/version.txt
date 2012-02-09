@@ -1,3 +1,4 @@
-TinyMCE-Version:	3.3.9.4
-Datum:			13.04.11
+TinyMCE-Version:	3.4.8
+Datum:				09.02.2012
+Changelog:			http://www.tinymce.com/develop/changelog/index.php?type=tinymce
 http://tinymce.moxiecode.com/index.php
