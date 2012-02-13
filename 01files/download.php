@@ -1,12 +1,12 @@
 <?php
 /*
-	01ACP - Copyright 2008-2011 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2012 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 
 	Modul:		01ACP
 	Dateiinfo:	File-Download-Funktion
-	#fv.121#
+	#fv.122#
 */
 
 $flag_acp = false;
@@ -42,10 +42,7 @@ if(isset($_GET['fileid']) && !empty($_GET['fileid']) && is_numeric($_GET['fileid
 			header("Expires: 0");
 			header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 			header("Cache-Control: private",false);
-			if(getEndung($row['name']) == "pdf")
-			    header("Content-Type : application/pdf");
-			else
-				header("Content-Type: application/force-download");
+			header("Content-Type: application/force-download");
 			header("Content-Disposition: attachment; filename=\"".basename($row['orgname'])."\";" );
 			header("Content-Transfer-Encoding: binary");
 			header("Content-Length: ".filesize($folder.$row['name']));
