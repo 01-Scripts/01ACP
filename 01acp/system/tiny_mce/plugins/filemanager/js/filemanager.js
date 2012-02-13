@@ -38,7 +38,7 @@ tinyMCEPopup.requireLangPack();
 			// Insert the contents from the input into the document
 			var ed = tinyMCEPopup.editor, dom = ed.dom;
 			
-			tinyMCEPopup.execCommand('mceInsertContent', false, dom.createHTML('a', {href : path+'download.php?fileid='+file, target: '_blank', class: 'lightbox'}, orgname+' herunterladen' ));
+			tinyMCEPopup.execCommand('mceInsertContent', false, dom.createHTML('a', {href : path+'download.php?fileid='+file, target: '_blank'}, orgname+' herunterladen' ));
 			tinyMCEPopup.close();
 		}
 	};
