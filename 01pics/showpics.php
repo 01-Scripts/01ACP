@@ -6,7 +6,7 @@
 	
 	Modul:		01ACP
 	Dateiinfo:	Dynamisches Generieren von Thumbnails
-	#fv.1002#
+	#fv.122#
 */
 
 include("../01acp/system/functions.php");
@@ -26,10 +26,13 @@ if(file_exists($_GET['img'])){
 		echo $file; 
 		fclose($file);
 		}
-	elseif(isset($_GET['img']) && !empty($_GET['img']) && getEndung($_GET['img']) == "gif" && strlen($_GET['img']) == 14){
+	elseif(isset($_GET['img']) && !empty($_GET['img']) && getEndung($_GET['img']) == "gif"){
 		$_GET['img'] = str_replace("../","",$_GET['img']);
+		$_GET['img'] = str_replace(".gif","",$_GET['img']);
+		$_GET['img'] = str_replace(".","",$_GET['img']);
+		$_GET['img'] = str_replace("/","",$_GET['img']);
 		
-		$file = fread(fopen($_GET['img'], "r"), filesize($_GET['img']));
+		$file = fread(fopen($_GET['img'].".gif", "r"), filesize($_GET['img'].".gif"));
 		header("Content-type: image/gif");
 		echo $file; 
 		fclose($file);
@@ -47,6 +50,5 @@ else{
 	echo $file; 
 	fclose($file);
 	}
-	
-// 01ACP Copyright 2008 by Michael Lorer - 01-Scripts.de
+
 ?>
