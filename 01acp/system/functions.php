@@ -647,15 +647,31 @@ else{
   $resize			Gewünschte Größe in Pixeln
 
   */
-function showpic($sourcefile,$resize){
+function showpic($sourcefile,$resize=0){
 global $_GLOBALS;
 
 $split = explode(".", strtolower($sourcefile),2);
 $filename = $split[0];
 $fileType = $split[1];
 
+// Seperate Behandlung bei resize == 0 --> direkte Bildausgabe ohne Komprimierung
+if($resize == 0){
+    $file = fread(fopen($sourcefile, "r"), filesize($sourcefile));
+	
+    switch($fileType){
+	  case('png'):
+		header("Content-type: image/png");
+	  break;
+	  default:
+		header("Content-type: image/jpg");
+	  }
+	
+    echo $file;
+	fclose($file);
+	return;
+}
 // Thumbnail ausgeben, wenn vorhanden
-if(file_exists($filename."_tb_".ACP_TB_WIDTH.".".$fileType) && $resize == ACP_TB_WIDTH || file_exists($filename."_tb_".ACP_TB_WIDTH200.".".$fileType) && $resize == ACP_TB_WIDTH200){
+elseif(file_exists($filename."_tb_".ACP_TB_WIDTH.".".$fileType) && $resize == ACP_TB_WIDTH || file_exists($filename."_tb_".ACP_TB_WIDTH200.".".$fileType) && $resize == ACP_TB_WIDTH200){
 	switch($fileType){
 	  case('png'):
 		$sourcefile_id = imagecreatefrompng($filename."_tb_".$resize.".".$fileType);
