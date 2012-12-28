@@ -196,12 +196,12 @@ ShowAjaxError('<b>Fehler:</b><br />Sie haben nicht alle ben&ouml;tigen Felder au
 	Die Datei wurde erfolgreich ersetzt!
 </p>
 
-<table border="0" align="center" width="100%" cellpadding="3" cellspacing="5" class="rundrahmen">
+<table border="0" align="center" width="100%" cellpadding="3" cellspacing="5" class="rundrahmen trab">
 
     <tr>
-		<td class="tra" width="10" align="center"><!--Mehrfach-Löschen--></td>
-		<td class="tra" width="70" align="center"><img src="images/icons/refresh.gif" alt="Refresh-Icon" title="Seite neu laden" onclick="document.location.reload(true);" /></td>
-        <td class="tra"><b>Dateiname</b>
+		<td style="width:10px;" align="center"><!--Mehrfach-Löschen--></td>
+		<td style="width:70px;" align="center"><img src="images/icons/refresh.gif" alt="Refresh-Icon" title="Seite neu laden" onclick="document.location.reload(true);" /></td>
+        <td><b>Dateiname</b>
 			<a href="<?PHP echo $filename2."&amp;uid=".$_REQUEST['uid']; ?>&amp;sort=asc&amp;orderby=filename"><img src="images/icons/sort_asc.gif" alt="Icon: Pfeil nach oben" title="Aufsteigend sortieren" /></a>
 			<a href="<?PHP echo $filename2."&amp;uid=".$_REQUEST['uid']; ?>&amp;sort=desc&amp;orderby=filename"><img src="images/icons/sort_desc.gif" alt="Icon: Pfeil nach unten" title="Absteigend sortieren (DESC)" /></a>
 			<span style="float:right;">
@@ -209,17 +209,17 @@ ShowAjaxError('<b>Fehler:</b><br />Sie haben nicht alle ben&ouml;tigen Felder au
 			<a href="<?PHP echo $filename2."&amp;uid=".$_REQUEST['uid']; ?>&amp;sort=desc&amp;orderby=downloads"><img src="images/icons/sort_desc.gif" alt="Icon: Pfeil nach unten" title="Absteigend sortieren (DESC)" /></a>
 			</span>
 		</td>
-		<td class="tra" width="90"><b>Größe</b>			
+		<td style="width:90px;"><b>Größe</b>			
 			<a href="<?PHP echo $filename2."&amp;uid=".$_REQUEST['uid']; ?>&amp;sort=asc&amp;orderby=size"><img src="images/icons/sort_asc.gif" alt="Icon: Pfeil nach oben" title="Aufsteigend sortieren" /></a>
 			<a href="<?PHP echo $filename2."&amp;uid=".$_REQUEST['uid']; ?>&amp;sort=desc&amp;orderby=size"><img src="images/icons/sort_desc.gif" alt="Icon: Pfeil nach unten" title="Absteigend sortieren (DESC)" /></a>
 		</td>
-		<td class="tra" width="90"><b>Datum</b>			
+		<td style="width:90px;"><b>Datum</b>			
 			<a href="<?PHP echo $filename2."&amp;uid=".$_REQUEST['uid']; ?>&amp;sort=asc&amp;orderby=date"><img src="images/icons/sort_asc.gif" alt="Icon: Pfeil nach oben" title="Aufsteigend sortieren" /></a>
 			<a href="<?PHP echo $filename2."&amp;uid=".$_REQUEST['uid']; ?>&amp;sort=desc&amp;orderby=date"><img src="images/icons/sort_desc.gif" alt="Icon: Pfeil nach unten" title="Absteigend sortieren (DESC)" /></a>
 		</td>
-		<td class="tra" width="130"><b>Benutzer</b></td>
-		<td class="tra" width="20">&nbsp;<!--Ersetzen--></td>
-		<td class="tra" width="20" align="center"><!--Löschen--><img src="images/icons/icon_trash.gif" alt="M&uuml;lleimer" title="Datei l&ouml;schen" /></td>
+		<td style="width:130px;"><b>Benutzer</b></td>
+		<td style="width:20px;">&nbsp;<!--Ersetzen--></td>
+		<td style="width:20px;" align="center"><!--Löschen--><img src="images/icons/icon_trash.gif" alt="M&uuml;lleimer" title="Datei l&ouml;schen" /></td>
     </tr>
 
 <?PHP
@@ -227,8 +227,8 @@ echo getFilelist($query,$filename2."&amp;sort=".$_GET['sort']."&amp;orderby=".$_
 ?>
 
     <tr>
-		<td class="tra" align="center" style="border: 1px solid #B00;"><input type="checkbox" name="delselected" value="1" /></td>
-		<td class="tra" colspan="7" align="left">
+		<td align="center" style="border: 1px solid #B00;"><input type="checkbox" name="delselected" value="1" /></td>
+		<td colspan="7" align="left">
 			<input type="submit" name="sending" value="Markierte Dateien l&ouml;schen" class="input" />
 			Es erfolgt <b>keine</b> weitere Abfrage!
 		</td>

@@ -8,27 +8,34 @@ tinyMCEPopup.requireLangPack();
 		insertpic : function(path,file) {
 			// Insert the contents from the input into the document
 			var ed = tinyMCEPopup.editor, dom = ed.dom;
-			var size = document.getElementsByName('maxsize')[0].value;			
-			var inhalt = '<img src="'+path+'showpics.php?img='+file+'&amp;size='+size+'" alt="Hochgeladene Bilddatei" />';
 				
-			if(document.getElementsByName('link')[0].checked == true){
+            // Original Dateigröße oder kleinere Kantenlänge?
+            if(document.getElementsByName('usesize')[0].checked == true){
+				var size = '';
+			}
+            else{
+                var size = document.getElementsByName('maxsize')[0].value;
+            }			
+			var inhalt = '<img src="'+path+'showpics.php?img='+file+'&amp;size='+size+'" alt="Bild" />';
+            
+            if(document.getElementsByName('link')[0].checked == true){
 				tinyMCEPopup.execCommand('mceInsertContent', false, dom.createHTML('a', {href : path+file, target: '_blank', class: 'lightbox'}, inhalt ));
 				}
 			else{
 				tinyMCEPopup.execCommand('mceInsertContent', false, dom.createHTML('img', {
 				src : path+'showpics.php?img='+file+'&size='+size,
-				alt : 'Hochgeladene Bilddatei',
+				alt : 'Bild',
 				border : 0
 				}));
-				}
+			}
 			
 			tinyMCEPopup.close();
 		},
 		
-		insertpic_flist : function(path,file) {
+		insertpic_flist : function(path,file,size) {
 			// Insert the contents from the input into the document
 			var ed = tinyMCEPopup.editor, dom = ed.dom;
-			var inhalt = '<img src="'+path+'showpics.php?img='+file+'&amp;size=300" alt="Hochgeladene Bilddatei" />';
+			var inhalt = '<img src="'+path+'showpics.php?img='+file+'&amp;size='+size+'" alt="Bild" />';
 
 			tinyMCEPopup.execCommand('mceInsertContent', false, dom.createHTML('a', {href : path+file, target: '_blank', class: 'lightbox'}, inhalt ));
 			tinyMCEPopup.close();
@@ -43,4 +50,4 @@ tinyMCEPopup.requireLangPack();
 		}
 	};
 
-	tinyMCEPopup.onInit.add(FileDialog.init);
+tinyMCEPopup.onInit.add(FileDialog.init);

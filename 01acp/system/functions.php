@@ -650,12 +650,17 @@ else{
 function showpic($sourcefile,$resize=0){
 global $_GLOBALS;
 
-$split = explode(".", strtolower($sourcefile),2);
-$filename = $split[0];
-$fileType = $split[1];
+$split = pathinfo(strtolower($sourcefile));
+$filename = $split['filename'];
+$fileType = $split['extension'];
+
+// Get ImageInfo/Size and biggest side
+$info = getimagesize($sourcefile);
+if($info[0] >= $info[1]) $bigside = $info[0];
+else $bigside = $info[1];
 
 // Seperate Behandlung bei resize == 0 --> direkte Bildausgabe ohne Komprimierung
-if($resize == 0){
+if($resize == 0 || $bigside <= $resize){
     $file = fread(fopen($sourcefile, "r"), filesize($sourcefile));
 	
     switch($fileType){
@@ -687,14 +692,8 @@ elseif(file_exists($filename."_tb_".ACP_TB_WIDTH.".".$fileType) && $resize == AC
 	  }
 	}
 else{
-
-	$info = getimagesize($sourcefile);
-
-	// Resize images
-	if($info[0] >= $info[1]) $bigside = $info[0];
-	else $bigside = $info[1];
-
-	if($bigside > $resize){
+	// Resize
+    if($bigside > $resize){
 		$k = $bigside/$resize;
 		$picwidth = $info[0]/$k;
 		$picheight = $info[1]/$k;
@@ -889,25 +888,22 @@ if($dirid > 0){
 	$list = mysql_query("SELECT parentid,name FROM ".$mysql_tables['filedirs']." WHERE id = '".$dirid."' LIMIT 1");
 	$dirup = mysql_fetch_assoc($list);
 	
-	if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
-	
 	$return .= "<tr>\n    ";
-	if($show_edit) $return .= "<td align=\"center\" class=\"".$class."\"></td>";
-	if($show_tb) $return .= "<td align=\"center\" class=\"".$class."\"><a href=\"".$url."&amp;dir=".$dirup['parentid']."\"><img src=\"images/icons/dir_up.gif\" alt=\"PC-Verzeichnis mit Pfeil nach oben\" title=\"Verzeichnis aufw&auml;rts\" /></a></td>";
-	$return .= "<td class=\"".$class."\" colspan=\"".($colspan+2)."\"><div id=\"dir_".$dirup['parentid']."\" class=\"droppable\"><a href=\"".$url."&amp;dir=".$dirup['parentid']."\">Verzeichnis Aufw&auml;rts</a> | Sie befinden sich hier: <i>".stripslashes($dirup['name'])."</i></div></td>";
+	if($show_edit) $return .= "<td align=\"center\"></td>";
+	if($show_tb) $return .= "<td align=\"center\"><a href=\"".$url."&amp;dir=".$dirup['parentid']."\"><img src=\"images/icons/dir_up.gif\" alt=\"PC-Verzeichnis mit Pfeil nach oben\" title=\"Verzeichnis aufw&auml;rts\" /></a></td>";
+	$return .= "<td colspan=\"".($colspan+2)."\"><div id=\"dir_".$dirup['parentid']."\" class=\"droppable\"><a href=\"".$url."&amp;dir=".$dirup['parentid']."\">Verzeichnis Aufw&auml;rts</a> | Sie befinden sich hier: <i>".stripslashes($dirup['name'])."</i></div></td>";
 	$return .= "</tr>";	
 	}
 
 // Unterverzeichnisse auflisten:
 $list = mysql_query("SELECT id,parentid,name FROM ".$mysql_tables['filedirs']." WHERE parentid = '".$dirid."' ORDER BY name");
 while($row = mysql_fetch_assoc($list)){
-	if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
 	
 	$return .= "<tr id=\"dirid".$row['id']."\">\n    ";
-	if($show_edit) $return .= "<td align=\"center\" class=\"".$class."\"></td>";
-	if($show_tb) $return .= "<td align=\"center\" class=\"".$class."\"><a href=\"".$url."&amp;dir=".$row['id']."\"><img src=\"images/icons/folder.gif\" alt=\"PC-Verzeichnis\" title=\"Verzeichnis ausw&auml;hlen\" /></a></td>";
+	if($show_edit) $return .= "<td align=\"center\"></td>";
+	if($show_tb) $return .= "<td align=\"center\"><a href=\"".$url."&amp;dir=".$row['id']."\"><img src=\"images/icons/folder.gif\" alt=\"PC-Verzeichnis\" title=\"Verzeichnis ausw&auml;hlen\" /></a></td>";
 	if($show_edit && $userdata['dateimanager'] == 2){
-		$return .= "<td class=\"".$class."\" colspan=\"".$colspan."\">";
+		$return .= "<td colspan=\"".$colspan."\">";
 
 		$return .= "
 			<form id=\"editdirform_".$row['id']."\" action=\"_ajaxloader.php?modul=01acp&ajaxaction=savefiledir&id=".$row['id']."\" method=\"post\">
@@ -942,23 +938,22 @@ while($row = mysql_fetch_assoc($list)){
             </script>";
 		$return .= "</td>";
 		
-		$return .= "<td class=\"".$class."\" align=\"center\"><a href=\"javascript:hide_unhide('hide_showdir_".$row['id']."'); hide_unhide('hide_editdir_".$row['id']."');\"><img src=\"images/icons/icon_edit.gif\" alt=\"Icon: Datei bearbeiten\" title=\"Datei bearbeiten / ersetzen\" /></a></td>\n";
-		$return .= "<td class=\"".$class."\" align=\"center\"><a href=\"javascript:popup('dir_del1','".$row['id']."','".$row['name']."','',400,250);\"><img src=\"images/icons/icon_delete.gif\" alt=\"Icon: Datei l&ouml;schen\" title=\"Datei l&ouml;schen\" /></a></td>\n    ";
+		$return .= "<td align=\"center\"><a href=\"javascript:hide_unhide('hide_showdir_".$row['id']."'); hide_unhide('hide_editdir_".$row['id']."');\"><img src=\"images/icons/icon_edit.gif\" alt=\"Icon: Datei bearbeiten\" title=\"Datei bearbeiten / ersetzen\" /></a></td>\n";
+		$return .= "<td align=\"center\"><a href=\"javascript:popup('dir_del1','".$row['id']."','".$row['name']."','',500,250);\"><img src=\"images/icons/icon_delete.gif\" alt=\"Icon: Datei l&ouml;schen\" title=\"Datei l&ouml;schen\" /></a></td>\n    ";
 		}
 	else
-		$return .= "<td class=\"".$class."\" colspan=\"".$colspan."\"><a href=\"".$url."&amp;dir=".$row['id']."\">".stripslashes($row['name'])."</a></td>";
+		$return .= "<td colspan=\"".$colspan."\"><a href=\"".$url."&amp;dir=".$row['id']."\">".stripslashes($row['name'])."</a></td>";
 	$return .= "</tr>";
 	
 	}
 
 	if($show_edit)
-	    $return .= "\n<form action=\"".$filename2."\" method=\"post\" id=\"multidelform0815\">\n";
+	    $return .= "\n<form action=\"".$filename2."\" method=\"post\" id=\"multidelform0815\">\n<tr style=\"height: 0px;\"><td colspan=\"8\"></td></tr>";
 
 $downloads = $drag_start = $drag_ende = "";
 // "Normale Dateien" auflisten
 $list = mysql_query($query);
 while($row = mysql_fetch_array($list)){
-	if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
 	
 	switch($row['type']){
 	  case "pic":
@@ -972,15 +967,16 @@ while($row = mysql_fetch_array($list)){
 	$return .= "<tr id=\"id".$row['id']."\">\n    ";
 
 	if($show_edit)	
-		$return .= "<td class=\"".$class."\" align=\"center\"><input type=\"checkbox\"  name=\"delfiles[]\" value=\"".$row['id']."\" /></td>";
+		$return .= "<td align=\"center\"><input type=\"checkbox\"  name=\"delfiles[]\" value=\"".$row['id']."\" /></td>";
 	
-	if($show_tb){
-		$return .= "<td class=\"".$class."\" align=\"center\">";
+	// Thumbnail-Spalte anzeigen?
+    if($show_tb){
+		$return .= "<td align=\"center\">";
 		
 		if($row['type'] == "pic"){
-			$split = explode(".", strtolower($row['name']),2);
-			$filename = $split[0];
-			$fileType = $split[1];
+			$split = pathinfo(strtolower($row['name']));
+			$filename = $split['filename'];
+			$fileType = $split['extension'];
 			if(file_exists($picuploaddir.$filename."_tb_".ACP_TB_WIDTH.".".$fileType))
 				$return .= "<a href=\"".$picuploaddir.$row['name']."\" target=\"_blank\" class=\"lightbox\"><img src=\"".$picuploaddir.$filename."_tb_".ACP_TB_WIDTH.".".$fileType."\" alt=\"Hochgeladenes Bild\" /></a>";
 			else
@@ -992,11 +988,8 @@ while($row = mysql_fetch_array($list)){
 		$return .= "</td>\n    ";
 		}
 		
-	if($insert == "tinymce" && $row['type'] == "pic"){
-		$link1 = "<a href=\"javascript:FileDialog.insertpic_flist('".$picuploaddir."','".stripslashes($row['name'])."');\">";
-		$link2 = "</a>";
-		}
-	elseif($insert == "tinymce" && $row['type'] == "file"){
+	// Links für die verschiedenen Einfüge-Arten vorbereiten
+    if($insert == "tinymce" && $row['type'] == "file"){
 		$link1 = "<a href=\"javascript:FileDialog.insertfile('".$attachmentuploaddir."','".$row['id']."','".stripslashes($row['orgname'])."');\">";
 		$link2 = "</a>";
 		}
@@ -1008,7 +1001,8 @@ while($row = mysql_fetch_array($list)){
 		$link1 = ""; $link2 = "";
 		}
 	
-	if($show_edit && $userdata['dateimanager'] == 2){
+    // Zusätzliche Felder für Hits und Drag&Drop
+    if($show_edit && $userdata['dateimanager'] == 2){
 		if($row['type'] == "file")
 			$downloads = "<span style=\"float:right;\">".$row['downloads']."</span>";
 		else
@@ -1017,14 +1011,18 @@ while($row = mysql_fetch_array($list)){
 		$drag_ende = "</div>";
 		}
 	
-	$return .= "<td class=\"".$class."\">".$drag_start.$link1.substr(stripslashes($row['orgname']),0,40).$downloads.$link2.$drag_ende."</td>\n    ";
-	$return .= "<td class=\"".$class."\" align=\"center\">".parse_size($row['size'],"KB")." KB</td>\n    ";
-	if($show_date) $return .= "<td class=\"".$class."\" align=\"center\">".date("d.m.Y",$row['timestamp'])."</td>\n    ";
-	if($show_username) $return .= "<td class=\"".$class."\"><a href=\"".$url."&amp;uid=".$row['uid']."\">".$usernames[$row['uid']]."</a></td>\n    ";
+	if($insert == "tinymce" && $row['type'] == "pic")
+		$return .= "<td>".substr(stripslashes($row['orgname']),0,40)."<br />Einf&uuml;gen: <a href=\"javascript:FileDialog.insertpic_flist('".$picuploaddir."','".stripslashes($row['name'])."','');\">Original</a> | <a href=\"javascript:FileDialog.insertpic_flist('".$picuploaddir."','".stripslashes($row['name'])."','".TINY_TB_DEFAULT."');\">Verkleinert</a></td>\n    ";
+	else
+	   $return .= "<td>".$drag_start.$link1.substr(stripslashes($row['orgname']),0,40).$downloads.$link2.$drag_ende."</td>\n    ";
+	
+    $return .= "<td align=\"center\">".parse_size($row['size'],"KB")." KB</td>\n    ";
+	if($show_date) $return .= "<td align=\"center\">".date("d.m.Y",$row['timestamp'])."</td>\n    ";
+	if($show_username) $return .= "<td><a href=\"".$url."&amp;uid=".$row['uid']."\">".$usernames[$row['uid']]."</a></td>\n    ";
 	
 	if($show_edit){
-		$return .= "<td class=\"".$class."\" align=\"center\"><a href=\"javascript:popup('reuploader','".$row['type']."','".$row['id']."','".stripslashes($row['orgname'])."',620,480);\"><img src=\"images/icons/icon_edit.gif\" alt=\"Icon: Datei bearbeiten\" title=\"Datei bearbeiten / ersetzen\" /></a></td>\n";
-		$return .= "<td class=\"".$class."\" align=\"center\"><a href=\"javascript:popup('file_del1','".$row['id']."','".$row['type']."','".$row['name']."-3-3-".stripslashes($row['orgname'])."',400,".$popuph.");\"><img src=\"images/icons/icon_delete.gif\" alt=\"Icon: Datei l&ouml;schen\" title=\"Datei l&ouml;schen\" /></a></td>\n    ";
+		$return .= "<td align=\"center\"><a href=\"javascript:popup('reuploader','".$row['type']."','".$row['id']."','".stripslashes($row['orgname'])."',620,480);\"><img src=\"images/icons/icon_edit.gif\" alt=\"Icon: Datei bearbeiten\" title=\"Datei bearbeiten / ersetzen\" /></a></td>\n";
+		$return .= "<td align=\"center\"><a href=\"javascript:popup('file_del1','".$row['id']."','".$row['type']."','".$row['name']."-3-3-".stripslashes($row['orgname'])."',450,".$popuph.");\"><img src=\"images/icons/icon_delete.gif\" alt=\"Icon: Datei l&ouml;schen\" title=\"Datei l&ouml;schen\" /></a></td>\n    ";
 		}
 	
 	$return .= "</tr>\n\n";

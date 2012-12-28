@@ -1,12 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2011 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2012 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
-	Dateiinfo:	Formular & Logik für Dateiupload
-	#fv.121#
+	Dateiinfo:	Formular & Logik für Dateiupload + Ausgabe im Rahmen des TinyMCE-Editors
+	#fv.122#
 */
 
 if(!isset($filename)) $filename = $_SERVER['PHP_SELF'];
@@ -41,8 +41,7 @@ if(isset($userdata['id']) && $userdata['id'] > 0){
 			if($menge == 1){
 				while($row = mysql_fetch_array($list)){
 					$fupload = uploadfile($_FILES['new_datei']['name'],$_FILES['new_datei']['size'],$_FILES['new_datei']['tmp_name'],$_REQUEST['type'],"01acp",$row['name'],$_REQUEST['filedirid']);
-					$fupload['msg'] = "Die Datei <i>".$_REQUEST['delfile']."</i> wurde erfolgreich ersetzt.<br />
-							F&uuml;r die korrekte Ansicht der neuen Datei im Dateimanager kann ein mehrfacher Refresh (F5) n&ouml;tig sein!";
+					$fupload['msg'] = "Die Datei <i>".$_REQUEST['delfile']."</i> wurde erfolgreich ersetzt.";
 					}
 				}
 			else
@@ -102,12 +101,16 @@ window.setTimeout(\"opener.document.getElementById('ers_erfolgsmeldung').style.d
 			// TinyMCE - Bilder
 			elseif($fupload['fileart'] == "pic" && $_REQUEST['returnvalue'] == "tinymce" && 
 				!empty($_REQUEST['formname']) && !empty($_REQUEST['formfield'])){
-				$info = getimagesize($picuploaddir.$fupload['name']);
+                $info = getimagesize($picuploaddir.$fupload['name']);
 				if($info[0] >= $info[1]){ $bigside = $info[0]; }else{ $bigside = $info[1]; }
 				
+				if($bigside > TINY_TB_DEFAULT){ $c1 = ""; $c2 = " checked=\"checked\""; }
+				else{ $c1 = " checked=\"checked\""; $c2 = ""; }
+				
 				echo "<br />Bild einf&uuml;gen:<br />
-				<span class=\"small\">Maximale Kantenl&auml;nge: <input type=\"text\" name=\"maxsize\" size=\"5\" value=\"".$bigside."\" />px<br />
-				Link auf original Datei (maximale Gr&ouml;&szlig;e) setzen <input type=\"checkbox\" name=\"link\" value=\"1\" checked=\"checked\" /></span>
+				<span class=\"small\"><input type=\"radio\" name=\"usesize\" value=\"org\"".$c1." />Original Datei (".$info[0]."x".$info[1]." px) einf&uuml;gen<br />
+                <input type=\"radio\" name=\"usesize\" value=\"small\"".$c2." />Verkleinerte Version mit <input type=\"text\" name=\"maxsize\" value=\"".TINY_TB_DEFAULT."\" size=\"5\" />px Kantenl&auml;nge einf&uuml;gen<br />
+				<input type=\"checkbox\" name=\"link\" value=\"1\" checked=\"checked\" />Link auf original Datei (mit maximale Aufl&ouml;sung) setzen</span>
 				<input type=\"button\" value=\"Einf&uuml;gen\" class=\"input\" onclick=\"FileDialog.insertpic('".$picuploaddir."','".$fupload['name']."');\" />
 				</p>
 				
@@ -117,7 +120,7 @@ window.setTimeout(\"opener.document.getElementById('ers_erfolgsmeldung').style.d
 				
 				echo "<div style=\"float:right;\">
 				<a href=\"".$filename."&amp;deltype=pic&amp;del=1&amp;file=".$fupload['name']."\" style=\"color:red;\"><img src=\"images/icons/icon_delete.gif\" alt=\"Icon: L&ouml;schen\" title=\"Bild l&ouml;schen\" style=\"border:0; margin-right:8px;\" />Bild l&ouml;schen &raquo;</a><br />
-				<a href=\"".$filename."\"><img src=\"images/icons/icon_upload.gif\" alt=\"Weitere Datei hochladen\" style=\"border:0; margin-right:8px;\" />Weitere Datei hochladen &raquo;</a></div>";
+				<a href=\"".$filename."\"><img src=\"images/icons/icon_upload.gif\" alt=\"Weitere Datei hochladen\" style=\"width:16px; margin-right:8px;\" />Weitere Datei hochladen &raquo;</a></div>";
 				}
 			// TinyMCE - Dateien
 			elseif($fupload['fileart'] == "file" && $_REQUEST['returnvalue'] == "tinymce" && 
@@ -127,7 +130,7 @@ window.setTimeout(\"opener.document.getElementById('ers_erfolgsmeldung').style.d
 				<br /><br />
 				
 				<a href=\"".$filename."&amp;deltype=file&amp;del=1&amp;file=".$fupload['name']."\" style=\"color:red;\"><img src=\"images/icons/icon_delete.gif\" alt=\"Icon: L&ouml;schen\" title=\"Datei l&ouml;schen\" style=\"border:0; margin-right:8px;\" />Datei l&ouml;schen</a><br />
-				<a href=\"".$filename."\"><img src=\"images/icons/icon_upload.gif\" alt=\"Weitere Datei hochladen\" style=\"border:0; margin-right:8px;\" />Weitere Datei hochladen &raquo;</a></p>";
+				<a href=\"".$filename."\"><img src=\"images/icons/icon_upload.gif\" alt=\"Weitere Datei hochladen\" style=\"width:16px; margin-right:8px;\" />Weitere Datei hochladen &raquo;</a></p>";
 				}
 				
 			}
@@ -208,7 +211,7 @@ if(isset($_REQUEST['delfileid']) && !empty($_REQUEST['delfileid'])){
 	<input type=\"hidden\" name=\"olddir\" value=\"".$fileinfo['dir']."\" />
 	<input type=\"submit\" class=\"input\" value=\"Verschieben\" />
 	</form></div>";
-	echo "<p class=\"meldung_hinweis\">W&auml;hlen Sie eine neue Datei aus um die Datei <b>".$_REQUEST['delfile']."</b> zu ersetzt:</p>";
+	echo "<p class=\"meldung_hinweis\">W&auml;hlen Sie eine neue Datei, aus um die Datei <b>".$_REQUEST['delfile']."</b> zu ersetzt:</p>";
 	
 	$flag_showlist = FALSE;
 	}
@@ -247,8 +250,9 @@ if(isset($_REQUEST['delfileid']) && !empty($_REQUEST['delfileid'])){
 </form>
 <?php } ?>
 
-<!-- Fallback-Lösung! -->
+<!-- Fallback-Lösung! + Standard-Lösung für TinyMCE-Upload! -->
 <div id="fancy-fallback">
+<h2>Neue Datei hochladen</h2>
 <form enctype="multipart/form-data" action="<?PHP echo $filename; ?>" method="post">
 	<p>Bitte w&auml;hlen Sie auf Ihrer Festplatte eine Datei aus:<br />
 	<input type="file" name="new_datei" class="input_text" />&nbsp;&nbsp;
@@ -267,15 +271,13 @@ if(isset($_REQUEST['delfileid']) && !empty($_REQUEST['delfileid'])){
 		<?PHP
 		if(isset($_REQUEST['type']) && ($_REQUEST['type'] == "pic" || empty($_REQUEST['type'])) || !isset($_REQUEST['type'])){
 		?>
-		<b>Spezifikationen für Bilder:</b><br />
-		Maximale Dateigr&ouml;&szlig;e: <?PHP echo $settings['pic_size']; ?> KB<br />Erlaubte Dateiendungen: <?PHP echo $settings['pic_end']; ?><br />
+		<b>Spezifikationen für Bilder:</b> <?PHP echo $settings['pic_end']; ?>-Datei mit max. <?PHP echo $settings['pic_size']; ?> KB<br />
 		<?PHP
 		}
 		
 		if(isset($_REQUEST['type']) && ($_REQUEST['type'] == "file" || empty($_REQUEST['type'])) || !isset($_REQUEST['type'])){
 		?>
-		<b>Spezifikationen für Dateien:</b><br />
-		Maximale Dateigr&ouml;&szlig;e: <?PHP echo $settings['attachment_size']; ?> KB<br />Erlaubte Dateiendungen: <?PHP echo $settings['attachment_end']; ?><br />
+		<b>Spezifikationen für Dateien:</b> <?PHP echo $settings['attachment_end']; ?>-Datei mit max. <?PHP echo $settings['attachment_size']; ?> KB<br />
 		<?PHP
 		}
 		?>
@@ -298,14 +300,21 @@ if($flag_showlist && (isset($_REQUEST['look']) && ($_REQUEST['look'] == "list" |
 	if($userdata['dateimanager'] == 1) $query = "SELECT * FROM ".$mysql_tables['files']." WHERE type='".mysql_real_escape_string($_REQUEST['type'])."' AND uid='".$userdata['id']."'".$where." ORDER BY timestamp DESC,orgname,id";
 	elseif($userdata['dateimanager'] == 2) $query = "SELECT * FROM ".$mysql_tables['files']." WHERE type='".mysql_real_escape_string($_REQUEST['type'])."'".$where." ORDER BY timestamp DESC,orgname,id";
 	$query = makepages($query,$sites,"site",ACP_PER_PAGE);
+
+    if($_REQUEST['returnvalue'] == "tinymce" && $_REQUEST['type'] == "pic"){
+        echo "<h2 style=\"clear: both;\">Bild ausw&auml;hlen</h2>";
+        echo "<p>Bildgr&ouml;&szlig;e nach dem Einf&uuml;gen &auml;ndern: Bild ausw&auml;hlen und auf <img src=\"system/tiny_mce/plugins/filemanager/img/old_pics.gif\" alt=\"Bild bearbeiten\" title=\"Bild-Eigenschaften bearbeiten\" /> klicken.</p>";
+    }
+    elseif($_REQUEST['returnvalue'] == "tinymce" && $_REQUEST['type'] == "file")
+        echo "<h2 style=\"clear: both;\">Datei ausw&auml;hlen</h2>";
 ?>
-<table border="0" align="center" width="95%" cellpadding="3" cellspacing="5" class="rundrahmen" style="margin-top: 10px;">
+<table border="0" align="center" width="95%" cellpadding="3" cellspacing="5" class="rundrahmen trab" style="margin-top: 10px;">
 
     <tr>
-		<td class="tra" width="70" align="center"><img src="images/icons/refresh.gif" alt="Refresh-Icon" title="Seite neu laden" onclick="document.location.reload(true);" /></td>
-        <td class="tra"><b>Dateiname</b></td>
-		<td class="tra" width="80" align="center"><b>Größe</b></td>
-		<td class="tra" width="80" align="center"><b>Datum</b></td>
+		<td style="width:70px;" align="center"><img src="images/icons/refresh.gif" alt="Refresh-Icon" title="Seite neu laden" onclick="document.location.reload(true);" /></td>
+        <td><b>Dateiname</b></td>
+		<td style="width:80px;" align="center"><b>Größe</b></td>
+		<td style="width:80px;" align="center"><b>Datum</b></td>
     </tr>
 	
 <?PHP
