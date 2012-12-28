@@ -1,13 +1,13 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2011 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2012 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Globale PHP-Funktionen
 				Auf Funktionen kann nach dem Include der headinclude.php zugrgriffen werden
-	#fv.121#
+	#fv.122#
 */
 
 // E-Mail-Adresse auf äußerliche Gültigkeit überprüfen
@@ -626,10 +626,9 @@ RETURN: Endung (ohne Trennungspunkt)
 function getEndung($filestring){
 
 if(!empty($filestring)){
-	$endungsarray = explode(".",$filestring);
-	$endung = $endungsarray[count($endungsarray)-1];
+	$pfad_info = pathinfo ($filestring);
 	
-	return strtolower($endung);
+	return strtolower($pfad_info['extension']);
 	}
 else{
 	return "";
