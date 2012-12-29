@@ -498,17 +498,17 @@ function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="
 		
 		// Thumbnails löschen
 		if(file_exists($dir.$split[0]."_tb_".ACP_TB_WIDTH.".".$split[1])){
-			@clearstatcache();  
 			@chmod($dir.$split[0]."_tb_".ACP_TB_WIDTH.".".$split[1], 0777);
 			@unlink($dir.$split[0]."_tb_".ACP_TB_WIDTH.".".$split[1]);
-			}
-		
+			}		
 		if(file_exists($dir.$split[0]."_tb_".ACP_TB_WIDTH200.".".$split[1])){
-			@clearstatcache();  
 			@chmod($dir.$split[0]."_tb_".ACP_TB_WIDTH200.".".$split[1], 0777);
 			@unlink($dir.$split[0]."_tb_".ACP_TB_WIDTH200.".".$split[1]);
 			}
-		@clearstatcache();  
+		if(file_exists($dir.$split[0]."_tb_".$settings['thumbwidth'].".".$split[1])){
+			@chmod($dir.$split[0]."_tb_".$settings['thumbwidth'].".".$split[1], 0777);
+			@unlink($dir.$split[0]."_tb_".$settings['thumbwidth'].".".$split[1]);
+			}
 		@chmod($dir.$filename.".".$endung, 0777);
         }
     else
@@ -586,23 +586,23 @@ function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="
 RETURN: TRUE/FALSE
   */
 function delfile($dir,$file){
-global $mysql_tables;
+global $mysql_tables,$settings;
 
 $split = explode(".", strtolower($file),2);
 
 if(file_exists($dir.$split[0]."_tb_".ACP_TB_WIDTH.".".$split[1])){
-	@clearstatcache();  
 	@chmod($dir.$split[0]."_tb_".ACP_TB_WIDTH.".".$split[1], 0777);
 	@unlink($dir.$split[0]."_tb_".ACP_TB_WIDTH.".".$split[1]);
 	}
-	
 if(file_exists($dir.$split[0]."_tb_".ACP_TB_WIDTH200.".".$split[1])){
-	@clearstatcache();  
 	@chmod($dir.$split[0]."_tb_".ACP_TB_WIDTH200.".".$split[1], 0777);
 	@unlink($dir.$split[0]."_tb_".ACP_TB_WIDTH200.".".$split[1]);
 	}
+if(file_exists($dir.$split[0]."_tb_".$settings['thumbwidth'].".".$split[1])){
+	@chmod($dir.$split[0]."_tb_".$settings['thumbwidth'].".".$split[1], 0777);
+	@unlink($dir.$split[0]."_tb_".$settings['thumbwidth'].".".$split[1]);
+	}
 
-@clearstatcache();  
 @chmod($dir.$file, 0777);
 if(unlink($dir.$file)){
 	mysql_query("DELETE FROM ".$mysql_tables['files']." WHERE name='".mysql_real_escape_string($file)."' LIMIT 1");
@@ -648,7 +648,7 @@ else{
 
   */
 function showpic($sourcefile,$resize=0){
-global $_GLOBALS;
+global $_GLOBALS,$settings;
 
 $split = pathinfo(strtolower($sourcefile));
 $filename = $split['filename'];
@@ -676,7 +676,7 @@ if($resize == 0 || $bigside <= $resize){
 	return;
 }
 // Thumbnail ausgeben, wenn vorhanden
-elseif(file_exists($filename."_tb_".ACP_TB_WIDTH.".".$fileType) && $resize == ACP_TB_WIDTH || file_exists($filename."_tb_".ACP_TB_WIDTH200.".".$fileType) && $resize == ACP_TB_WIDTH200){
+elseif(file_exists($filename."_tb_".$settings['thumbwidth'].".".$fileType) && $resize == $settings['thumbwidth'] || file_exists($filename."_tb_".ACP_TB_WIDTH.".".$fileType) && $resize == ACP_TB_WIDTH || file_exists($filename."_tb_".ACP_TB_WIDTH200.".".$fileType) && $resize == ACP_TB_WIDTH200){
 	switch($fileType){
 	  case('png'):
 		$sourcefile_id = imagecreatefrompng($filename."_tb_".$resize.".".$fileType);
@@ -692,7 +692,7 @@ elseif(file_exists($filename."_tb_".ACP_TB_WIDTH.".".$fileType) && $resize == AC
 	  }
 	}
 else{
-	// Resize
+    // Resize
     if($bigside > $resize){
 		$k = $bigside/$resize;
 		$picwidth = $info[0]/$k;
@@ -723,7 +723,7 @@ else{
 	  case('png'):
 		header("Content-type: image/png");
 		imagecopyresampled($echofile_id, $sourcefile_id, 0, 0, 0, 0, $picwidth, $picheight, $info[0], $info[1]);
-		if($resize == ACP_TB_WIDTH || $resize == ACP_TB_WIDTH200)
+		if($resize == ACP_TB_WIDTH || $resize == ACP_TB_WIDTH200 || $resize == $settings['thumbwidth'])
 			imagepng($echofile_id,$filename."_tb_".$resize.".".$fileType);
 			
 		imagealphablending($echofile_id,TRUE);
@@ -731,9 +731,10 @@ else{
 		imagepng($echofile_id);
 	  break;
 	  default:
-		header("Content-type: image/jpg");
+		echo $settings['thumbwidth'];
+        header("Content-type: image/jpg");
 		imagecopyresampled($echofile_id, $sourcefile_id, 0, 0, 0, 0, $picwidth, $picheight, $info[0], $info[1]);
-		if($resize == ACP_TB_WIDTH || $resize == ACP_TB_WIDTH200)
+		if($resize == ACP_TB_WIDTH || $resize == ACP_TB_WIDTH200 || $resize == $settings['thumbwidth'])
 			imagejpeg($echofile_id,$filename."_tb_".$resize.".".$fileType,80);
 		imagejpeg($echofile_id);
 	  }
