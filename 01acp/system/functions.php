@@ -860,7 +860,7 @@ return $return;
 RETURN: Tabellenzeilen mit den entsprechenden Spalten
   */
 function getFilelist($query,$url,$show_edit,$show_tb,$show_date,$show_username,$insert){
-global $mysql_tables,$attachmentuploaddir,$picuploaddir,$_REQUEST,$userdata,$filename2;
+global $mysql_tables,$attachmentuploaddir,$picuploaddir,$_REQUEST,$userdata,$filename2,$settings;
 
 $return = "";
 
@@ -1012,7 +1012,7 @@ while($row = mysql_fetch_array($list)){
 		}
 	
 	if($insert == "tinymce" && $row['type'] == "pic")
-		$return .= "<td>".substr(stripslashes($row['orgname']),0,40)."<br />Einf&uuml;gen: <a href=\"javascript:FileDialog.insertpic_flist('".$picuploaddir."','".stripslashes($row['name'])."','');\">Original</a> | <a href=\"javascript:FileDialog.insertpic_flist('".$picuploaddir."','".stripslashes($row['name'])."','".TINY_TB_DEFAULT."');\">Verkleinert</a></td>\n    ";
+		$return .= "<td>".substr(stripslashes($row['orgname']),0,40)."<br />Einf&uuml;gen: <a href=\"javascript:FileDialog.insertpic_flist('".$picuploaddir."','".stripslashes($row['name'])."','');\">Original</a> | <a href=\"javascript:FileDialog.insertpic_flist('".$picuploaddir."','".stripslashes($row['name'])."','".$settings['thumbwidth']."');\">Verkleinert</a></td>\n    ";
 	else
 	   $return .= "<td>".$drag_start.$link1.substr(stripslashes($row['orgname']),0,40).$downloads.$link2.$drag_ende."</td>\n    ";
 	

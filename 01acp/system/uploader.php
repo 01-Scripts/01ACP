@@ -104,12 +104,12 @@ window.setTimeout(\"opener.document.getElementById('ers_erfolgsmeldung').style.d
                 $info = getimagesize($picuploaddir.$fupload['name']);
 				if($info[0] >= $info[1]){ $bigside = $info[0]; }else{ $bigside = $info[1]; }
 				
-				if($bigside > TINY_TB_DEFAULT){ $c1 = ""; $c2 = " checked=\"checked\""; }
+				if($bigside > $settings['thumbwidth']){ $c1 = ""; $c2 = " checked=\"checked\""; }
 				else{ $c1 = " checked=\"checked\""; $c2 = ""; }
 				
 				echo "<br />Bild einf&uuml;gen:<br />
 				<span class=\"small\"><input type=\"radio\" name=\"usesize\" value=\"org\"".$c1." />Original Datei (".$info[0]."x".$info[1]." px) einf&uuml;gen<br />
-                <input type=\"radio\" name=\"usesize\" value=\"small\"".$c2." />Verkleinerte Version mit <input type=\"text\" name=\"maxsize\" value=\"".TINY_TB_DEFAULT."\" size=\"5\" />px Kantenl&auml;nge einf&uuml;gen<br />
+                <input type=\"radio\" name=\"usesize\" value=\"small\"".$c2." />Verkleinerte Version mit <input type=\"text\" name=\"maxsize\" value=\"".$settings['thumbwidth']."\" size=\"5\" />px Kantenl&auml;nge einf&uuml;gen<br />
 				<input type=\"checkbox\" name=\"link\" value=\"1\" checked=\"checked\" />Link auf original Datei (mit maximale Aufl&ouml;sung) setzen</span>
 				<input type=\"button\" value=\"Einf&uuml;gen\" class=\"input\" onclick=\"FileDialog.insertpic('".$picuploaddir."','".$fupload['name']."');\" />
 				</p>
