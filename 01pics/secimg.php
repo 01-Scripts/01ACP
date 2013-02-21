@@ -1,17 +1,16 @@
 <?PHP
 session_start();
 /* 
-	01ACP - Copyright 2008 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Captcha-Funktion
-	#fv.1002#
+	#fv.122#
 */
 
 function rand_String($laenge){
-	mt_srand((double)microtime()*1000000); 
 	$zahl = mt_rand(1000, 9999);
 
 	$passzahl = md5($zahl);
@@ -32,5 +31,5 @@ $fontColor = imagecolorallocate($im, 70, 70, 70);
 
 imagettftext($im, $fontSize, 10, 5, 25, $fontColor, $font, $secCode);
 header("Content-Type: image/jpeg");
-imagejpeg($im,"",100);
+imagejpeg($im,NULL,100);
 ?>
