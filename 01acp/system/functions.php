@@ -368,7 +368,7 @@ if($row['formename'] == "text"){
 	
 // Textarea
 elseif($row['formename'] == "textarea"){
-	list($nrrows, $nrcols) = explode("|", stripslashes($row['formwerte']),2);
+	@list($nrrows, $nrcols) = explode("|", stripslashes($row['formwerte']),2);
 	$inputfield = "<textarea name=\"".$row['idname']."\" rows=\"".$nrrows."\" cols=\"".$nrcols."\" style=\"font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; font-style: normal;\">".stripslashes($row['wert'])."</textarea>";
 	}
 	
@@ -2115,7 +2115,7 @@ else
 $url_parameter = array();
 foreach($params as $param){
 	$value = $key = "";
-	list($key, $value) = explode("=", $param,2);
+	@list($key, $value) = explode("=", $param,2);
 	
 	if(!empty($value) && !empty($key)) $url_parameter[$key] = $value;
 	}
