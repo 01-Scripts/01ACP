@@ -1,6 +1,6 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2012 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
@@ -1168,8 +1168,8 @@ while($row = mysql_fetch_array($list)){
 	
 	if($option == "free" && $row['frei'] == 0) $return .= "<td class=\"".$class."\" align=\"center\"><img src=\"images/icons/ok.gif\" alt=\"OK\" title=\"Kommentar freischalten\" id=\"cfree".$row['id']."\" onclick=\"AjaxRequest.send('modul=01acp&ajaxaction=freecomment&id=".$row['id']."');\" /></td>\n";
 	
-	$return .= "<td class=\"".$class."\" align=\"center\"><a href=\"javascript:popup('show_comment','".$row['id']."','','',510,450);\"><img src=\"images/icons/icon_show.gif\" alt=\"Auge\" title=\"Kommentar ansehen\" /></a></td>
-	<td class=\"".$class."\" align=\"center\"><a href=\"javascript:popup('edit_comment','".$row['id']."','','',510,450);\"><img src=\"images/icons/icon_edit.gif\" alt=\"Stift+Papier\" title=\"Kommentar bearbeiten\" /></a></td>
+	$return .= "<td class=\"".$class."\" align=\"center\"><a href=\"javascript:popup('show_comment','".$row['id']."','','',580,450);\"><img src=\"images/icons/icon_show.gif\" alt=\"Auge\" title=\"Kommentar ansehen\" /></a></td>
+	<td class=\"".$class."\" align=\"center\"><a href=\"javascript:popup('edit_comment','".$row['id']."','','',580,450);\"><img src=\"images/icons/icon_edit.gif\" alt=\"Stift+Papier\" title=\"Kommentar bearbeiten\" /></a></td>
 	<td class=\"".$class."\" align=\"center\" nowrap=\"nowrap\"><img src=\"images/icons/icon_delete.gif\" alt=\"L&ouml;schen - rotes X\" title=\"Kommentar l&ouml;schen\" class=\"fx_opener\" style=\"border:0; float:left;\" align=\"left\" /><div class=\"fx_content tr_red\" style=\"width:60px; display:none;\"><a href=\"#foo\" onclick=\"AjaxRequest.send('modul=01acp&ajaxaction=delcomment&id=".$row['id']."');\">Ja</a> - <a href=\"#foo\">Nein</a></div></td>
 	</tr>\n\n";
 	}
@@ -1580,7 +1580,7 @@ return "<img src=\"".$picuploaddir."secimg.php\" alt=\"Sicherheitscode (Spamschu
 RETURN: $message mit Erfolgs/Fehler-Nummer
   */
 function insert_Comment($autor,$email_form,$url_form,$comment,$antispam,$deaktivieren,$postid,$uid,$subpostid=0){
-global $mysql_tables,$settings,$_SESSION,$modul,$filename,$names,$flag_utf8;
+global $mysql_tables,$settings,$_SESSION,$modul,$filename,$names,$flag_utf8,$htmlent_encoding_pub,$htmlent_flags;
 $zcount = $zcount2 = $zcount1 = 0;
 
 // Zensur-Funktion
@@ -1647,12 +1647,15 @@ if(isset($autor) && !empty($autor) &&
 	if(!empty($url_form) && $url_form != "http://") $url = mysql_real_escape_string(strip_tags($url_form)); else $url = "";
 	if($deaktivieren == 1){ $c_bbc = 0; $c_smilies = 0; }else{ $c_bbc = 1; $c_smilies = 1; }
 
-	$clist = mysql_query("SELECT id,postid,uid,comment FROM ".$mysql_tables['comments']." WHERE postid='".mysql_real_escape_string($postid)."' AND uid='".mysql_real_escape_string($uid)."' OR postid='".mysql_real_escape_string($postid)."' AND comment='".mysql_real_escape_string(htmlentities($comment))."'");
+	if($flag_utf8){
+		$autor = utf8_decode($autor);
+		$comment = utf8_decode($comment);
+	}
+
+	$clist = mysql_query("SELECT id,postid,uid,comment FROM ".$mysql_tables['comments']." WHERE postid='".mysql_real_escape_string($postid)."' AND uid='".mysql_real_escape_string($uid)."' OR postid='".mysql_real_escape_string($postid)."' AND comment='".mysql_real_escape_string(htmlentities($comment, $htmlent_flags, $htmlent_encoding_pub))."'");
 
 	if(mysql_num_rows($clist) == 0){
 	
-		if($flag_utf8) $comment = utf8_decode(htmlentities($comment));
-        else $comment = htmlentities($comment);
 		// Eintragung in Datenbank vornehmen:
 		$sql_insert = "INSERT INTO ".$mysql_tables['comments']." (modul,postid,subpostid,uid,frei,timestamp,ip,autor,email,url,comment,smilies,bbc) VALUES (
 						'".mysql_real_escape_string($modul)."',
@@ -1662,10 +1665,10 @@ if(isset($autor) && !empty($autor) &&
 						'".$frei."',
 						'".time()."',
 						'".mysql_real_escape_string($_SERVER['REMOTE_ADDR'])."',
-						'".mysql_real_escape_string(strip_tags($autor))."',
+						'".mysql_real_escape_string(htmlentities(strip_tags($autor), $htmlent_flags, $htmlent_encoding_pub))."',
 						'".$email."',
 						'".$url."',
-						'".mysql_real_escape_string($comment)."',
+						'".mysql_real_escape_string(htmlentities($comment, $htmlent_flags, $htmlent_encoding_pub))."',
 						'".$c_smilies."',
 						'".$c_bbc."'
 						)";
@@ -1676,9 +1679,14 @@ if(isset($autor) && !empty($autor) &&
 			$autor 		 = preg_replace("/(content-type:|bcc:|cc:|to:|from:)/im","",$autor);
 			$email 		 = preg_replace("/(content-type:|bcc:|cc:|to:|from:)/im","",$email);
 			$url 	 	 = preg_replace("/(content-type:|bcc:|cc:|to:|from:)/im","",$url);
+			
 			$comment 	 = preg_replace("/(content-type:|bcc:|cc:|to:|from:)/im","",$comment);
 			
-			$header = "From:".$settings['email_absender']."<".$settings['email_absender'].">\n";
+			$headerFields = array(
+"From:".$settings['email_absender']."<".$settings['email_absender'].">",
+"MIME-Version: 1.0",
+"Content-Type: text/html;charset=".$htmlent_encoding_pub.""
+);
 			$email_betreff = $settings['sitename']." - Neuer Kommentar - bitte freischalten";
 			$email_content = "Es wurde ein neuer Kommentar verfasst.
 Kommentar zu: ".$_SERVER['HTTP_HOST'].$filename."?".$names['artid']."=".$postid."#01id".$postid."
@@ -1697,7 +1705,7 @@ Webmailer";
 
 			$list = mysql_query("SELECT mail,01acp_editcomments FROM ".$mysql_tables['user']." WHERE 01acp_editcomments='1' AND sperre = '0' ORDER BY rand() LIMIT 10");
 			while($row = mysql_fetch_array($list)){
-				@mail(stripslashes($row['mail']),$email_betreff,$email_content,$header);
+				@mail(stripslashes($row['mail']),$email_betreff,$email_content,implode("\r\n", $headerFields));
 				}
 			
 			$message = 1;
@@ -1962,6 +1970,7 @@ return $return;
 RETURN: <option>-Fields
   */
 function echo_FileVerz_select($row,$deep,$selected=""){
+global $htmlent_flags,$htmlent_encoding_acp;
 
 $return = "";
 $tab = "";
@@ -1972,7 +1981,7 @@ for($x=0;$x<($deep*2);$x++){
 if($row['id'] == $selected) $sel = " selected=\"selected\"";
 else $sel ="";
 
-$return .= "<option value=\"".$row['id']."\"".$sel.">".$tab.htmlentities(stripslashes($row['name']))."</option>\n";
+$return .= "<option value=\"".$row['id']."\"".$sel.">".$tab.htmlentities(stripslashes($row['name']),$htmlent_flags,$htmlent_encoding_acp)."</option>\n";
 
 return $return;
 

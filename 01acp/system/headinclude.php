@@ -54,15 +54,23 @@ $catuploaddir 				= $picuploaddir."catpics/";
 // Sonstige Variablen
 $flag_modcheck 		= FALSE;
 $flag_showacpRSS 	= TRUE;						// RSS-Feed auf der ACP-Startseite anzeigen?
-$flag_feedback		= TRUE;
-$flag_credits       = TRUE;
+$flag_feedback		= TRUE;						// Feedback-Link im Footer des 01ACP anzeigen?
+$flag_credits       = TRUE;						// Credits-Link  im Footer des 01ACP anzeigen?
 $flag_showIE6Warning= TRUE;
 $flag_indivstorage	= FALSE;
 $stid				= 0;						// Formular-ID für Storage-Formlare (automatisches ++)
 $flag_oldfileupload = FALSE;					// Alten Datei-Upload für Filemanager nutzen?
 $inst_module 		= array();
+$htmlent_flags		= ENT_COMPAT | ENT_HTML401;	// Standard-Flags für die htmlentities()-Funktion
+$htmlent_encoding_acp = "ISO-8859-1";			// Standard-Encoding für alle htmlentities()-Funktionen innerhalb des ACP
+// Standard-Encoding für alle htmlentities()-Funktionen im Frontend abhängig vo $flag_utf8:
+if(isset($flag_utf8) && $flag_utf8 == TRUE && !isset($flag_acp))
+	$htmlent_encoding_pub = "UTF-8";
+else
+	$htmlent_encoding_pub = "ISO-8859-1";
 if(!isset($flag_nofunctions)) $flag_nofunctions = FALSE;
 $forbidden_chars = array("ä","Ä","ö","Ö","ü","Ü","ß","-",".",";",",","_","/","\$","(",")","=","?","´","`","#","+","*","'","\\"," ");
+
 define('_01ACP_VERSION_NR', '1.2.2');         // Versionsnummer des 01ACP
 define('ACPSTART_RSSFEED_URL', 'http://www.01-scripts.de/01scripts/01module/01article/01article.php?rss=show_rssfeed&modul=01article&catid=15');				// URL zum RSS-Feed, der auf der Startseite des ACP angezeigt werden soll
 define('RSS_CACHEFILE', $admindir.'cache/01rss.xml');

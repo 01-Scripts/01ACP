@@ -1,12 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2011 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Layout / Framework für Popup-Fenster
-	#fv.121#
+	#fv.122#
 */
 
 // Session starten:
@@ -417,10 +417,10 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "save_comment" && $userd
 	else $url = "";
 	
 	mysql_query("UPDATE ".$mysql_tables['comments']." SET 
-				autor 	=	'".mysql_real_escape_string($_REQUEST['autor'])."',
+				autor 	=	'".mysql_real_escape_string(htmlentities($_REQUEST['autor'], $htmlent_flags, $htmlent_encoding_acp))."',
 				email 	=	'".mysql_real_escape_string($email)."',
 				url		=	'".mysql_real_escape_string($url)."',
-				comment =	'".mysql_real_escape_string($_REQUEST['comment'])."',
+				comment =	'".mysql_real_escape_string(htmlentities($_REQUEST['comment'], $htmlent_flags, $htmlent_encoding_acp))."',
 				bbc		=	'".$bbc."',
 				smilies =	'".$smilies."'
 				WHERE id='".mysql_real_escape_string($_REQUEST['var1'])."' LIMIT 1");
