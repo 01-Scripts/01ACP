@@ -2174,4 +2174,30 @@ $return[$currentkey] = unserialize($valuetext);
 return $return;
 }
 
+
+
+
+
+
+
+
+
+
+// Wendet htmlentities, stripslashes und ggf. utf8_decode in Abhängigkeit von $flag_utf8 auf den übergebenen String an
+/*$string				String, der behandelt werden soll
+
+RETURN: Behandelter String
+  */
+function parse_SafeString($string,$strip=TRUE){
+global $htmlent_flags,$htmlent_encoding_pub,$flag_utf8;
+
+if($strip)
+	$string = stripslashes($string);
+
+if($flag_utf8)
+	$string = utf8_decode($string);
+
+return htmlentities($string, $htmlent_flags,$htmlent_encoding_pub);
+}
+
 ?>
