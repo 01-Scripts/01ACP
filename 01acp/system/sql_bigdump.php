@@ -150,7 +150,7 @@ if(!$error){
         if(ereg(";$",trim($dumpline)) && !$inparents){
             if(!mysql_query(trim($query))){
                 echo "<p class=\"meldung_error\">Fehler in Zeile ".$linenumber.": ". trim($dumpline)."<br /><br />\n";
-                echo "Query: ".trim(nl2br(htmlentities($query)))."<br />\n";
+                echo "Query: ".trim(nl2br(htmlentities($query),$htmlent_flags,$htmlent_encoding_acp))."<br />\n";
                 echo "MySQL: ".mysql_error()."</p>\n";
                 $error = TRUE;
                 break;

@@ -1,12 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <!--
-	01ACP - Copyright 2008 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Importiert Einträge aus dem 01-Newsscript V 2.1.0.x
-	#fv.1003#
+	#fv.122#
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -395,7 +395,7 @@ if(isset($_REQUEST['step']) && $_REQUEST['step'] == 5 &&
 							'".$row['frei']."',
 							'".$row['hide']."',
 							'".mysql_real_escape_string(stripslashes($row['icon']))."',
-							'".mysql_real_escape_string(htmlentities(stripslashes($row['titel'])))."',
+							'".mysql_real_escape_string(htmlentities(stripslashes($row['titel']),$htmlent_flags,$htmlent_encoding_acp))."',
 							'".$row['newscatid']."',
 							'".mysql_real_escape_string($newstext)."',
 							'0',
@@ -724,6 +724,5 @@ else{
 	<p>&copy; 2006-<?PHP echo date("Y"); ?> by <a href="http://www.01-scripts.de" target="_blank">01-Scripts.de</a></p>
 </div>
 
-<!-- 01ACP Copyright 2008 by Michael Lorer - 01-Scripts.de -->
 </body>
 </html>

@@ -1160,7 +1160,7 @@ while($row = mysql_fetch_array($list)){
 	
 	$return .= "<tr id=\"id".$row['id']."\">
 	<td class=\"".$class."\" width=\"25\" align=\"center\"><input type=\"checkbox\" name=\"cdelid[]\" value=\"".$row['id']."\" /></td>
-	<td class=\"".$class."\"".$colspan." onclick=\"popup('show_comment','".$row['id']."','','',510,450);\" style=\"cursor: pointer;\">
+	<td class=\"".$class."\"".$colspan." onclick=\"popup('show_comment','".$row['id']."','','',580,450);\" style=\"cursor: pointer;\">
 		Am ".date("d.m.Y - H:i",$row['timestamp'])."Uhr von <b>".stripslashes($row['autor'])."</b> (".$row['ip'].") verfasst:<br />
 		<b>".call_user_func("_".$module[$modul]['modulname']."_getCommentParentTitle",$row['postid'])."</b><br />
 		".substr(strip_tags(bb_code_comment(stripslashes($row['comment']),1,$row['bbc'],$row['smilies'])),0,250)." [...]
