@@ -1,19 +1,25 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2010 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Datei- & Bildverwaltung (Hochgeladenen Bilder und andere Dateien verwalten sowie neue Dateien hochladen)
-	#fv.1200#
+	#fv.122#
 */
 
 $menuecat = "01acp_filemanager";
 $sitetitle = "Datei- &amp; Bildverwaltung";
 $filename = $_SERVER['PHP_SELF'];
-$filename2 = $filename."?type=".$_REQUEST['type']."&amp;search=".$_REQUEST['search']."&amp;dir=".$_REQUEST['dir'];
 $mootools_use = array("moo_core","moo_more","moo_remooz","moo_request","moo_dragdrop");
+
+
+if(!isset($_REQUEST['type'])) $_REQUEST['type'] = "";
+if(!isset($_REQUEST['search'])) $_REQUEST['search'] = "";
+if(!isset($_REQUEST['dir'])) $_REQUEST['dir'] = "";
+
+$filename2 = $filename."?type=".$_REQUEST['type']."&amp;search=".$_REQUEST['search']."&amp;dir=".$_REQUEST['dir'];
 
 // Config-Dateien
 include("system/main.php");
@@ -24,7 +30,6 @@ if(!isset($_REQUEST['uid'])) $_REQUEST['uid'] = "";
 // Sicherheitsabfrage: Login & Benutzerrechte für Dateimanager
 if(isset($userdata['id']) && $userdata['id'] > 0 && $userdata['dateimanager'] >= 1){
 
-	if(!isset($_REQUEST['type'])) $_REQUEST['type'] = "";
 	switch($_REQUEST['type']){
 	  case "pic":
 	    echo "<h1>Bildverwaltung</h1>";
