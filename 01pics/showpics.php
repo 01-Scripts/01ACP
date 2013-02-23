@@ -1,6 +1,6 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
@@ -11,6 +11,7 @@
 
 include("../01acp/system/functions.php");
 define('ACP_TB_WIDTH', 40);
+define('ACP_TB_WIDTH200', 200);
 define('FILE_404_THUMB', '404thumb.gif');
 define('FILE_GIF_THUMB', 'gifthumb.gif');
 
