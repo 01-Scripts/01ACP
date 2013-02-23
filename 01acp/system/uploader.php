@@ -165,7 +165,7 @@ window.setTimeout(\"opener.document.getElementById('ers_erfolgsmeldung').style.d
 	elseif(isset($_GET['del']) && $_GET['del'] == 2 && isset($_GET['file']) && !empty($_GET['file']) && isset($_GET['deltype']) && !empty($_GET['deltype']) && $userdata['upload'] == 1){
 		$flag_showformular = TRUE;
 		
-		list($fmenge) = $mysqli->query($mysqli->query("SELECT COUNT(*) FROM ".$mysql_tables['files']." WHERE name='".$mysqli->escape_string($_GET['file'])."' AND uid='".$userdata['id']."'")->fetch_array(MYSQLI_NUM);
+		list($fmenge) = $mysqli->query("SELECT COUNT(*) FROM ".$mysql_tables['files']." WHERE name='".$mysqli->escape_string($_GET['file'])."' AND uid='".$userdata['id']."'")->fetch_array(MYSQLI_NUM);
 		if($fmenge == 1){
 			switch($_REQUEST['deltype']){
 			  case "file":
