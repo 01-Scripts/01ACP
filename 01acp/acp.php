@@ -1,12 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2011 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Startseite des ACP-Bereich
-	#fv.121#
+	#fv.122#
 */
 
 $menuecat = "01acp_start";
@@ -61,9 +61,9 @@ else
 	<p>
 		<b>01ACP-Version:</b> <?PHP echo $settings['acpversion'].$newerversion; ?><br />
 		<br />
-		<b>Benutzer:</b> <?PHP list($usermenge) = mysql_fetch_array(mysql_query("SELECT COUNT(*) FROM ".$mysql_tables['user']." WHERE id!='0'")); echo $usermenge; ?><br />
-		<b>Dateien:</b> <?PHP list($filemenge) = mysql_fetch_array(mysql_query("SELECT COUNT(*) FROM ".$mysql_tables['files']." WHERE type='file'")); echo $filemenge; ?><br />
-		<b>Bilder:</b> <?PHP list($picmenge) = mysql_fetch_array(mysql_query("SELECT COUNT(*) FROM ".$mysql_tables['files']." WHERE type='pic'")); echo $picmenge; ?>
+		<b>Benutzer:</b> <?PHP list($usermenge) = $mysqli->query("SELECT COUNT(*) FROM ".$mysql_tables['user']." WHERE id!='0'")->fetch_array(MYSQLI_NUM); echo $usermenge; ?><br />
+		<b>Dateien:</b> <?PHP list($filemenge) = $mysqli->query("SELECT COUNT(*) FROM ".$mysql_tables['files']." WHERE type='file'")->fetch_array(MYSQLI_NUM); echo $filemenge; ?><br />
+		<b>Bilder:</b> <?PHP list($picmenge) = $mysqli->query("SELECT COUNT(*) FROM ".$mysql_tables['files']." WHERE type='pic'")->fetch_array(MYSQLI_NUM); echo $picmenge; ?>
 		<br /><br />
 		<a href="http://board.01-scripts.de" target="_blank">Supportforum &amp; FAQ &raquo;</a><br />
 		<a href="http://www.01-scripts.de/contact.php" target="_blank">Kontakt &raquo;</a><br />
@@ -90,7 +90,6 @@ if($flag_showacpRSS && ACPSTART_RSSFEED_URL != "" && $rss01){
 else{
 	echo "<h4>Tipps &amp; Tricks</h4>";
 	
-	srand((double)microtime() * 10000000);
 	$rand_tt = array_rand($tt, 3);
 	
 	echo "<ul>\n";
@@ -105,7 +104,6 @@ else{
 
 </div>
 <?PHP
-srand((double)microtime() * 10000000);
 $rand_tt = array_rand($tt, 1);
 echo "<p align=\"center\"><b>Tipp:</b> ".$tt[$rand_tt]."</p>";
 

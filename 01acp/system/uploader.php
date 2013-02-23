@@ -1,11 +1,11 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2012 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
-	Dateiinfo:	Formular & Logik für Dateiupload + Ausgabe im Rahmen des TinyMCE-Editors
+	Dateiinfo:	Formular & Logik für Dateiupload + Ausgabe innerhalb des TinyMCE-Editor
 	#fv.122#
 */
 
@@ -31,15 +31,12 @@ if(isset($userdata['id']) && $userdata['id'] > 0){
 	if(isset($_POST['upload']) && $_POST['upload'] == 1 && isset($_FILES['new_datei']['name']) && $_FILES['new_datei']['name'] != "" && $userdata['upload'] == 1){
 		
 		if(isset($_REQUEST['delfileid']) && !empty($_REQUEST['delfileid'])){
-			if($userdata['dateimanager'] == 1) $query = "SELECT id,type,name FROM ".$mysql_tables['files']." WHERE uid = '".$userdata['id']."' AND id='".mysql_real_escape_string($_REQUEST['delfileid'])."' LIMIT 1";
-			elseif($userdata['dateimanager'] == 2) $query = "SELECT id,type,name FROM ".$mysql_tables['files']." WHERE id='".mysql_real_escape_string($_REQUEST['delfileid'])."' LIMIT 1";
+			if($userdata['dateimanager'] == 1) $query = "SELECT id,type,name FROM ".$mysql_tables['files']." WHERE uid = '".$userdata['id']."' AND id='".$mysqli->escape_string($_REQUEST['delfileid'])."' LIMIT 1";
+			elseif($userdata['dateimanager'] == 2) $query = "SELECT id,type,name FROM ".$mysql_tables['files']." WHERE id='".$mysqli->escape_string($_REQUEST['delfileid'])."' LIMIT 1";
 			
-			$list = mysql_query($query);
-			$menge = 0;
-			$menge = mysql_num_rows($list);
-
-			if($menge == 1){
-				while($row = mysql_fetch_array($list)){
+			$list = $mysqli->query($query);
+			if($list->num_rows == 1){
+				while($row = $list->fetch_assoc()){
 					$fupload = uploadfile($_FILES['new_datei']['name'],$_FILES['new_datei']['size'],$_FILES['new_datei']['tmp_name'],$_REQUEST['type'],"01acp",$row['name'],$_REQUEST['filedirid']);
 					$fupload['msg'] = "Die Datei <i>".$_REQUEST['delfile']."</i> wurde erfolgreich ersetzt.";
 					}
@@ -168,7 +165,7 @@ window.setTimeout(\"opener.document.getElementById('ers_erfolgsmeldung').style.d
 	elseif(isset($_GET['del']) && $_GET['del'] == 2 && isset($_GET['file']) && !empty($_GET['file']) && isset($_GET['deltype']) && !empty($_GET['deltype']) && $userdata['upload'] == 1){
 		$flag_showformular = TRUE;
 		
-		list($fmenge) = mysql_fetch_array(mysql_query("SELECT COUNT(*) FROM ".$mysql_tables['files']." WHERE name='".mysql_real_escape_string($_GET['file'])."' AND uid='".$userdata['id']."'"));
+		list($fmenge) = $mysqli->query($mysqli->query("SELECT COUNT(*) FROM ".$mysql_tables['files']." WHERE name='".$mysqli->escape_string($_GET['file'])."' AND uid='".$userdata['id']."'")->fetch_array(MYSQLI_NUM);
 		if($fmenge == 1){
 			switch($_REQUEST['deltype']){
 			  case "file":
@@ -191,7 +188,7 @@ if($userdata['upload'] == 1 && $flag_showformular && (isset($_REQUEST['look']) &
 // Tun: Datei verschieben:
 if(isset($_REQUEST['delfileid']) && !empty($_REQUEST['delfileid']) &&
    isset($_REQUEST['newdir']) && is_numeric($_REQUEST['newdir']) && $_REQUEST['newdir'] != $_REQUEST['olddir']){
-	mysql_query("UPDATE ".$mysql_tables['files']." SET dir = '".mysql_real_escape_string($_REQUEST['newdir'])."' WHERE id = '".mysql_real_escape_string($_REQUEST['delfileid'])."' LIMIT 1");
+	$mysqli->query("UPDATE ".$mysql_tables['files']." SET dir = '".$mysqli->escape_string($_REQUEST['newdir'])."' WHERE id = '".$mysqli->escape_string($_REQUEST['delfileid'])."' LIMIT 1");
 	
 	echo "
 <script type=\"text/javascript\">
@@ -200,8 +197,8 @@ opener.document.getElementById('id".$_REQUEST['delfileid']."').style.display = '
 	}
 // Ausgabe: Datei in anderes Verzeichnis verschieben und Hinweis auf Möglichkeit der Ersetzung
 if(isset($_REQUEST['delfileid']) && !empty($_REQUEST['delfileid'])){
-	$list = mysql_query("SELECT dir FROM ".$mysql_tables['files']." WHERE id = '".mysql_real_escape_string($_REQUEST['delfileid'])."' LIMIT 1");
-	$fileinfo = mysql_fetch_assoc($list);
+	$list = $mysqli->query("SELECT dir FROM ".$mysql_tables['files']." WHERE id = '".$mysqli->escape_string($_REQUEST['delfileid'])."' LIMIT 1");
+	$fileinfo = $list->fetch_assoc();
 	
 	echo "<div class=\"meldung_hinweis\"><form action=\"".$filename."\" method=\"post\">
 	<b>Datei in Verzeichnis verschieben:</b> <select name=\"newdir\" size=\"1\" class=\"input_select\">
@@ -293,12 +290,12 @@ if(isset($_REQUEST['delfileid']) && !empty($_REQUEST['delfileid'])){
 // Auflistung der bereits hochgeladenen Dateien
 if($flag_showlist && (isset($_REQUEST['look']) && ($_REQUEST['look'] == "list" || $_REQUEST['look'] == "both" || empty($_REQUEST['look'])) || !isset($_REQUEST['look']))){
 
-	if(isset($_REQUEST['dir']) && !empty($_REQUEST['dir']) && is_numeric($_REQUEST['dir'])) $where = " AND dir = '".mysql_real_escape_string($_REQUEST['dir'])."' ";
+	if(isset($_REQUEST['dir']) && !empty($_REQUEST['dir']) && is_numeric($_REQUEST['dir'])) $where = " AND dir = '".$mysqli->escape_string($_REQUEST['dir'])."' ";
 	else{ $_REQUEST['dir'] = 0; $where = " AND dir = '0' "; }
 	
 	$sites = 0;
-	if($userdata['dateimanager'] == 1) $query = "SELECT * FROM ".$mysql_tables['files']." WHERE type='".mysql_real_escape_string($_REQUEST['type'])."' AND uid='".$userdata['id']."'".$where." ORDER BY timestamp DESC,orgname,id";
-	elseif($userdata['dateimanager'] == 2) $query = "SELECT * FROM ".$mysql_tables['files']." WHERE type='".mysql_real_escape_string($_REQUEST['type'])."'".$where." ORDER BY timestamp DESC,orgname,id";
+	if($userdata['dateimanager'] == 1) $query = "SELECT * FROM ".$mysql_tables['files']." WHERE type='".$mysqli->escape_string($_REQUEST['type'])."' AND uid='".$userdata['id']."'".$where." ORDER BY timestamp DESC,orgname,id";
+	elseif($userdata['dateimanager'] == 2) $query = "SELECT * FROM ".$mysql_tables['files']." WHERE type='".$mysqli->escape_string($_REQUEST['type'])."'".$where." ORDER BY timestamp DESC,orgname,id";
 	$query = makepages($query,$sites,"site",ACP_PER_PAGE);
 
     if($_REQUEST['returnvalue'] == "tinymce" && $_REQUEST['type'] == "pic"){

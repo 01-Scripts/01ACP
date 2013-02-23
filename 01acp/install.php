@@ -1,12 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <!--
-	01ACP - Copyright 2008-2011 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Installationsdatei
-	#fv.121#
+	#fv.122#
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -49,13 +49,13 @@ if(isset($_REQUEST['step']) && $_REQUEST['step'] == 7 &&
 	include_once("system/functions.php");
 	
 	if($settings['installed'] != 1){
-		mysql_query("UPDATE ".$mysql_tables['settings']." SET wert = '".mysql_real_escape_string($_POST['absolut_url'])."' WHERE idname = 'absolut_url' LIMIT 1");
-		mysql_query("UPDATE ".$mysql_tables['settings']." SET wert = '".mysql_real_escape_string($_POST['kontaktemail'])."' WHERE idname = 'email_absender' LIMIT 1");
+		$mysqli->query("UPDATE ".$mysql_tables['settings']." SET wert = '".$mysqli->escape_string($_POST['absolut_url'])."' WHERE idname = 'absolut_url' LIMIT 1");
+		$mysqli->query("UPDATE ".$mysql_tables['settings']." SET wert = '".$mysqli->escape_string($_POST['kontaktemail'])."' WHERE idname = 'email_absender' LIMIT 1");
 		
 		// Eintrag in DB vornehmen
 		$sql_insert = "INSERT INTO ".$mysql_tables['user']." (username,mail,password,level,lastlogin,sperre,01acp_rights,01acp_profil,01acp_upload,01acp_dateimanager,01acp_settings,01acp_userverwaltung,01acp_signatur,01acp_addsettings,01acp_devmode,01acp_module,01acp_editcomments) VALUES (
-						'".mysql_real_escape_string($_POST['username'])."',
-						'".mysql_real_escape_string($_POST['email'])."',
+						'".$mysqli->escape_string($_POST['username'])."',
+						'".$mysqli->escape_string($_POST['email'])."',
 						'".pwhashing($_POST['passwort1'])."',
 						'10',
 						'0',
@@ -72,8 +72,8 @@ if(isset($_REQUEST['step']) && $_REQUEST['step'] == 7 &&
 						'1',
 						'1'
 						)";
-		$result = mysql_query($sql_insert, $db) OR die(mysql_error());
-		mysql_query("UPDATE ".$mysql_tables['settings']." SET wert = '1' WHERE idname = 'installed' LIMIT 1");
+		$result = $mysqli->query($sql_insert) OR die($mysqli->error);
+		$mysqli->query("UPDATE ".$mysql_tables['settings']." SET wert = '1' WHERE idname = 'installed' LIMIT 1");
 		}
 ?>
 <h1>Installation beendet</h1>
@@ -168,7 +168,6 @@ elseif(isset($_REQUEST['step']) && $_REQUEST['step'] == 5 &&
 
     // Funktionen
 	function create_Salt(){
-	mt_srand((double)microtime()*1000000); 
 	$zahl = mt_rand(1111, 9999999999999);
 
 	$salt = md5(md5(md5($zahl)));
@@ -192,17 +191,13 @@ elseif(isset($_REQUEST['step']) && $_REQUEST['step'] == 5 &&
 	}
    
     // Versuchen eine Verbindung zur Datenbank aufzubauen:
-	$db = @mysql_connect($_POST['mysql_host'], $_POST['mysql_username'], $_POST['mysql_passwort']);
-	//Verbinungsaufnahme mit der MySQL-Datenbank:
-	$dab = @mysql_select_db($_POST['mysql_datenbank'], $db);
-	//Es trat ein Fehler auf, wenn $db oder $dab = NULL
-	
-	if($db == "" || $dab == ""){
-		echo "<p class=\"meldung_error\"><b>Fehler:</b> Es konnte keine Verbindung zum MySQL-Server 
+	$mysqli = new mysqli($host, $user, $passw, $database);
+	if ($mysqli->connect_errno) {
+	    echo "<p class=\"meldung_error\"><b>Fehler:</b> Es konnte keine Verbindung zum MySQL-Server 
 				und/oder der MySQL-Datenbank aufgebaut werden. Bitte gehen Sie zur&uuml;ck und &uuml;berpr&uuml;fen
 				Sie Ihre Zugangsdaten!<br />
 				<a href=\"javascript:history.back();\">&laquo; Zur&uuml;ck</a></p>";
-		}
+	}
 	// Verbindung wurde aufgebaut -> weitere Ausführung
 	else{
 		//Zugangsdaten in Datei schreiben:

@@ -18,7 +18,7 @@ $comment[] = '-- ';
 
 // Connection character set should be the same as the dump file character set (utf8, latin1, cp1251, koi8r etc.)
 // See http://dev.mysql.com/doc/refman/5.0/en/charset-charsets.html for the full list
-$db_connection_charset = 'latin1_german2_ci';
+$db_connection_charset = 'latin1';
 
 $sql_start = 1;
 $sql_totalqueries = 0;
@@ -29,12 +29,6 @@ define ('MAX_QUERY_LINES',300);      // How many lines may be considered to be o
 $error = FALSE;
 $file = FALSE;
 
-// PHP-Version überprüfen
-if(!function_exists('version_compare')){
-    echo "<p class=\"meldung_error\">PHP-Version 4.1.0 wird ben&ouml;tigt. Sie haben leider nur Version ".phpversion().".</p>\n";
-    $error = TRUE;
-    }
-
 // max_upload_size kalkulieren
 $upload_max_filesize = ini_get("upload_max_filesize");
 if(eregi("([0-9]+)K",$upload_max_filesize,$tempregs)) $upload_max_filesize = $tempregs[1]*1024;
@@ -42,7 +36,8 @@ if(eregi("([0-9]+)M",$upload_max_filesize,$tempregs)) $upload_max_filesize = $te
 if(eregi("([0-9]+)G",$upload_max_filesize,$tempregs)) $upload_max_filesize = $tempregs[1]*1024*1024*1024;
 
 //C harset setzten
-if(!$error && $db_connection_charset !== "") @mysql_query("SET NAMES ".$db_connection_charset."");
+$result = $mysqli->get_charset();
+if(!$error && $db_connection_charset !== "" && $result['charset'] != "latin1") $mysqli->set_charset($db_connection_charset);
 
 // sql-file öffnen
 if(!$error && isset($sql_filename)){
@@ -148,10 +143,10 @@ if(!$error){
 
         //Execute query if end of query detected (; as last character) AND NOT in parents
         if(ereg(";$",trim($dumpline)) && !$inparents){
-            if(!mysql_query(trim($query))){
+            if(!$mysqli->query(trim($query))){
                 echo "<p class=\"meldung_error\">Fehler in Zeile ".$linenumber.": ". trim($dumpline)."<br /><br />\n";
                 echo "Query: ".trim(nl2br(htmlentities($query),$htmlent_flags,$htmlent_encoding_acp))."<br />\n";
-                echo "MySQL: ".mysql_error()."</p>\n";
+                echo "MySQL: ".$mysqli->error."</p>\n";
                 $error = TRUE;
                 break;
                 }

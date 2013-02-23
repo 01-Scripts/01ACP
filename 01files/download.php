@@ -1,6 +1,6 @@
 <?php
 /*
-	01ACP - Copyright 2008-2012 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 
@@ -18,8 +18,8 @@ if(ini_get('zlib.output_compression'))
 	ini_set('zlib.output_compression', 'Off');
 
 if(isset($_GET['fileid']) && !empty($_GET['fileid']) && is_numeric($_GET['fileid'])){
-	$list = mysql_query("SELECT id,type,orgname,name FROM ".$mysql_tables['files']." WHERE id='".mysql_real_escape_string($_GET['fileid'])."' LIMIT 1");
-	while($row = mysql_fetch_assoc($list)){
+	$list = $mysqli->query("SELECT id,type,orgname,name FROM ".$mysql_tables['files']." WHERE id='".$mysqli->escape_string($_GET['fileid'])."' LIMIT 1");
+	while($row = $list->fetch_assoc()){
 		switch($row['type']){
 		  case "pic":
 		    $folder = $picuploaddir;
@@ -36,7 +36,7 @@ if(isset($_GET['fileid']) && !empty($_GET['fileid']) && is_numeric($_GET['fileid
 		else{
 			// downloads+1
 			if(!isset($_GET['nocount']))
-				mysql_query("UPDATE ".$mysql_tables['files']." SET downloads = downloads+1 WHERE id = '".mysql_real_escape_string($_GET['fileid'])."' LIMIT 1");
+				$mysqli->query("UPDATE ".$mysql_tables['files']." SET downloads = downloads+1 WHERE id = '".$mysqli->escape_string($_GET['fileid'])."' LIMIT 1");
 			
 			header("Pragma: public");
 			header("Expires: 0");

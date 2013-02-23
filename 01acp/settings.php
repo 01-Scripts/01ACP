@@ -1,12 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Einstellungen verwalten (bearbeiten, hinzufügen, sortieren)
-	#fv.1101#
+	#fv.122#
 */
 
 $menuecat = "01acp_settings";
@@ -35,18 +35,18 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "settings" && $userdata[
 
     // Einstellungen auf Standardwerte zurücksetzen
 	if(isset($_GET['do']) && $_GET['do'] == "standard2" && $userdata['addsettings'] == 1 && $userdata['settings'] == 1 && $userdata['level'] == 10){
-        $list_save = mysql_query("SELECT id,standardwert,wert FROM ".$mysql_tables['settings']." WHERE modul='".mysql_real_escape_string($modul)."' AND standardwert!='' AND hide='0'");
-        while($row_save = mysql_fetch_array($list_save)){
-            mysql_query("UPDATE ".$mysql_tables['settings']." SET wert='".$row_save['standardwert']."' WHERE id='".$row_save['id']."'");
+        $list_save = $mysqli->query("SELECT id,standardwert,wert FROM ".$mysql_tables['settings']." WHERE modul='".$mysqli->escape_string($modul)."' AND standardwert!='' AND hide='0'");
+        while($row_save = $list_save->fetch_assoc()){
+            $mysqli->query("UPDATE ".$mysql_tables['settings']." SET wert='".$row_save['standardwert']."' WHERE id='".$row_save['id']."'");
             }
         echo "<p class=\"meldung_ok\"><b>Einstellungen wurden zur&uuml;ckgesetzt.</b></p>";
         }
 
 	// Einstellungen speichern
 	if(isset($_POST['do']) && $_POST['do'] == "save"){
-        $list_save = mysql_query("SELECT * FROM ".$mysql_tables['settings']." WHERE modul='".mysql_real_escape_string($modul)."' AND is_cat='0' AND hide='0'");
-        while($row_save = mysql_fetch_array($list_save)){
-            mysql_query("UPDATE ".$mysql_tables['settings']." SET wert='".mysql_real_escape_string($_POST[$row_save['idname']])."' WHERE id='".$row_save['id']."'");
+        $list_save = $mysqli->query("SELECT * FROM ".$mysql_tables['settings']." WHERE modul='".$mysqli->escape_string($modul)."' AND is_cat='0' AND hide='0'");
+        while($row_save = $list_save->fetch_assoc()){
+            $mysqli->query("UPDATE ".$mysql_tables['settings']." SET wert='".$mysqli->escape_string($_POST[$row_save['idname']])."' WHERE id='".$row_save['id']."'");
             }
         echo "<p class=\"meldung_ok\"><b>Einstellungen wurden erfolgreich gespeichert.</b></p>";
         }
@@ -68,8 +68,8 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "settings" && $userdata[
         <td colspan=\"2\" class=\"".$class."\"><h3>".$catvalue['name']."</h3></td>
     </tr>";
         
-        $list = mysql_query("SELECT * FROM ".$mysql_tables['settings']." WHERE modul='".mysql_real_escape_string($modul)."' AND is_cat='0' AND catid='".$catvalue['catid']."' AND hide='0' ORDER BY sortid");
-        while($row = mysql_fetch_array($list)){
+        $list = $mysqli->query("SELECT * FROM ".$mysql_tables['settings']." WHERE modul='".$mysqli->escape_string($modul)."' AND is_cat='0' AND catid='".$catvalue['catid']."' AND hide='0' ORDER BY sortid");
+        while($row = $list->fetch_assoc()){
             if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
 			
 			// MySQL-daten verarbeiten
@@ -104,8 +104,8 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "add_setting" && $userda
 	
 	// Eintragung in Datenbank vornehmen
 	if(isset($_POST['send']) && $_POST['send'] == 1){
-		$sql_insert = "INSERT INTO ".$mysql_tables['settings']." (modul,is_cat,catid,sortid,idname,name,exp,formename,formwerte,input_exp,standardwert,wert,nodelete,hide) VALUES ('".mysql_real_escape_string($_POST['modulname'])."','0','".mysql_real_escape_string($_POST['catid'])."','".mysql_real_escape_string($_POST['sortid'])."','".mysql_real_escape_string($_POST['idname'])."','".mysql_real_escape_string($_POST['name'])."','".mysql_real_escape_string($_POST['exp'])."','".mysql_real_escape_string($_POST['formename'])."','".mysql_real_escape_string($_POST['formwerte'])."','".mysql_real_escape_string($_POST['input_exp'])."','".mysql_real_escape_string($_POST['standardwert'])."','".mysql_real_escape_string($_POST['wert'])."','".mysql_real_escape_string($_POST['nodelete'])."','".mysql_real_escape_string($_POST['hide'])."')";
-		$result = mysql_query($sql_insert, $db) OR die(mysql_error());
+		$sql_insert = "INSERT INTO ".$mysql_tables['settings']." (modul,is_cat,catid,sortid,idname,name,exp,formename,formwerte,input_exp,standardwert,wert,nodelete,hide) VALUES ('".$mysqli->escape_string($_POST['modulname'])."','0','".$mysqli->escape_string($_POST['catid'])."','".$mysqli->escape_string($_POST['sortid'])."','".$mysqli->escape_string($_POST['idname'])."','".$mysqli->escape_string($_POST['name'])."','".$mysqli->escape_string($_POST['exp'])."','".$mysqli->escape_string($_POST['formename'])."','".$mysqli->escape_string($_POST['formwerte'])."','".$mysqli->escape_string($_POST['input_exp'])."','".$mysqli->escape_string($_POST['standardwert'])."','".$mysqli->escape_string($_POST['wert'])."','".$mysqli->escape_string($_POST['nodelete'])."','".$mysqli->escape_string($_POST['hide'])."')";
+		$result = $mysqli->query($sql_insert) OR die($mysqli->error);
 
 		echo $sql_insert."<br /><br />";
 		echo "<p class=\"meldung_ok\"><b>Datensatz wurde hinzugefügt</b></p>";
@@ -229,10 +229,10 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "sort_settings" && $user
 	// Einträge speichern
 	if(isset($_POST['send']) && $_POST['send'] == 1)
 		{
-		$list_save = mysql_query("SELECT id,sortid FROM ".$mysql_tables['settings']." WHERE is_cat='0' AND modul='".mysql_real_escape_string($modul)."'");
-		while($row_save = mysql_fetch_array($list_save)){
-			mysql_query("UPDATE ".$mysql_tables['settings']." SET sortid='".mysql_real_escape_string($_POST[$row_save['id']])."' WHERE id='".$row_save['id']."'");
-			echo "UPDATE ".$mysql_tables['settings']." SET sortid='".mysql_real_escape_string($_POST[$row_save['id']])."' WHERE id='".$row_save['id']."'<br />\n";
+		$list_save = $mysqli->query("SELECT id,sortid FROM ".$mysql_tables['settings']." WHERE is_cat='0' AND modul='".$mysqli->escape_string($modul)."'");
+		while($row_save = $list_save->fetch_assoc()){
+			$mysqli->query("UPDATE ".$mysql_tables['settings']." SET sortid='".$mysqli->escape_string($_POST[$row_save['id']])."' WHERE id='".$row_save['id']."'");
+			echo "UPDATE ".$mysql_tables['settings']." SET sortid='".$mysqli->escape_string($_POST[$row_save['id']])."' WHERE id='".$row_save['id']."'<br />\n";
 			}
 
 		echo "<p class=\"meldung_ok\"><b>Gespeichert</b></p>";
@@ -242,8 +242,8 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "sort_settings" && $user
         echo "<ul>\n";
         
 		$save1 = "";
-        $list = mysql_query("SELECT id,catid,sortid,name FROM ".$mysql_tables['settings']." WHERE is_cat='0' AND modul='".mysql_real_escape_string($modul)."' ORDER BY catid,sortid");
-        while($row = mysql_fetch_array($list)){
+        $list = $mysqli->query("SELECT id,catid,sortid,name FROM ".$mysql_tables['settings']." WHERE is_cat='0' AND modul='".$mysqli->escape_string($modul)."' ORDER BY catid,sortid");
+        while($row = $list->fetch_assoc()){
             if($save1 != $row['catid']) echo "<li><h2>".$cats_settings[$row['catid'].$modul]['name']."</h2></li>";
 			echo "<li><input type=\"text\" name=\"".$row['id']."\" size=\"3\" value=\"".$row['sortid']."\" maxlength=\"5\" /> ".$row['name']." <i>(ID: ".$row['id'].")</i></li>\n";
 			
@@ -256,10 +256,9 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "sort_settings" && $user
         echo "</form>";
 		
     }elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "sort_settings") 
-		$flag_loginerror = true;
+		$flag_loginerror = TRUE;
 	
-}else $flag_loginerror = true;
+}else $flag_loginerror = TRUE;
 include("system/foot.php");
 
-// 01ACP Copyright 2008 by Michael Lorer - 01-Scripts.de
 ?>

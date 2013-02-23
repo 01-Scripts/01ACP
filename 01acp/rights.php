@@ -1,11 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Benutzerrechte verwalten (hinzufügen & sortieren)
+	#fv.122#
 */
 
 $menuecat = "01acp_users";
@@ -25,25 +26,25 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "add_right" && $userdata
 	// Eintragung in Datenbank vornehmen
 	if(isset($_POST['send']) && $_POST['send'] == 1){
 		$sql_insert = "INSERT INTO ".$mysql_tables['rights']." (modul,is_cat,catid,sortid,idname,name,exp,formename,formwerte,input_exp,standardwert,nodelete,hide,in_profile) VALUES (
-						'".mysql_real_escape_string($_POST['modulname'])."',
+						'".$mysqli->escape_string($_POST['modulname'])."',
 						'0',
-						'".mysql_real_escape_string($_POST['catid'])."',
-						'".mysql_real_escape_string($_POST['sortid'])."',
-						'".mysql_real_escape_string($_POST['idname'])."',
-						'".mysql_real_escape_string($_POST['name'])."',
-						'".mysql_real_escape_string($_POST['exp'])."',
-						'".mysql_real_escape_string($_POST['formename'])."',
-						'".mysql_real_escape_string($_POST['formwerte'])."',
-						'".mysql_real_escape_string($_POST['input_exp'])."',
-						'".mysql_real_escape_string($_POST['standardwert'])."',
-						'".mysql_real_escape_string($_POST['nodelete'])."',
-						'".mysql_real_escape_string($_POST['hide'])."',
-						'".mysql_real_escape_string($_POST['in_profile'])."')";
-		$result = mysql_query($sql_insert, $db) OR die(mysql_error());
+						'".$mysqli->escape_string($_POST['catid'])."',
+						'".$mysqli->escape_string($_POST['sortid'])."',
+						'".$mysqli->escape_string($_POST['idname'])."',
+						'".$mysqli->escape_string($_POST['name'])."',
+						'".$mysqli->escape_string($_POST['exp'])."',
+						'".$mysqli->escape_string($_POST['formename'])."',
+						'".$mysqli->escape_string($_POST['formwerte'])."',
+						'".$mysqli->escape_string($_POST['input_exp'])."',
+						'".$mysqli->escape_string($_POST['standardwert'])."',
+						'".$mysqli->escape_string($_POST['nodelete'])."',
+						'".$mysqli->escape_string($_POST['hide'])."',
+						'".$mysqli->escape_string($_POST['in_profile'])."')";
+		$result = $mysqli->query($sql_insert) OR die($mysqli->error);
 		
 		//Datenbankspalte erzeugen
-		$query = "ALTER TABLE `".$mysql_tables['user']."` ADD `".mysql_real_escape_string($_POST['modulname'])."_".mysql_real_escape_string($_POST['idname'])."` VARCHAR( 255 ) NOT NULL DEFAULT '".mysql_real_escape_string($_POST['standardwert'])."'";
-		mysql_query($query);
+		$query = "ALTER TABLE `".$mysql_tables['user']."` ADD `".$mysqli->escape_string($_POST['modulname'])."_".$mysqli->escape_string($_POST['idname'])."` VARCHAR( 255 ) NOT NULL DEFAULT '".$mysqli->escape_string($_POST['standardwert'])."'";
+		$mysqli->query($query);
 
 		if($userdata['devmode'] == 1){
 			echo $sql_insert."<br />";
@@ -173,10 +174,10 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "sort_rights" && $userda
 	// Einträge speichern
 	if(isset($_POST['send']) && $_POST['send'] == 1){
 	
-		$list_save = mysql_query("SELECT id,sortid FROM ".$mysql_tables['rights']." WHERE is_cat='0' AND modul='".mysql_real_escape_string($modul)."'");
-		while($row_save = mysql_fetch_array($list_save)){
-			mysql_query("UPDATE ".$mysql_tables['rights']." SET sortid='".mysql_real_escape_string($_POST[$row_save['id']])."' WHERE id='".$row_save['id']."'");
-			if($userdata['devmode'] == 1) echo "UPDATE ".$mysql_tables['rights']." SET sortid='".mysql_real_escape_string($_POST[$row_save['id']])."' WHERE id='".$row_save['id']."'<br />\n";
+		$list_save = $mysqli->query("SELECT id,sortid FROM ".$mysql_tables['rights']." WHERE is_cat='0' AND modul='".$mysqli->escape_string($modul)."'");
+		while($row_save = $list_save->fetch_assoc()){
+			$mysqli->query("UPDATE ".$mysql_tables['rights']." SET sortid='".$mysqli->escape_string($_POST[$row_save['id']])."' WHERE id='".$row_save['id']."'");
+			if($userdata['devmode'] == 1) echo "UPDATE ".$mysql_tables['rights']." SET sortid='".$mysqli->escape_string($_POST[$row_save['id']])."' WHERE id='".$row_save['id']."'<br />\n";
 			}
 
 		echo "<p class=\"meldung_ok\"><b>Gespeichert</b></p>";
@@ -187,8 +188,8 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "sort_rights" && $userda
         echo "<ul>\n";
 
 		$save1 = "";
-        $list = mysql_query("SELECT id,catid,sortid,name FROM ".$mysql_tables['rights']." WHERE is_cat='0' AND modul='".mysql_real_escape_string($modul)."' ORDER BY catid,sortid");
-        while($row = mysql_fetch_array($list)){
+        $list = $mysqli->query("SELECT id,catid,sortid,name FROM ".$mysql_tables['rights']." WHERE is_cat='0' AND modul='".$mysqli->escape_string($modul)."' ORDER BY catid,sortid");
+        while($row = $list->fetch_assoc()){
             if($save1 != $row['catid']) echo "<li><h2>".$cats_settings[$row['catid'].$modul]['name']."</h2></li>";
 			echo "<li><input type=\"text\" name=\"".$row['id']."\" size=\"3\" value=\"".$row['sortid']."\" maxlength=\"5\" /> ".$row['name']." <i>ID: ".$row['id']."</i></li>\n";
 
@@ -207,5 +208,4 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "sort_rights" && $userda
 }else $flag_loginerror = true;
 include("system/foot.php");
 
-// 01ACP Copyright 2008 by Michael Lorer - 01-Scripts.de
 ?>

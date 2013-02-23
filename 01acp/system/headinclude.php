@@ -126,10 +126,11 @@ $domready['moo_fancyup_fm'][]	= "system/js/mootools-domready-fancyup_fm.js";		//
 
 
 /* Verbindung zur MySQL-Datenbank aufbauen */
-$db = @mysql_connect($host, $user, $passw)
-or die ("Verbindungsaufnahme mit der MySQL-Server war <b>nicht</b> erfolgreich!<br />Bitte gehen Sie nochmals zurück.<br />Sollte weiterhin keine Verbindung zum MySQL-Server zu Stande kommen wenden Sie sich an den technischen Ansprechparnter");
-@mysql_select_db($database, $db)
-or die ("Verbindungsaufnahme mit Datenbank war <b>nicht</b> erfolgreich!<br />Bitte gehen Sie nochmals zurück.<br />Sollte weiterhin keine Verbindung zur MySQL-Datenbank zu Stande kommen wenden Sie sich an den technischen Ansprechparnter");
+$mysqli = new mysqli($host, $user, $passw, $database);
+if ($mysqli->connect_errno) {
+    echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
+}
+//print_r( $mysqli->get_charset() );
 
 // Globale functions.php einbinden
 if(!$flag_nofunctions)
@@ -172,8 +173,8 @@ if(isset($_REQUEST['modul']) && !empty($_REQUEST['modul']) && in_array($_REQUEST
 	}else $modul = "01acp";
 
 // DB: Einstellungen in Array $settings[] einlesen
-$list = mysql_query("SELECT idname,wert FROM ".$mysql_tables['settings']." WHERE is_cat = '0' AND (modul = '01acp' OR modul = '".mysql_real_escape_string($modul)."')");
-while($row = mysql_fetch_array($list)){
+$list = $mysqli->query("SELECT idname,wert FROM ".$mysql_tables['settings']." WHERE is_cat = '0' AND (modul = '01acp' OR modul = '".$mysqli->escape_string($modul)."')");
+while($row = $list->fetch_assoc()){
 	$settings[stripslashes($row['idname'])] = stripslashes($row['wert']);
 	}
 

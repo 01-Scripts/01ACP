@@ -25,18 +25,18 @@ function check_mail($email){
   $perpage			Anzahl Elemente pro Seite
 */
 function makepages(&$query,&$sites,$get_var,$perpage){
-global $db,$_GET;
+global $mysqli,$_GET;
 
-$slc = mysql_query($query);
-$sc = mysql_num_rows($slc);
+$slc = $mysqli->query($query);
+$sc = $slc->num_rows;
 $sites = ceil($sc/$perpage);
 
 if(isset($_GET[$get_var]) && $_GET[$get_var] != "" && $_GET[$get_var] <= $sites){
     $start = $_GET[$get_var]*$perpage-$perpage;
-    $query .= " LIMIT ".mysql_real_escape_string($start).",".mysql_real_escape_string($perpage)."";
+    $query .= " LIMIT ".$mysqli->escape_string($start).",".$mysqli->escape_string($perpage)."";
     }
 else{
-    $query .= " LIMIT ".mysql_real_escape_string($perpage)."";
+    $query .= " LIMIT ".$mysqli->escape_string($perpage)."";
     }
 	
 return $query;
@@ -139,7 +139,7 @@ if($bigside > $maxwidth){
 RETURN: Menue in <ul></ul>-Tags
 */
 function create_menue($menuecat,$sub){
-global $db,$mysql_tables,$userdata,$modul;
+global $mysqli,$mysql_tables,$userdata,$modul;
 
 $first = 1;
 
@@ -150,13 +150,13 @@ if($sub == 0 && $modul != "01acp"){
 	$first++;
 	}
 
-$list = mysql_query("SELECT id,name,link,rightname,rightvalue FROM ".$mysql_tables['menue']." WHERE (modul='".mysql_real_escape_string($menuecat)."' OR modul='overall') AND
-		(sicherheitslevel <= '".mysql_real_escape_string($userdata['level'])."' OR sicherheitslevel = '0') AND
-		subof = '".mysql_real_escape_string($sub)."' AND
+$list = $mysqli->query("SELECT id,name,link,rightname,rightvalue FROM ".$mysql_tables['menue']." WHERE (modul='".$mysqli->escape_string($menuecat)."' OR modul='overall') AND
+		(sicherheitslevel <= '".$mysqli->escape_string($userdata['level'])."' OR sicherheitslevel = '0') AND
+		subof = '".$mysqli->escape_string($sub)."' AND
 		hide = '0'
 		ORDER BY sortorder");
-if(mysql_num_rows($list) >= 1){
-	while($row = mysql_fetch_array($list)){
+if($list->num_rows >= 1){
+	while($row = $list->fetch_assoc()){
 		if((isset($userdata[stripslashes($row['rightname'])]) && $userdata[stripslashes($row['rightname'])] == stripslashes($row['rightvalue'])) || empty($row['rightname'])){
 			if($first == 1) $class = " class=\"first\"";
 			else $class = "";
@@ -179,7 +179,6 @@ return $return;
 // Neues Zufallspasswort generieren
 /*$laenge			Anzahl Zeichen des Passworts*/
 function create_NewPassword($laenge){
-mt_srand((double)microtime()*1000000); 
 $zahl = mt_rand(1000, 9999);
 
 $passzahl = md5($zahl);
@@ -215,19 +214,17 @@ RETURN: $return[catid][catid]	= Catid
 		$return[catid][name] 	= Name der Einstellung / des Rechts
 */
 function getSettingCats($modul,$mysqltab){
-global $db;
+global $mysqli;
 
 $return = "";
 
-if(isset($modul) && !empty($modul)) $add2query = " AND modul='".mysql_real_escape_string($modul)."'";
+if(isset($modul) && !empty($modul)) $add2query = " AND modul='".$mysqli->escape_string($modul)."'";
 
-$list = mysql_query("SELECT modul,catid,name FROM ".$mysqltab." WHERE is_cat='1'".$add2query." ORDER BY modul,sortid,catid");
-while($row = mysql_fetch_array($list)){
-	//$return[$row['catid']][0] = $row['name'];
+$list = $mysqli->query("SELECT modul,catid,name FROM ".$mysqltab." WHERE is_cat='1'".$add2query." ORDER BY modul,sortid,catid");
+while($row = $list->fetch_assoc()){
 	$return[$row['catid'].$row['modul']]['catid'] = $row['catid'];
 	$return[$row['catid'].$row['modul']]['modul'] = $row['modul'];
 	$return[$row['catid'].$row['modul']]['name'] = $row['name'];
-	//$return[$row['catid']]['modul'] = $row['modul'];		//Gibt an welchem Modul das entsprechende Recht / die entsprechende Einstellung zugeordnet ist
 	}
 return $return;
 }
@@ -242,13 +239,14 @@ return $return;
 RETURN: Array(id => Modul-Idname);
 */
 function getModuls(&$inst_module){
-global $db,$mysql_tables;
+global $mysqli,$mysql_tables;
 
-$list = mysql_query("SELECT * FROM ".$mysql_tables['module']." ORDER BY instname");
-$fieldmenge = mysql_num_fields($list);
-while($row = mysql_fetch_array($list)){
+$list = $mysqli->query("SELECT * FROM ".$mysql_tables['module']." ORDER BY instname");
+$fieldmenge = $list->field_count;
+while($row = $list->fetch_assoc()){
 	for($i=0;$i < $fieldmenge;$i++){ 
-		$module[stripslashes($row['idname'])][mysql_field_name($list, $i)] = stripslashes($row[mysql_field_name($list, $i)]);
+		$finfo = $list->fetch_field_direct($i);
+		$module[stripslashes($row['idname'])][$finfo->name] = stripslashes($row[$finfo->name]);
 		}
 	$inst_module[] = stripslashes($row['idname']);
 	}
@@ -300,15 +298,15 @@ return $return;
 RETURN: Option-Elemente für Select-Formularelement
 */
 function create_UserDropDown($unbekannt,$selectedid=NULL){
-global $mysql_tables,$userdata;
+global $mysqli,$mysql_tables,$userdata;
 $return = "";
 
 if($selectedid == NULL) $selectedid = $userdata['id'];
 if(!$unbekannt) $add2query = " WHERE id != '0'";
 else $add2query = "";
 
-$list = mysql_query("SELECT id,username FROM ".$mysql_tables['user'].$add2query." ORDER BY username");
-while($row = mysql_fetch_array($list)){
+$list = $mysqli->query("SELECT id,username FROM ".$mysql_tables['user'].$add2query." ORDER BY username");
+while($row = $list->fetch_assoc()){
 	if($selectedid == $row['id']) $sel = " selected=\"selected\"";
 	else $sel = "";
 	
@@ -451,9 +449,8 @@ return $return;
 RETURN: Array(success,name,orgname,size,endung,fileart,msg);
   */
 function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="",$dirid=0){
-    global $db,$userdata,$picuploaddir,$catuploaddir,$attachmentuploaddir,$mysql_tables,$settings,$picendungen,$picsize,$attachmentendungen,$attachmentsize,$instnr;
+    global $mysqli,$userdata,$picuploaddir,$catuploaddir,$attachmentuploaddir,$mysql_tables,$settings,$picendungen,$picsize,$attachmentendungen,$attachmentsize,$instnr;
 
-    mt_srand((double)microtime()*1000000);
 	$new_filename = substr(md5($instnr.time().microtime().mt_rand(10000,99999999)),0,15);    
     $endung = getEndung($fname);
 	
@@ -532,26 +529,26 @@ function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="
 				
 				// Datensatz einer ggf. überschriebenen Datei löschen
 				if(!empty($destname)){
-					$list = mysql_query("SELECT id FROM ".$mysql_tables['files']." WHERE name='".mysql_real_escape_string($destname)."' LIMIT 1");
-					while($row = mysql_fetch_array($list)){
-						mysql_query("DELETE FROM ".$mysql_tables['files']." WHERE id='".$row['id']."' LIMIT 1");
+					$list = $mysqli->query("SELECT id FROM ".$mysql_tables['files']." WHERE name='".$mysqli->escape_string($destname)."' LIMIT 1");
+					while($row = $list->fetch_assoc()){
+						$mysqli->query("DELETE FROM ".$mysql_tables['files']." WHERE id='".$row['id']."' LIMIT 1");
 						}
 					}
 
                 //Eintragung in Datenbank vornehmen:
                 $sql_insert = "INSERT INTO ".$mysql_tables['files']." (type,modul,timestamp,dir,orgname,name,size,ext,uid) VALUES (
-							'".mysql_real_escape_string($fupload['fileart'])."',
-							'".mysql_real_escape_string($modul)."',
+							'".$mysqli->escape_string($fupload['fileart'])."',
+							'".$mysqli->escape_string($modul)."',
 							'".time()."',
-							'".mysql_real_escape_string($dirid)."',
-							'".mysql_real_escape_string($fupload['orgname'])."',
-							'".mysql_real_escape_string($fupload['name'])."', 
-							'".mysql_real_escape_string($fupload['size'])."', 
-							'".mysql_real_escape_string($fupload['endung'])."', 
+							'".$mysqli->escape_string($dirid)."',
+							'".$mysqli->escape_string($fupload['orgname'])."',
+							'".$mysqli->escape_string($fupload['name'])."', 
+							'".$mysqli->escape_string($fupload['size'])."', 
+							'".$mysqli->escape_string($fupload['endung'])."', 
 							'".$userdata['id']."')";
-                mysql_query($sql_insert) OR die(mysql_error());
+                $result = $mysqli->query($sql_insert) OR die($mysqli->error);
                 
-                $fupload['fileid'] = mysql_insert_id();
+                $fupload['fileid'] = $mysqli->insert_id;
                 }
             else{
                 $fupload['success'] = 0;
@@ -586,7 +583,7 @@ function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="
 RETURN: TRUE/FALSE
   */
 function delfile($dir,$file){
-global $mysql_tables,$settings;
+global $mysqli,$mysql_tables,$settings;
 
 $split = explode(".", strtolower($file),2);
 
@@ -605,7 +602,7 @@ if(file_exists($dir.$split[0]."_tb_".$settings['thumbwidth'].".".$split[1])){
 
 @chmod($dir.$file, 0777);
 if(unlink($dir.$file)){
-	mysql_query("DELETE FROM ".$mysql_tables['files']." WHERE name='".mysql_real_escape_string($file)."' LIMIT 1");
+	$mysqli->query("DELETE FROM ".$mysql_tables['files']." WHERE name='".$mysqli->escape_string($file)."' LIMIT 1");
 	return TRUE;
 	}
 else return FALSE;
@@ -861,21 +858,21 @@ return $return;
 RETURN: Tabellenzeilen mit den entsprechenden Spalten
   */
 function getFilelist($query,$url,$show_edit,$show_tb,$show_date,$show_username,$insert){
-global $mysql_tables,$attachmentuploaddir,$picuploaddir,$_REQUEST,$userdata,$filename2,$settings;
+global $mysqli,$mysql_tables,$attachmentuploaddir,$picuploaddir,$_REQUEST,$userdata,$filename2,$settings;
 
 $return = "";
 
 // Usernamen in Array einlesen um MySQL-Anfragen zu minimieren
 if($show_username){
-	$list = mysql_query("SELECT id,username FROM ".$mysql_tables['user']);
-	while($row = mysql_fetch_array($list)){
+	$list = $mysqli->query("SELECT id,username FROM ".$mysql_tables['user']);
+	while($row = $list->fetch_assoc()){
 		$usernames[$row['id']] = stripslashes($row['username']);
 		}
 	$usernames[0] = "gel&ouml;scht";
 	}
 
 // Filedirs auflisten
-if(isset($_REQUEST['dir']) && !empty($_REQUEST['dir']) && is_numeric($_REQUEST['dir'])) $dirid = mysql_real_escape_string($_REQUEST['dir']);
+if(isset($_REQUEST['dir']) && !empty($_REQUEST['dir']) && is_numeric($_REQUEST['dir'])) $dirid = $mysqli->escape_string($_REQUEST['dir']);
 else $dirid = 0;
 
 $count = 0;
@@ -886,8 +883,8 @@ if($show_edit && $userdata['dateimanager'] < 2){ $colspan = $colspan+2; }
 
 if($dirid > 0){
 	// Aufwärts-ID holen
-	$list = mysql_query("SELECT parentid,name FROM ".$mysql_tables['filedirs']." WHERE id = '".$dirid."' LIMIT 1");
-	$dirup = mysql_fetch_assoc($list);
+	$list = $mysqli->query("SELECT parentid,name FROM ".$mysql_tables['filedirs']." WHERE id = '".$dirid."' LIMIT 1");
+	$dirup = $list->fetch_assoc();
 	
 	$return .= "<tr>\n    ";
 	if($show_edit) $return .= "<td align=\"center\"></td>";
@@ -897,8 +894,8 @@ if($dirid > 0){
 	}
 
 // Unterverzeichnisse auflisten:
-$list = mysql_query("SELECT id,parentid,name FROM ".$mysql_tables['filedirs']." WHERE parentid = '".$dirid."' ORDER BY name");
-while($row = mysql_fetch_assoc($list)){
+$list = $mysqli->query("SELECT id,parentid,name FROM ".$mysql_tables['filedirs']." WHERE parentid = '".$dirid."' ORDER BY name");
+while($row = $list->fetch_assoc()){
 	
 	$return .= "<tr id=\"dirid".$row['id']."\">\n    ";
 	if($show_edit) $return .= "<td align=\"center\"></td>";
@@ -953,8 +950,8 @@ while($row = mysql_fetch_assoc($list)){
 
 $downloads = $drag_start = $drag_ende = "";
 // "Normale Dateien" auflisten
-$list = mysql_query($query);
-while($row = mysql_fetch_array($list)){
+$list = $mysqli->query($query);
+while($row = $list->fetch_assoc()){
 	
 	switch($row['type']){
 	  case "pic":
@@ -1132,7 +1129,7 @@ return "<img src=\"images/filetypes/".$icon."\" alt=\"Filetype / Icon: ".$endung
 RETURN: Komplette Liste (HTML)
   */
 function getCommentList($query,$option){
-global $_GET,$module,$modul,$filename;
+global $mysqli,$_GET,$module,$modul,$filename;
 
 if(!isset($_GET['site'])) $_GET['site'] = "";
 
@@ -1150,8 +1147,8 @@ $return .="		<td class=\"tra\" width=\"25\"><!-- Ansehen -->&nbsp;</td>
 	</tr>\n\n";
 
 $count = 0;
-$list = mysql_query($query);
-while($row = mysql_fetch_array($list)){
+$list = $mysqli->query($query);
+while($row = $list->fetch_assoc()){
 	if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
 	if($option == "free" && $row['frei'] == 1)
 		$colspan = " colspan=\"2\"";
@@ -1198,7 +1195,7 @@ return $return;
 RETURN: Liste in kompletter HTML-Tabelle
   */
 function getCommentPostList($query,$parent_child="parent"){
-global $filename,$modul,$module,$mysql_tables,$_GET;
+global $mysqli,$filename,$modul,$module,$mysql_tables,$_GET;
 
 if(!isset($_GET['commentsites'])) $_GET['commentsites'] = "";
 
@@ -1223,21 +1220,21 @@ $return = "<table border=\"0\" align=\"center\" width=\"100%\" cellpadding=\"3\"
 $count		= 0;
 $cmenge		= 0;
 $subcmenge	= 0;
-$list = mysql_query($query);
-while($row = mysql_fetch_array($list)){
+$list = $mysqli->query($query);
+while($row = $list->fetch_assoc()){
 	if(!isset($row['postid']) || isset($row['postid']) && empty($row['postid'])) $row['postid'] = $_GET['postid'];
 	if(!isset($row['subpostid'])) $row['subpostid'] = "";
 
 	if($parent_child == "child")
-		$listcountcomments = mysql_query("SELECT id FROM ".$mysql_tables['comments']." WHERE frei = '1' AND modul='".mysql_real_escape_string($modul)."' AND subpostid='".$row['subpostid']."'");
+		$listcountcomments = $mysqli->query("SELECT id FROM ".$mysql_tables['comments']." WHERE frei = '1' AND modul='".$mysqli->escape_string($modul)."' AND subpostid='".$row['subpostid']."'");
 	else
-		$listcountcomments = mysql_query("SELECT id FROM ".$mysql_tables['comments']." WHERE frei = '1' AND modul='".mysql_real_escape_string($modul)."' AND postid='".$row['postid']."'");
-	$cmenge = mysql_num_rows($listcountcomments);
+		$listcountcomments = $mysqli->query("SELECT id FROM ".$mysql_tables['comments']." WHERE frei = '1' AND modul='".$mysqli->escape_string($modul)."' AND postid='".$row['postid']."'");
+	$cmenge = $listcountcomments->num_rows;
 	
 	// Kommentare mit Subpostid vorhanden?
 	if($parent_child != "child"){
-		$listcountsubcomments = mysql_query("SELECT id FROM ".$mysql_tables['comments']." WHERE frei = '1' AND modul='".mysql_real_escape_string($modul)."' AND postid='".$row['postid']."' AND subpostid != '' AND subpostid != '0'");
-		$subcmenge = mysql_num_rows($listcountsubcomments);
+		$listcountsubcomments = $mysqli->query("SELECT id FROM ".$mysql_tables['comments']." WHERE frei = '1' AND modul='".$mysqli->escape_string($modul)."' AND postid='".$row['postid']."' AND subpostid != '' AND subpostid != '0'");
+		$subcmenge = $listcountsubcomments->num_rows;
 		}
 	
 	if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
@@ -1398,12 +1395,12 @@ RETURN: Array(
 			)
   */
 function getUserstats($userid){
-global $mysql_tables;
+global $mysqli,$mysql_tables;
 
 if(isset($userid) && is_integer(intval($userid))){
 	$picmenge = $filemenge = 0;
-	list($picmenge) = mysql_fetch_array(mysql_query("SELECT COUNT(*) FROM ".$mysql_tables['files']." WHERE type='pic' AND uid='".mysql_real_escape_string($userid)."'"));
-	list($filemenge) = mysql_fetch_array(mysql_query("SELECT COUNT(*) FROM ".$mysql_tables['files']." WHERE type='file' AND uid='".mysql_real_escape_string($userid)."'"));
+	list($picmenge) = $mysqli->query("SELECT COUNT(*) FROM ".$mysql_tables['files']." WHERE type='pic' AND uid='".$mysqli->escape_string($userid)."'")->fetch_array(MYSQLI_NUM);
+	list($filemenge) = $mysqli->query("SELECT COUNT(*) FROM ".$mysql_tables['files']." WHERE type='file' AND uid='".$mysqli->escape_string($userid)."'")->fetch_array(MYSQLI_NUM);
 	
 	$ustats[] = array("statcat"	=> "Hochgeladene Bilder:",
 						"statvalue"	=> $picmenge);
@@ -1429,27 +1426,28 @@ RETURN: Array mit den Userdaten. Name entspricht MySQL-Spaltennamen (ohne ModulP
 		Es werden nur globale Berechtigungenund die jeweiligen Modul-Berechtigungen geladen
   */
 function getUserdata($uid,$login=FALSE){
-global $modul,$mysql_tables,$salt;
+global $mysqli,$modul,$mysql_tables,$salt;
 
-$list = mysql_query("SELECT modul,idname FROM ".$mysql_tables['rights']." WHERE (modul = '01acp' OR modul='".mysql_real_escape_string($modul)."') AND is_cat='0'");
-while($row = mysql_fetch_array($list)){
+$list = $mysqli->query("SELECT modul,idname FROM ".$mysql_tables['rights']." WHERE (modul = '01acp' OR modul='".$mysqli->escape_string($modul)."') AND is_cat='0'");
+while($row = $list->fetch_assoc()){
 	$loadrights[] = $row['modul']."_".$row['idname'];
 	$loadrightnames[$row['modul']."_".$row['idname']] = $row['idname'];
 	}
 
 if($login)
-	$list = mysql_query("SELECT id,username,mail,password,level,lastlogin,startpage,sperre,".implode(",",$loadrights)." FROM ".$mysql_tables['user']." WHERE id='".mysql_real_escape_string($_SESSION['01_idsession_'.$salt])."' AND password='".mysql_real_escape_string($_SESSION['01_passsession_'.$salt])."' LIMIT 1");
+	$list = $mysqli->query("SELECT id,username,mail,password,level,lastlogin,startpage,sperre,".implode(",",$loadrights)." FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($_SESSION['01_idsession_'.$salt])."' AND password='".$mysqli->escape_string($_SESSION['01_passsession_'.$salt])."' LIMIT 1");
 if(!empty($uid) && $uid > 0 && is_numeric($uid) && $login)
-	$list = mysql_query("SELECT id,username,mail,password,level,lastlogin,startpage,sperre,".implode(",",$loadrights)." FROM ".$mysql_tables['user']." WHERE id='".mysql_real_escape_string($uid)."' LIMIT 1");
-$fieldmenge = mysql_num_fields($list);
-while($row = mysql_fetch_array($list)){
+	$list = $mysqli->query("SELECT id,username,mail,password,level,lastlogin,startpage,sperre,".implode(",",$loadrights)." FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($uid)."' LIMIT 1");
+$fieldmenge = $list->field_count;
+while($row = $list->fetch_assoc()){
 
 	if($row['sperre'] == 0){
 		for($i=0;$i < $fieldmenge;$i++){ 
-			if(isset($loadrightnames[mysql_field_name($list, $i)]) && !empty($loadrightnames[mysql_field_name($list, $i)]))
-				$userdata[$loadrightnames[mysql_field_name($list, $i)]] = stripslashes($row[mysql_field_name($list, $i)]);
+			$finfo = $list->fetch_field_direct($i);
+			if(isset($loadrightnames[$finfo->name]) && !empty($loadrightnames[$finfo->name]))
+				$userdata[$loadrightnames[$finfo->name]] = stripslashes($row[$finfo->name]);
 			else
-				$userdata[mysql_field_name($list, $i)] = stripslashes($row[mysql_field_name($list, $i)]);
+				$userdata[$finfo->name] = stripslashes($row[$finfo->name]);
 			}
 		}
 	else{
@@ -1475,23 +1473,24 @@ return $userdata;
 RETURN: Array mit den Daten aus den übergebenen Userfields
   */
 function getUserdatafields($uid,$fields){
-global $modul,$mysql_tables;
+global $mysqli,$modul,$mysql_tables;
 
-$list = mysql_query("SELECT modul,idname FROM ".$mysql_tables['rights']." WHERE (modul = '01acp' OR modul='".mysql_real_escape_string($modul)."') AND is_cat='0'");
-while($row = mysql_fetch_array($list)){
+$list = $mysqli->query("SELECT modul,idname FROM ".$mysql_tables['rights']." WHERE (modul = '01acp' OR modul='".$mysqli->escape_string($modul)."') AND is_cat='0'");
+while($row = $list->fetch_assoc()){
 	$loadrights[] = $row['modul']."_".$row['idname'];
 	$loadrightnames[$row['modul']."_".$row['idname']] = $row['idname'];
 	}
 
-$list = mysql_query("SELECT ".$fields." FROM ".$mysql_tables['user']." WHERE id='".mysql_real_escape_string($uid)."' LIMIT 1");
-$fieldmenge = mysql_num_fields($list);
-while($row = mysql_fetch_array($list)){
+$list = $mysqli->query("SELECT ".$fields." FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($uid)."' LIMIT 1");
+$fieldmenge = $list->field_count;
+while($row = $list->fetch_assoc()){
 
 	for($i=0;$i < $fieldmenge;$i++){ 
-		if(isset($loadrightnames[mysql_field_name($list, $i)]) && !empty($loadrightnames[mysql_field_name($list, $i)]))
-			$userdata[$loadrightnames[mysql_field_name($list, $i)]] = stripslashes($row[mysql_field_name($list, $i)]);
+		$finfo = $list->fetch_field_direct($i);
+		if(isset($loadrightnames[$finfo->name]) && !empty($loadrightnames[$finfo->name]))
+			$userdata[$loadrightnames[$finfo->name]] = stripslashes($row[$finfo->name]);
 		else
-			$userdata[mysql_field_name($list, $i)] = stripslashes($row[mysql_field_name($list, $i)]);
+			$userdata[$finfo->name] = stripslashes($row[$finfo->name]);
 		}
 	}
 return $userdata;
@@ -1519,23 +1518,24 @@ RETURN: Mehrdimensionaler Array mit den Daten aus den übergebenen Userfields
 			-....
   */
 function getUserdatafields_Queryless($fields){
-global $modul,$mysql_tables;
+global $mysqli,$modul,$mysql_tables;
 
-$list = mysql_query("SELECT modul,idname FROM ".$mysql_tables['rights']." WHERE (modul = '01acp' OR modul='".mysql_real_escape_string($modul)."') AND is_cat='0'");
-while($row = mysql_fetch_array($list)){
+$list = $mysqli->query("SELECT modul,idname FROM ".$mysql_tables['rights']." WHERE (modul = '01acp' OR modul='".$mysqli->escape_string($modul)."') AND is_cat='0'");
+while($row = $list->fetch_assoc()){
 	$loadrights[] = $row['modul']."_".$row['idname'];
 	$loadrightnames[$row['modul']."_".$row['idname']] = $row['idname'];
 	}
 
-$list = mysql_query("SELECT id,".$fields." FROM ".$mysql_tables['user']."");
-$fieldmenge = mysql_num_fields($list);
-while($row = mysql_fetch_array($list)){
+$list = $mysqli->query("SELECT id,".$fields." FROM ".$mysql_tables['user']."");
+$fieldmenge = $list->field_count;
+while($row = $list->fetch_assoc()){
 
 	for($i=0;$i < $fieldmenge;$i++){ 
-		if(isset($loadrightnames[mysql_field_name($list, $i)]) && !empty($loadrightnames[mysql_field_name($list, $i)]))
-			$userdata[$row['id']][$loadrightnames[mysql_field_name($list, $i)]] = stripslashes($row[mysql_field_name($list, $i)]);
+		$finfo = $list->fetch_field_direct($i);
+		if(isset($loadrightnames[$finfo->name]) && !empty($loadrightnames[$finfo->name]))
+			$userdata[$row['id']][$loadrightnames[$finfo->name]] = stripslashes($row[$finfo->name]);
 		else
-			$userdata[$row['id']][mysql_field_name($list, $i)] = stripslashes($row[mysql_field_name($list, $i)]);
+			$userdata[$row['id']][$finfo->name] = stripslashes($row[$finfo->name]);
 		}
 	}
 return $userdata;
@@ -1580,7 +1580,7 @@ return "<img src=\"".$picuploaddir."secimg.php\" alt=\"Sicherheitscode (Spamschu
 RETURN: $message mit Erfolgs/Fehler-Nummer
   */
 function insert_Comment($autor,$email_form,$url_form,$comment,$antispam,$deaktivieren,$postid,$uid,$subpostid=0){
-global $mysql_tables,$settings,$_SESSION,$modul,$filename,$names,$flag_utf8,$htmlent_encoding_pub,$htmlent_flags;
+global $mysqli,$mysql_tables,$settings,$_SESSION,$modul,$filename,$names,$flag_utf8,$htmlent_encoding_pub,$htmlent_flags;
 $zcount = $zcount2 = $zcount1 = 0;
 
 // Zensur-Funktion
@@ -1642,9 +1642,9 @@ if(isset($autor) && !empty($autor) &&
    (isset($antispam) && md5($antispam) == $_SESSION['antispam01'] && $settings['spamschutz'] == 1 || $settings['spamschutz'] == 0) &&
    ($settings['comments_zensur'] == 0 || empty($settings['comments_badwords']) || ($settings['comments_zensur'] == 1 && !empty($settings['comments_badwords']) && ($settings['comments_zensurlimit'] == "-1" || $zcount < $settings['comments_zensurlimit'])))){
 
-	if(check_mail($email_form)) $email = mysql_real_escape_string(strip_tags($email_form)); else $email = "";
+	if(check_mail($email_form)) $email = $mysqli->escape_string(strip_tags($email_form)); else $email = "";
 	if($settings['commentfreischaltung'] == 1) $frei = 0; else $frei = 1;
-	if(!empty($url_form) && $url_form != "http://") $url = mysql_real_escape_string(strip_tags($url_form)); else $url = "";
+	if(!empty($url_form) && $url_form != "http://") $url = $mysqli->escape_string(strip_tags($url_form)); else $url = "";
 	if($deaktivieren == 1){ $c_bbc = 0; $c_smilies = 0; }else{ $c_bbc = 1; $c_smilies = 1; }
 
 	if($flag_utf8){
@@ -1652,28 +1652,28 @@ if(isset($autor) && !empty($autor) &&
 		$comment = utf8_decode($comment);
 	}
 
-	$clist = mysql_query("SELECT id,postid,uid,comment FROM ".$mysql_tables['comments']." WHERE postid='".mysql_real_escape_string($postid)."' AND uid='".mysql_real_escape_string($uid)."' OR postid='".mysql_real_escape_string($postid)."' AND comment='".mysql_real_escape_string(htmlentities($comment, $htmlent_flags, $htmlent_encoding_pub))."'");
+	$clist = $mysqli->query("SELECT id,postid,uid,comment FROM ".$mysql_tables['comments']." WHERE postid='".$mysqli->escape_string($postid)."' AND uid='".$mysqli->escape_string($uid)."' OR postid='".$mysqli->escape_string($postid)."' AND comment='".$mysqli->escape_string(htmlentities($comment, $htmlent_flags, $htmlent_encoding_pub))."'");
 
-	if(mysql_num_rows($clist) == 0){
+	if($clist->num_rows == 0){
 	
 		// Eintragung in Datenbank vornehmen:
 		$sql_insert = "INSERT INTO ".$mysql_tables['comments']." (modul,postid,subpostid,uid,frei,timestamp,ip,autor,email,url,comment,smilies,bbc) VALUES (
-						'".mysql_real_escape_string($modul)."',
-						'".mysql_real_escape_string($postid)."',
-						'".mysql_real_escape_string($subpostid)."',
-						'".mysql_real_escape_string($uid)."',
+						'".$mysqli->escape_string($modul)."',
+						'".$mysqli->escape_string($postid)."',
+						'".$mysqli->escape_string($subpostid)."',
+						'".$mysqli->escape_string($uid)."',
 						'".$frei."',
 						'".time()."',
-						'".mysql_real_escape_string($_SERVER['REMOTE_ADDR'])."',
-						'".mysql_real_escape_string(htmlentities(strip_tags($autor), $htmlent_flags, $htmlent_encoding_pub))."',
+						'".$mysqli->escape_string($_SERVER['REMOTE_ADDR'])."',
+						'".$mysqli->escape_string(htmlentities(strip_tags($autor), $htmlent_flags, $htmlent_encoding_pub))."',
 						'".$email."',
 						'".$url."',
-						'".mysql_real_escape_string(htmlentities($comment, $htmlent_flags, $htmlent_encoding_pub))."',
+						'".$mysqli->escape_string(htmlentities($comment, $htmlent_flags, $htmlent_encoding_pub))."',
 						'".$c_smilies."',
 						'".$c_bbc."'
 						)";
-		$result = mysql_query($sql_insert) OR die(mysql_error());
-		$jumpto_id = mysql_insert_id();
+        $result = $mysqli->query($sql_insert) OR die($mysqli->error);
+        $jumpto_id = $mysqli->insert_id;
 
 		if($frei == 0){
 			$autor 		 = preg_replace("/(content-type:|bcc:|cc:|to:|from:)/im","",$autor);
@@ -1703,8 +1703,8 @@ Loggen Sie sich in den Administrationsbereich ein um den Kommentar freizuschalte
 ---
 Webmailer";
 
-			$list = mysql_query("SELECT mail,01acp_editcomments FROM ".$mysql_tables['user']." WHERE 01acp_editcomments='1' AND sperre = '0' ORDER BY rand() LIMIT 10");
-			while($row = mysql_fetch_array($list)){
+			$list = $mysqli->query("SELECT mail,01acp_editcomments FROM ".$mysql_tables['user']." WHERE 01acp_editcomments='1' AND sperre = '0' ORDER BY rand() LIMIT 10");
+			while($row = $list->fetch_assoc()){
 				@mail(stripslashes($row['mail']),$email_betreff,$email_content,implode("\r\n", $headerFields));
 				}
 			
@@ -1777,7 +1777,7 @@ return $return;
 RETURN: TRUE
   */
 function getXML2Cache($quelle,$ziel){
-global $mysql_tables;
+global $mysqli,$mysql_tables;
 
 $errno = "";
 $errstr = "";
@@ -1791,7 +1791,7 @@ if($fp){
 		$wrotez = fwrite($cachefile, $write);
 		fclose($cachefile);
 		
-		mysql_query("UPDATE ".$mysql_tables['settings']." SET wert = '".time()."' WHERE idname = 'cachetime' LIMIT 1");
+		$mysqli->query("UPDATE ".$mysql_tables['settings']." SET wert = '".time()."' WHERE idname = 'cachetime' LIMIT 1");
 		}
 	}
 
@@ -1841,9 +1841,9 @@ return $dumpline;
 RETURN:	Kein Return
   */
 function delComments($postid){
-global $mysql_tables,$modul;
+global $mysqli,$mysql_tables,$modul;
 
-mysql_query("DELETE FROM ".$mysql_tables['comments']." WHERE modul='".mysql_real_escape_string($modul)."' AND postid='".mysql_real_escape_string($postid)."'");
+$mysqli->query("DELETE FROM ".$mysql_tables['comments']." WHERE modul='".$mysqli->escape_string($modul)."' AND postid='".$mysqli->escape_string($postid)."'");
 }
 
 
@@ -1861,9 +1861,9 @@ mysql_query("DELETE FROM ".$mysql_tables['comments']." WHERE modul='".mysql_real
 RETURN:	Kein Return
   */
 function delSubPostComments($postid,$subpostid){
-global $mysql_tables,$modul;
+global $mysqli,$mysql_tables,$modul;
 
-mysql_query("DELETE FROM ".$mysql_tables['comments']." WHERE modul='".mysql_real_escape_string($modul)."' AND postid='".mysql_real_escape_string($postid)."' AND subpostid='".mysql_real_escape_string($subpostid)."'");
+$mysqli->query("DELETE FROM ".$mysql_tables['comments']." WHERE modul='".$mysqli->escape_string($modul)."' AND postid='".$mysqli->escape_string($postid)."' AND subpostid='".$mysqli->escape_string($subpostid)."'");
 }
 
 
@@ -1900,10 +1900,10 @@ return $string;
 RETURN:	Array mit dem im serialized_data enthaltenen Daten
   */
 function getStorageData($modul){
-global $mysql_tables;
+global $mysqli,$mysql_tables;
 
-$list = mysql_query("SELECT serialized_data FROM ".$mysql_tables['module']." WHERE idname = '".mysql_real_escape_string($modul)."' LIMIT 1");
-$row = mysql_fetch_assoc($list);
+$list = $mysqli->query("SELECT serialized_data FROM ".$mysql_tables['module']." WHERE idname = '".$mysqli->escape_string($modul)."' LIMIT 1");
+$row = $list->fetch_assoc();
 
 $return = unserialize($row['serialized_data']);
 
@@ -1936,14 +1936,14 @@ return $return;
 RETURN: true
   */
 function getFileVerz_Rek($parentid,$deep=0,$maxdeep=-1,$callfunction="",$givedeeperparam=""){
-global $mysql_tables;
+global $mysqli,$mysql_tables;
 $return = "";
 
 // Abbruch, falls $deep = 0 erreicht wurde
 if($maxdeep == 0) return true;
 
-$list = mysql_query("SELECT * FROM ".$mysql_tables['filedirs']." WHERE parentid = '".mysql_real_escape_string($parentid)."' ORDER BY name");
-while($row = mysql_fetch_assoc($list)){
+$list = $mysqli->query("SELECT * FROM ".$mysql_tables['filedirs']." WHERE parentid = '".$mysqli->escape_string($parentid)."' ORDER BY name");
+while($row = $list->fetch_assoc()){
 	if(!empty($callfunction) && function_exists($callfunction)) $return .= call_user_func($callfunction,$row,$deep,$givedeeperparam);
 
 	// Rekursion

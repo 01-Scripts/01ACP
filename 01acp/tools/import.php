@@ -39,14 +39,14 @@ include_once("system/headinclude.php");
 include_once("system/functions.php");
 
 if(isset($_REQUEST['newsscript_instnr']) && !empty($_REQUEST['newsscript_instnr'])){
-	$instnr = mysql_real_escape_string($_REQUEST['newsscript_instnr']);
-	$table_users = "01news_".$instnr."_users";
-	$table_news = "01news_".$instnr."_news";
-	$table_newscat = "01news_".$instnr."_newscat";
-	$table_comments = "01news_".$instnr."_comments";
-	$table_settings = "01news_".$instnr."_settings";
-	$table_attachments = "01news_".$instnr."_attachments";
-	$table_pics = "01news_".$instnr."_pics";
+	$instnr				= $mysqli->escape_string($_REQUEST['newsscript_instnr']);
+	$table_users		= "01news_".$instnr."_users";
+	$table_news			= "01news_".$instnr."_news";
+	$table_newscat		= "01news_".$instnr."_newscat";
+	$table_comments		= "01news_".$instnr."_comments";
+	$table_settings		= "01news_".$instnr."_settings";
+	$table_attachments	= "01news_".$instnr."_attachments";
+	$table_pics			= "01news_".$instnr."_pics";
 	}
 
 //BB-Code-Funktion (nur für Import!)
@@ -55,7 +55,6 @@ function bb_code(&$text,$urls,$bbc){
 * BB-Code-Funktion: Autor: C by Michael Müller, 30.07.2003, 17:55 - www.php4u.net *
 * Edited by Michael Lorer, 01.04.2007, 20:37 - www.01-scripts.de                  *
 **********************************************************************************/
-
       # Config #
       $max_lang = 150;//max. Wortlänge
       $word_replace = "-<br />";//Wörter werden getrennt
@@ -334,20 +333,20 @@ if(isset($_REQUEST['step']) && $_REQUEST['step'] == 5 &&
 	$iusers_id[] = 0;
 	$iusers_username[] = "";
 	$iusers_mail[] = "";
-	$list = mysql_query("SELECT id,username,mail FROM ".$mysql_tables['user']." WHERE id!='1' AND id != '0'");
-	while($row = mysql_fetch_array($list)){
+	$list = $mysqli->query("SELECT id,username,mail FROM ".$mysql_tables['user']." WHERE id!='1' AND id != '0'");
+	while($row = $list->fetch_assoc()){
 		$iusers_id[] = $row['id'];
 		$iusers_username[] = $row['username'];
 		$iusers_mail[] = $row['mail'];
 		}
-	$list = mysql_query("SELECT * FROM ".$table_users." WHERE id!='1' AND id != '0'");
-	while($row = mysql_fetch_array($list)){
+	$list = $mysqli->query("SELECT * FROM ".$table_users." WHERE id!='1' AND id != '0'");
+	while($row = $list->fetch_assoc()){
 		if(!in_array($row['id'],$iusers_id) && !in_array($row['username'],$iusers_username) && !in_array($row['mail'],$iusers_mail)){
 			if($uc > 0) $insertquery .= ",";
 			$insertquery .= "(
 							'".$row['id']."',
-							'".mysql_real_escape_string($row['username'])."',
-							'".mysql_real_escape_string($row['mail'])."',
+							'".$mysqli->escape_string($row['username'])."',
+							'".$mysqli->escape_string($row['mail'])."',
 							'".pwhashing(create_NewPassword(6))."',
 							'".$row['level']."',
 							'',
@@ -360,7 +359,7 @@ if(isset($_REQUEST['step']) && $_REQUEST['step'] == 5 &&
 	if($uc > 0){
 		$sql_insert = "INSERT INTO ".$mysql_tables['user']." (id,username,mail,password,level,lastlogin,sperre) VALUES ".$insertquery.";";
 		//echo $sql_insert;
-		$result = mysql_query($sql_insert) OR die(mysql_error());
+		$result = $mysqli->query($sql_insert) OR die($mysqli->error);
 		}
 		
     $insertquery = "";
@@ -368,12 +367,12 @@ if(isset($_REQUEST['step']) && $_REQUEST['step'] == 5 &&
 	// Newseinträge
 	// Vorhandene Einträge in Array einlesen
 	$entrys[] = 0;
-	$list = mysql_query("SELECT id FROM ".$mysql_tables['artikel']."");
-	while($row = mysql_fetch_array($list)){
+	$list = $mysqli->query("SELECT id FROM ".$mysql_tables['artikel']."");
+	while($row = $list->fetch_assoc()){
 		$entrys[] = $row['id'];
 		}
-	$list = mysql_query("SELECT * FROM ".$table_news."");
-	while($row = mysql_fetch_array($list)){
+	$list = $mysqli->query("SELECT * FROM ".$table_news."");
+	while($row = $list->fetch_assoc()){
 		if(!in_array($row['id'],$entrys)){
 			if($nc > 0) $insertquery .= ",";
 			
@@ -394,10 +393,10 @@ if(isset($_REQUEST['step']) && $_REQUEST['step'] == 5 &&
 							'".$row['endtime']."',
 							'".$row['frei']."',
 							'".$row['hide']."',
-							'".mysql_real_escape_string(stripslashes($row['icon']))."',
-							'".mysql_real_escape_string(htmlentities(stripslashes($row['titel']),$htmlent_flags,$htmlent_encoding_acp))."',
+							'".$mysqli->escape_string(stripslashes($row['icon']))."',
+							'".$mysqli->escape_string(htmlentities(stripslashes($row['titel']),$htmlent_flags,$htmlent_encoding_acp))."',
 							'".$row['newscatid']."',
-							'".mysql_real_escape_string($newstext)."',
+							'".$mysqli->escape_string($newstext)."',
 							'0',
 							'',
 							'".$row['comments']."',
@@ -413,26 +412,26 @@ if(isset($_REQUEST['step']) && $_REQUEST['step'] == 5 &&
 	if($nc > 0){
 		$sql_insert = "INSERT INTO ".$mysql_tables['artikel']." (id,timestamp,endtime,frei,hide,icon,titel,newscatid,text,autozusammen,zusammenfassung,comments,hide_headline,uid,static,hits) VALUES ".$insertquery.";";
 		//echo $sql_insert;
-		$result = mysql_query($sql_insert) OR die(mysql_error());
+		$result = $mysqli->query($sql_insert) OR die($mysqli->error);
 		}
 		
     $insertquery = "";
 	$cc = 0;
 	// Kommentare
-	$list = mysql_query("SELECT * FROM ".$table_comments."");
-	while($row = mysql_fetch_array($list)){
+	$list = $mysqli->query("SELECT * FROM ".$table_comments."");
+	while($row = $list->fetch_assoc()){
 		if($cc > 0) $insertquery .= ",";
 		$insertquery .= "(
-						'".mysql_real_escape_string($modul)."',
+						'".$mysqli->escape_string($modul)."',
 						'".$row['newsid']."',
 						'".$row['uid']."',
 						'".$row['frei']."',
 						'".$row['timestamp']."',
 						'".$row['ip']."',
-						'".mysql_real_escape_string($row['name'])."',
-						'".mysql_real_escape_string($row['email'])."',
-						'".mysql_real_escape_string($row['url'])."',
-						'".mysql_real_escape_string($row['comment'])."',
+						'".$mysqli->escape_string($row['name'])."',
+						'".$mysqli->escape_string($row['email'])."',
+						'".$mysqli->escape_string($row['url'])."',
+						'".$mysqli->escape_string($row['comment'])."',
 						'".$row['smilies']."',
 						'".$row['bbc']."'
 						)";
@@ -441,8 +440,7 @@ if(isset($_REQUEST['step']) && $_REQUEST['step'] == 5 &&
 		
 	if($cc > 0){
 		$sql_insert = "INSERT INTO ".$mysql_tables['comments']." (modul,postid,uid,frei,timestamp,ip,autor,email,url,comment,smilies,bbc) VALUES ".$insertquery.";";
-		//echo $sql_insert;
-		$result = mysql_query($sql_insert) OR die(mysql_error());
+		$result = $mysqli->query($sql_insert) OR die($mysqli->error);
 		}
 ?>
 <h1>Schritt 5 - Benutzer, Newseintr&auml;ge &amp; Kommentare importieren</h1>
@@ -479,14 +477,14 @@ elseif(isset($_REQUEST['step']) && $_REQUEST['step'] == 4 &&
     $insertquery = "";
 	$c = 0;
 	// Dateien
-	$list = mysql_query("SELECT * FROM ".$table_attachments."");
-	while($row = mysql_fetch_array($list)){
+	$list = $mysqli->query("SELECT * FROM ".$table_attachments."");
+	while($row = $list->fetch_assoc()){
 		if($c > 0) $insertquery .= ",";
 		if(empty($row['uid'])) $uid = 0;
 		else $uid = $row['uid'];
 		$insertquery .= "(
 						'file',
-						'".mysql_real_escape_string($modul)."',
+						'".$mysqli->escape_string($modul)."',
 						'".$row['orgname']."',
 						'".$row['name']."',
 						'".$row['size']."',
@@ -498,14 +496,14 @@ elseif(isset($_REQUEST['step']) && $_REQUEST['step'] == 4 &&
 	$filecount = $c;
 	// Bilder
 	$piccount = 0;
-	$list = mysql_query("SELECT * FROM ".$table_pics."");
-	while($row = mysql_fetch_array($list)){
+	$list = $mysqli->query("SELECT * FROM ".$table_pics."");
+	while($row = $list->fetch_assoc()){
 		if($c > 0) $insertquery .= ",";
 		if(empty($row['uid'])) $uid = 0;
 		else $uid = $row['uid'];
 		$insertquery .= "(
 						'pic',
-						'".mysql_real_escape_string($modul)."',
+						'".$mysqli->escape_string($modul)."',
 						'".$row['orgname']."',
 						'".$row['name']."',
 						'".$row['size']."',
@@ -518,21 +516,20 @@ elseif(isset($_REQUEST['step']) && $_REQUEST['step'] == 4 &&
 	
 	if($c > 0){
 		$sql_insert = "INSERT INTO ".$mysql_tables['files']." (type,modul,orgname,name,size,ext,uid) VALUES ".$insertquery.";";
-		//echo $sql_insert;
-		$result = mysql_query($sql_insert) OR die(mysql_error());
+		$result = $mysqli->query($sql_insert) OR die($mysqli->error);
 		}
 	
 	// Newskategorien
 	// Vorhandene Kategorien in Array einlesen
 	$installed_cats[] = 0;
-	$list = mysql_query("SELECT id FROM ".$mysql_tables['cats']."");
-	while($row = mysql_fetch_array($list)){
+	$list = $mysqli->query("SELECT id FROM ".$mysql_tables['cats']."");
+	while($row = $list->fetch_assoc()){
 		$installed_cats[] = $row['id'];
 		}
 	$insertquery = "";
 	$c = 0;
-    $list = mysql_query("SELECT * FROM ".$table_newscat."");
-	while($row = mysql_fetch_array($list)){
+    $list = $mysqli->query("SELECT * FROM ".$table_newscat."");
+	while($row = $list->fetch_assoc()){
 		if(!in_array($row['id'],$installed_cats)){
 			if($c > 0) $insertquery .= ",";
 			$insertquery .= "(
@@ -545,8 +542,7 @@ elseif(isset($_REQUEST['step']) && $_REQUEST['step'] == 4 &&
 		}
 	if($c > 0){
 		$sql_insert = "INSERT INTO ".$mysql_tables['cats']." (id,name,catpic) VALUES ".$insertquery.";";
-		//echo $sql_insert;
-		$result = mysql_query($sql_insert) OR die(mysql_error());
+		$result = $mysqli->query($sql_insert) OR die($mysqli->error);
 		}
 ?>
 <h1>Schritt 4 - Dateien, Bilder &amp; Newskategorien in DB importieren</h1>
@@ -639,9 +635,9 @@ elseif(isset($_REQUEST['step']) && $_REQUEST['step'] == 2 &&
     echo "<h1>Schritt 2 - Modul w&auml;hlen</h1>\n";
 
     // Verbindung zu einer Newsscript-Tabelle möglich?
-	if(mysql_query("SELECT COUNT(*) FROM ".$table_users."")){
-		$list = mysql_query("SELECT idname,wert FROM ".$table_settings." WHERE idname = 'version' LIMIT 1");
-		while($row = mysql_fetch_array($list)){
+	if($mysqli->query("SELECT COUNT(*) FROM ".$table_users."")){
+		$list = $mysqli->query("SELECT idname,wert FROM ".$table_settings." WHERE idname = 'version' LIMIT 1");
+		while($row = $list->fetch_assoc()){
 			$version = $row['wert'];
 			}
 		// Version überprüfen

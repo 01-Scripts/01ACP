@@ -6,7 +6,7 @@
 	
 	Modul:		01ACP
 	Dateiinfo: 	Bearbeitung von eingehenden Ajax-Requests
-	#fv.1200#
+	#fv.122#
 */
 
 // Fancy-Upload (Dateien hochladen)
@@ -63,7 +63,7 @@ hide_unhide('hide_editdir_".$_REQUEST['id']."');
 	echo "<a href=\"".$_REQUEST['url']."\">".$_REQUEST['olddirname']."</a>";
 		}
 	else{
-		mysql_query("UPDATE ".$mysql_tables['filedirs']." SET parentid = '".mysql_real_escape_string($_REQUEST['dir'])."', name = '".mysql_real_escape_string(utf8_decode($_REQUEST['dirname']))."' WHERE id = '".mysql_real_escape_string($_REQUEST['id'])."' LIMIT 1");
+		$mysqli->query("UPDATE ".$mysql_tables['filedirs']." SET parentid = '".$mysqli->escape_string($_REQUEST['dir'])."', name = '".$mysqli->escape_string(utf8_decode($_REQUEST['dirname']))."' WHERE id = '".$mysqli->escape_string($_REQUEST['id'])."' LIMIT 1");
 		
 		if($_REQUEST['dir'] != $_REQUEST['olddirid']) $hide = "Success_delfade('dirid".$_REQUEST['id']."');";
 		else $hide = "Success_standard();";
@@ -96,7 +96,7 @@ elseif(isset($_REQUEST['ajaxaction']) && $_REQUEST['ajaxaction'] == "file_change
    isset($_REQUEST['fileid']) && !empty($_REQUEST['fileid']) && $userdata['dateimanager'] == 2){
 	$dirid = substr($_REQUEST['dirid'],4);
 	$fileid =substr($_REQUEST['fileid'],5);
-	mysql_query("UPDATE ".$mysql_tables['files']." SET dir = '".mysql_real_escape_string($dirid)."' WHERE id = '".mysql_real_escape_string($fileid)."' LIMIT 1");
+	$mysqli->query("UPDATE ".$mysql_tables['files']." SET dir = '".$mysqli->escape_string($dirid)."' WHERE id = '".$mysqli->escape_string($fileid)."' LIMIT 1");
 	
 	echo "<script type=\"text/javascript\"> Success_delfade('id".$fileid."'); </script>";
 	}
@@ -122,7 +122,7 @@ elseif(isset($_REQUEST['ajaxaction']) && $_REQUEST['ajaxaction'] == "savestorage
 			if(isset($_POST['field_'.$x]))
 				$storage['field_'.$x] = utf8_decode($_POST['field_'.$x]); 
 			}
-		mysql_query("UPDATE ".$mysql_tables['module']." SET serialized_data='".mysql_real_escape_string(serialize($storage))."' WHERE idname='".mysql_real_escape_string($_REQUEST['storagemodul'])."' LIMIT 1");
+		$mysqli->query("UPDATE ".$mysql_tables['module']." SET serialized_data='".$mysqli->escape_string(serialize($storage))."' WHERE idname='".$mysqli->escape_string($_REQUEST['storagemodul'])."' LIMIT 1");
 		
 		echo "
 <script type=\"text/javascript\">
@@ -142,7 +142,7 @@ ShowAjaxError('<b>Fehler:</b><br />Sie haben nicht alle ben&ouml;tigen Felder au
 elseif(isset($_REQUEST['ajaxaction']) && $_REQUEST['ajaxaction'] == "delcomment" &&
    isset($_REQUEST['id']) && !empty($_REQUEST['id']) &&
    $userdata['editcomments'] == 1){
-	mysql_query("DELETE FROM ".$mysql_tables['comments']." WHERE id='".mysql_real_escape_string($_REQUEST['id'])."' LIMIT 1");
+	$mysqli->query("DELETE FROM ".$mysql_tables['comments']." WHERE id='".$mysqli->escape_string($_REQUEST['id'])."' LIMIT 1");
 	
 	echo "<script type=\"text/javascript\"> Success_delfade('id".$_REQUEST['id']."'); </script>";
 	}
@@ -150,7 +150,7 @@ elseif(isset($_REQUEST['ajaxaction']) && $_REQUEST['ajaxaction'] == "delcomment"
 elseif(isset($_REQUEST['ajaxaction']) && $_REQUEST['ajaxaction'] == "freecomment" &&
    isset($_REQUEST['id']) && !empty($_REQUEST['id']) &&
    $userdata['editcomments'] == 1){
-    mysql_query("UPDATE ".$mysql_tables['comments']." SET frei='1' WHERE id='".mysql_real_escape_string($_REQUEST['id'])."' LIMIT 1");
+    $mysqli->query("UPDATE ".$mysql_tables['comments']." SET frei='1' WHERE id='".$mysqli->escape_string($_REQUEST['id'])."' LIMIT 1");
 	
 	echo "<script type=\"text/javascript\"> Success_CFree('cfree".$_REQUEST['id']."'); </script>";
 	}

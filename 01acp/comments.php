@@ -1,12 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Kommentare verwalten
-	#fv.1102#
+	#fv.122#
 */
 
 $menuecat = "01acp_comments";
@@ -35,7 +35,7 @@ if($modul != "01acp"){
 	   isset($_POST['delselected']) && $_POST['delselected'] == 1){
 		$cup = 0;
 		foreach($_POST['cdelid'] as $delid){
-			mysql_query("DELETE FROM ".$mysql_tables['comments']." WHERE modul='".mysql_real_escape_string($modul)."' AND id='".mysql_real_escape_string($delid)."' LIMIT 1");
+			$mysqli->query("DELETE FROM ".$mysql_tables['comments']." WHERE modul='".$mysqli->escape_string($modul)."' AND id='".$mysqli->escape_string($delid)."' LIMIT 1");
 			$cup++;
 			}
 		echo "<p class=\"meldung_erfolg\">Es wurden ".$cup." Kommentare gel&ouml;scht</p>";
@@ -63,9 +63,9 @@ if($modul != "01acp"){
 		// Kommentare zu Sub-Posts auflisten:
 		if(isset($_GET['subpostid']) && !empty($_GET['subpostid'])){
 			$sites = 0;
-			$query = "SELECT id,postid,subpostid,frei,timestamp,ip,autor,email,comment,smilies,bbc FROM ".$mysql_tables['comments']." WHERE postid='".mysql_real_escape_string($_GET['postid'])."' AND subpostid='".mysql_real_escape_string($_GET['subpostid'])."' AND modul='".mysql_real_escape_string($modul)."' ORDER BY timestamp DESC";
+			$query = "SELECT id,postid,subpostid,frei,timestamp,ip,autor,email,comment,smilies,bbc FROM ".$mysql_tables['comments']." WHERE postid='".$mysqli->escape_string($_GET['postid'])."' AND subpostid='".$mysqli->escape_string($_GET['subpostid'])."' AND modul='".$mysqli->escape_string($modul)."' ORDER BY timestamp DESC";
 			$query = makepages($query,$sites,"site",ACP_PER_PAGE);		
-			$list = mysql_query($query);
+			$list = $mysqli->query($query);
 			
 			echo "<h2>Kommentare bearbeiten <img src=\"images/icons/icon_edit.gif\" alt=\"Stift + Block\" title=\"bearbeiten\" /></h2>";
 			echo "<p><a href=\"".$filename."&amp;showsub=1&amp;postid=".$_GET['postid']."\">&laquo; Zur&uuml;ck</a></p>";
@@ -80,7 +80,7 @@ if($modul != "01acp"){
 		elseif(isset($_GET['showsub']) && $_GET['showsub'] == 1 && function_exists("_".$module[$modul]['modulname']."_getCommentChildTitle")){
 			$csites = 0;
 			$menge = 0;
-			$query = "SELECT DISTINCT subpostid FROM ".$mysql_tables['comments']." WHERE frei = '1' AND modul='".mysql_real_escape_string($modul)."' AND postid = '".mysql_real_escape_string($_GET['postid'])."' ORDER BY (subpostid*'1') DESC";
+			$query = "SELECT DISTINCT subpostid FROM ".$mysql_tables['comments']." WHERE frei = '1' AND modul='".$mysqli->escape_string($modul)."' AND postid = '".$mysqli->escape_string($_GET['postid'])."' ORDER BY (subpostid*'1') DESC";
 			$query = makepages($query,$csites,"commentsites",ACP_PER_PAGE);
 			
 			echo "<h2>Kommentare bearbeiten <img src=\"images/icons/icon_edit.gif\" alt=\"Stift + Block\" title=\"bearbeiten\" /></h2>";
@@ -94,9 +94,9 @@ if($modul != "01acp"){
 		// Kommentare zu Posts auflisten:
 		else{
 			$sites = 0;
-			$query = "SELECT id,postid,frei,timestamp,ip,autor,email,comment,smilies,bbc FROM ".$mysql_tables['comments']." WHERE postid='".mysql_real_escape_string($_GET['postid'])."' AND modul='".mysql_real_escape_string($modul)."' ORDER BY timestamp DESC";
+			$query = "SELECT id,postid,frei,timestamp,ip,autor,email,comment,smilies,bbc FROM ".$mysql_tables['comments']." WHERE postid='".$mysqli->escape_string($_GET['postid'])."' AND modul='".$mysqli->escape_string($modul)."' ORDER BY timestamp DESC";
 			$query = makepages($query,$sites,"site",ACP_PER_PAGE);		
-			$list = mysql_query($query);
+			$list = $mysqli->query($query);
 			
 			echo "<h2>Kommentare bearbeiten <img src=\"images/icons/icon_edit.gif\" alt=\"Stift + Block\" title=\"bearbeiten\" /></h2>";
 			echo "<p><a href=\"".$filename."\">&laquo; Zur&uuml;ck</a></p>";
@@ -112,11 +112,11 @@ if($modul != "01acp"){
 		// Kommentare, die freigeschaltet werden müssen auflisten:
 		$sites = 0;
 		$menge = 0;
-		$query = "SELECT id,postid,timestamp,ip,autor,email,comment,smilies,bbc FROM ".$mysql_tables['comments']." WHERE frei = '0' AND modul='".mysql_real_escape_string($modul)."' ORDER BY timestamp DESC";
+		$query = "SELECT id,postid,timestamp,ip,autor,email,comment,smilies,bbc FROM ".$mysql_tables['comments']." WHERE frei = '0' AND modul='".$mysqli->escape_string($modul)."' ORDER BY timestamp DESC";
 		$query = makepages($query,$sites,"commentfreesite",ACP_PER_PAGE);
 		
-		$list = mysql_query($query);
-		$menge = mysql_num_rows($list);
+		$list = $mysqli->query($query);
+		$menge = $list->num_rows;
 		
 		if($menge > 0){
 		
@@ -129,7 +129,7 @@ if($modul != "01acp"){
 		// Posts mit Kommentaren auflisten:
 		$csites = 0;
 		$menge = 0;
-		$query = "SELECT DISTINCT postid FROM ".$mysql_tables['comments']." WHERE frei = '1' AND modul='".mysql_real_escape_string($modul)."' ORDER BY (postid*'1') DESC";
+		$query = "SELECT DISTINCT postid FROM ".$mysql_tables['comments']." WHERE frei = '1' AND modul='".$mysqli->escape_string($modul)."' ORDER BY (postid*'1') DESC";
 		$query = makepages($query,$csites,"commentsites",ACP_PER_PAGE);
 		
 		echo "<h2>Kommentare bearbeiten <img src=\"images/icons/icon_edit.gif\" alt=\"Stift + Block\" title=\"bearbeiten\" /></h2>";
@@ -148,5 +148,4 @@ else{
 }else $flag_loginerror = true;
 include("system/foot.php");
 
-// 01ACP Copyright 2008 by Michael Lorer - 01-Scripts.de
 ?>

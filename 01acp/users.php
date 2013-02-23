@@ -1,12 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2011 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Benutzerverwaltung (Benutzer hinzufügen und bearbeiten; Eigenes Profil)
-	#fv.1201#
+	#fv.122#
 */
 
 $menuecat = "01acp_users";
@@ -23,9 +23,6 @@ if(isset($userdata['id']) && $userdata['id'] > 0){
 
 
 
-
-
-
 // Neuen Benutzer hinzufügen
 if(isset($_REQUEST['action']) && $_REQUEST['action'] == "add_user" && $userdata['userverwaltung'] >= 1){
 ?>
@@ -39,9 +36,8 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "add_user" && $userdata[
 	isset($_POST['pwwahl']) && (($_POST['pwwahl'] == "eigen" && isset($_POST['password']) && !empty($_POST['password']) && strlen($_POST['password']) >= PW_LAENGE) || $_POST['pwwahl'] == "random") &&
 	isset($_POST['level']) && $_POST['level'] <= $userdata['level']){
 		// Überprüfen ob E-Mail-Adresse oder Benutzername schon vorhanden ist
-		$list = mysql_query("SELECT id FROM ".$mysql_tables['user']." WHERE username='".mysql_real_escape_string($_POST['username'])."' OR mail='".mysql_real_escape_string($_POST['mail'])."'");
-		$menge = mysql_num_rows($list);
-		if($menge < 1){
+		$list = $mysqli->query("SELECT id FROM ".$mysql_tables['user']." WHERE username='".$mysqli->escape_string($_POST['username'])."' OR mail='".$mysqli->escape_string($_POST['mail'])."'");
+		if($list->num_rows < 1){
 			if($_POST['pwwahl'] == "random"){
 		        $password = create_NewPassword(8);
 		        $passmd5 = pwhashing($password);
@@ -53,13 +49,13 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "add_user" && $userdata[
 			
 			// Eintrag in DB vornehmen
 			$sql_insert = "INSERT INTO ".$mysql_tables['user']." (username,mail,password,level) VALUES (
-							'".mysql_real_escape_string(trim($_POST['username']))."',
-							'".mysql_real_escape_string($_POST['mail'])."',
+							'".$mysqli->escape_string(trim($_POST['username']))."',
+							'".$mysqli->escape_string($_POST['mail'])."',
 							'".$passmd5."',
-							'".mysql_real_escape_string($_POST['level'])."'
+							'".$mysqli->escape_string($_POST['level'])."'
 							)";
-            $result = mysql_query($sql_insert, $db) OR die(mysql_error());
-			$lastinsertid = mysql_insert_id();
+            $result = $mysqli->query($sql_insert) OR die($mysqli->error);
+			$lastinsertid = $mysqli->insert_id;
 			
 			if($lastinsertid > 0){
 				// ggf. E-Mail @ Benutzer versenden
@@ -122,7 +118,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "add_user" && $userdata[
     <tr>
         <td class="tra"><b>Passwort*</b></td>
         <td class="tra">
-			<input type="radio" name="pwwahl" value="random" checked="checked" /> Zufälliges Passwort generieren <span class="small">(Wird per E-Mail an den Benutzer verschickt)</span><br />
+			<input type="radio" name="pwwahl" value="random" checked="checked" /> Zuf&auml;lliges Passwort generieren <span class="small">(Wird per E-Mail an den Benutzer verschickt)</span><br />
 			<input type="radio" name="pwwahl" value="eigen" /> Passwort manuell festlegen: <input type="text" name="password" size="20" /> <span class="small"><b>Mindestens <?PHP echo PW_LAENGE; ?> Zeichen</b></span>
 		</td>
     </tr>
@@ -176,9 +172,6 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "add_user" && $userdata[
 
 
 
-
-
-
 // Benutzer auflisten
 if(isset($_REQUEST['action']) && $_REQUEST['action'] == "edit_users" && $userdata['userverwaltung'] == 2){
 ?>
@@ -195,7 +188,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "edit_users" && $userdat
 	if(isset($_GET['sort']) && $_GET['sort'] == "desc") $sortorder = "DESC";
 	else{ $sortorder = "ASC"; $_GET['sort'] = "ASC"; }
 	
-	if(isset($_GET['search']) && !empty($_GET['search'])) $where = " WHERE (username LIKE '%".mysql_real_escape_string($_GET['search'])."%' OR mail LIKE '%".mysql_real_escape_string($_GET['search'])."%') AND id != '0'";
+	if(isset($_GET['search']) && !empty($_GET['search'])) $where = " WHERE (username LIKE '%".$mysqli->escape_string($_GET['search'])."%' OR mail LIKE '%".$mysqli->escape_string($_GET['search'])."%') AND id != '0'";
 	else{ $where = " WHERE id != '0'"; $_GET['search'] = ""; }
 	
 	if(!isset($_GET['orderby'])) $_GET['orderby'] = "";
@@ -255,8 +248,8 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "edit_users" && $userdat
 <?PHP
 	// Ausgabe der Datensätze (Liste) aus DB
 	$count = 0;
-	$list = mysql_query($query);
-	while($row = mysql_fetch_assoc($list)){
+	$list = $mysqli->query($query);
+	while($row = $list->fetch_assoc()){
 		// Zusatzinformationen/Statistiken über Benutzer zusammentragen
 		$userstats = getUserstats($row['id']);
 
@@ -331,8 +324,8 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "ask_del" && $userdata['
 	
 	if($_GET['userid'] == $userdata['id']) $error = 1;
 	else{
-		$list = mysql_query("SELECT username,level FROM ".$mysql_tables['user']." WHERE id='".mysql_real_escape_string($_GET['userid'])."' AND id != '0' LIMIT 1");
-		while($row = mysql_fetch_assoc($list)){
+		$list = $mysqli->query("SELECT username,level FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($_GET['userid'])."' AND id != '0' LIMIT 1");
+		while($row = $list->fetch_assoc()){
 			$u_username = $row['username'];
 			$u_level = $row['level'];
 			}
@@ -373,8 +366,8 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_del" && $userdata['u
 	
 	if($_GET['userid'] == $userdata['id']) $error = 1;
 	else{
-		$list = mysql_query("SELECT id,username,mail,level FROM ".$mysql_tables['user']." WHERE id='".mysql_real_escape_string($_GET['userid'])."' AND id != '0' LIMIT 1");
-		while($row = mysql_fetch_assoc($list)){
+		$list = $mysqli->query("SELECT id,username,mail,level FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($_GET['userid'])."' AND id != '0' LIMIT 1");
+		while($row = $list->fetch_assoc()){
 			$u_id = $row['id'];
 			$u_username = stripslashes($row['username']);
 			$u_mail = stripslashes($row['mail']);
@@ -386,9 +379,9 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_del" && $userdata['u
 	// Ist ein Fehler aufgetreten?
 	if($error == 0){
 		// Normale weitere Programmausführung
-		mysql_query("DELETE FROM ".$mysql_tables['user']." WHERE id='".mysql_real_escape_string($u_id)."' AND id != '0' LIMIT 1");
+		$mysqli->query("DELETE FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($u_id)."' AND id != '0' LIMIT 1");
 		
-		mysql_query("UPDATE ".$mysql_tables['files']." SET uid='0' WHERE uid='".mysql_real_escape_string($u_id)."'");
+		$mysqli->query("UPDATE ".$mysql_tables['files']." SET uid='0' WHERE uid='".$mysqli->escape_string($u_id)."'");
 		
 		/*An dieser Stelle alle Modulspezifischen zur Verfügung gestellten Lösch-Funktionen ausführen
 		Schema der Funktionsnamen: modulname_DeleteUser()
@@ -443,16 +436,15 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 			$error = 1;
 			}
 		else{
-			$list = mysql_query("SELECT * FROM ".$mysql_tables['user']." WHERE id='".mysql_real_escape_string($_REQUEST['userid'])."' AND id != '0' AND (level < '".mysql_real_escape_string($userdata['level'])."' OR level = '10' AND level = '".mysql_real_escape_string($userdata['level'])."' OR id = '".mysql_real_escape_string($userdata['id'])."') LIMIT 1");
-			$count_erg = mysql_num_rows($list);
-			if($count_erg < 1) $error = 2;
+			$list = $mysqli->query("SELECT * FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($_REQUEST['userid'])."' AND id != '0' AND (level < '".$mysqli->escape_string($userdata['level'])."' OR level = '10' AND level = '".$mysqli->escape_string($userdata['level'])."' OR id = '".$mysqli->escape_string($userdata['id'])."') LIMIT 1");
+			if($list->num_rows < 1) $error = 2;
 			}
 			
 		$title = "Benutzer bearbeiten";
 		$case = "do_edit";
 	  break;
 	  case "save_profile":
-	    $list = mysql_query("SELECT * FROM ".$mysql_tables['user']." WHERE id='".$userdata['id']."' LIMIT 1");
+	    $list = $mysqli->query("SELECT * FROM ".$mysql_tables['user']." WHERE id='".$userdata['id']."' LIMIT 1");
 		
 		$title = "Eigenes Profil";
 		$case = "profil";
@@ -471,24 +463,24 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 				if(isset($_POST['sperre']) && $_POST['sperre'] != 1 || !isset($_POST['sperre'])) $_POST['sperre'] = 0;
 				
 				// Überprüfen ob E-Mail-Adresse oder Benutzername schon vorhanden ist
-				$list = mysql_query("SELECT id FROM ".$mysql_tables['user']." WHERE username='".mysql_real_escape_string($_POST['username'])."'");
-				$row_u		= mysql_fetch_assoc($list);
-				$menge_u	= mysql_num_rows($list);
-				$list = mysql_query("SELECT id FROM ".$mysql_tables['user']." WHERE mail='".mysql_real_escape_string($_POST['mail'])."'");
-				$row_m		= mysql_fetch_assoc($list);
-				$menge_m	= mysql_num_rows($list);
+				$list = $mysqli->query("SELECT id FROM ".$mysql_tables['user']." WHERE username='".$mysqli->escape_string($_POST['username'])."'");
+				$row_u		= $list->fetch_assoc();
+				$menge_u	= $list->num_rows;
+				$list = $mysqli->query("SELECT id FROM ".$mysql_tables['user']." WHERE mail='".$mysqli->escape_string($_POST['mail'])."'");
+				$row_m		= $list->fetch_assoc();
+				$menge_m	= $list->num_rows;
 				
 				$add2query = "";    
 				if($menge_u < 1)
-				    $add2query .= "username='".mysql_real_escape_string(trim($_POST['username']))."', ";
+				    $add2query .= "username='".$mysqli->escape_string(trim($_POST['username']))."', ";
 				elseif($row_u['id'] != $_POST['userid'])
 					echo "<p class=\"meldung_error\">Der <b>Benutzername</b> wurde nicht ge&auml;ndert, da bereits ein Benutzerkonto mit diesem Namen existiert.</p>";
 				if($menge_m < 1)
-				    $add2query .= "mail='".mysql_real_escape_string($_POST['mail'])."', ";
+				    $add2query .= "mail='".$mysqli->escape_string($_POST['mail'])."', ";
 				elseif($row_m['id'] != $_POST['userid'])
 					echo "<p class=\"meldung_error\">Die <b>E-Mail-Adresse</b> wurde nicht ge&auml;ndert, da bereits ein Benutzerkonto mit dieser Adresse existiert.</p>";
 				
-				mysql_query("UPDATE ".$mysql_tables['user']." SET ".$add2query."level='".mysql_real_escape_string($_POST['level'])."', sperre='".mysql_real_escape_string($_POST['sperre'])."' WHERE id='".mysql_real_escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
+				$mysqli->query("UPDATE ".$mysql_tables['user']." SET ".$add2query."level='".$mysqli->escape_string($_POST['level'])."', sperre='".$mysqli->escape_string($_POST['sperre'])."' WHERE id='".$mysqli->escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
 
 				// Passwort ändern?
 				if(isset($_POST['changepw']) && $_POST['changepw'] == 1){
@@ -497,7 +489,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 						isset($_POST['password']) && !empty($_POST['password']) && 
 						strlen($_POST['password']) >= PW_LAENGE){
 						
-						mysql_query("UPDATE ".$mysql_tables['user']." SET password='".pwhashing($_POST['password'])."', cookiehash='' WHERE id='".mysql_real_escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
+						$mysqli->query("UPDATE ".$mysql_tables['user']." SET password='".pwhashing($_POST['password'])."', cookiehash='' WHERE id='".$mysqli->escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
 						$pwerror = false;
 						}
 					elseif(isset($_POST['pwwahl']) && $_POST['pwwahl'] == "random" ||
@@ -507,7 +499,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 				        $newpassmd5 = pwhashing($newpass);
 
 				        // Datenbank aktualisieren:
-				        mysql_query("UPDATE ".$mysql_tables['user']." SET password='".$newpassmd5."', cookiehash='' WHERE id='".mysql_real_escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
+				        $mysqli->query("UPDATE ".$mysql_tables['user']." SET password='".$newpassmd5."', cookiehash='' WHERE id='".$mysqli->escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
 
 				        $header = "From:".$settings['email_absender']."<".$settings['email_absender'].">\n";
 				        $email_betreff = $settings['sitename']." - Neues Passwort für Administrationsbereich";
@@ -523,15 +515,15 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 
 				// Alle Datensätze in DB durchgehen und neue Formularwerte ggf. speichern
 				$query = "SELECT id,modul,idname FROM ".$mysql_tables['rights']." WHERE is_cat='0' AND hide='0'";
-				$list = mysql_query($query);
+				$list = $mysqli->query($query);
 				$savequery = "";
-				while($row_save = mysql_fetch_assoc($list)){
+				while($row_save = $list->fetch_assoc()){
 					if(isset($_POST[$row_save['modul']."_".$row_save['idname']]))
-						$savequery .= $row_save['modul']."_".$row_save['idname']."='".mysql_real_escape_string($_POST[$row_save['modul']."_".$row_save['idname']])."', ";
+						$savequery .= $row_save['modul']."_".$row_save['idname']."='".$mysqli->escape_string($_POST[$row_save['modul']."_".$row_save['idname']])."', ";
 					}
 
 				if(isset($savequery) && !empty($savequery))
-					mysql_query("UPDATE ".$mysql_tables['user']." SET ".substr($savequery,0,strlen($savequery)-2)." WHERE id='".mysql_real_escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
+					$mysqli->query("UPDATE ".$mysql_tables['user']." SET ".substr($savequery,0,strlen($savequery)-2)." WHERE id='".$mysqli->escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
 				
 				echo "<p class=\"meldung_ok\">Benutzerdaten wurden gespeichert.<br />
 					<a href=\"users.php?action=edit_user&userid=".$_POST['userid']."\">Benutzer erneut bearbeiten &raquo;</a><br />
@@ -549,29 +541,28 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 		  case "profil":
 			if(isset($_POST['mail']) && !empty($_POST['mail']) && check_mail($_POST['mail'])){
 				// Überprüfen ob E-Mail-Adresse schon vorhanden ist
-				$list = mysql_query("SELECT id FROM ".$mysql_tables['user']." WHERE mail='".mysql_real_escape_string($_POST['mail'])."'");
-				$menge_m = mysql_num_rows($list);
+				$list = $mysqli->query("SELECT id FROM ".$mysql_tables['user']." WHERE mail='".$mysqli->escape_string($_POST['mail'])."'");
 
 				$add2query = "";
-				if($menge_m < 1)
-				    $add2query .= "mail='".mysql_real_escape_string($_POST['mail'])."', ";
+				if($list->num_rows < 1)
+				    $add2query .= "mail='".$mysqli->escape_string($_POST['mail'])."', ";
 				elseif($userdata['mail'] != $_POST['mail']){
 					$save_error = true;
 					echo "<p class=\"meldung_error\">Die <b>E-Mail-Adresse</b> wurde nicht ge&auml;ndert, da bereits ein Benutzerkonto mit dieser Adresse existiert.</p>";
 					}
 				
-				mysql_query("UPDATE ".$mysql_tables['user']." SET ".$add2query."startpage='".mysql_real_escape_string($_POST['startpage'])."' WHERE id='".mysql_real_escape_string($userdata['id'])."' AND id != '0' LIMIT 1");
+				$mysqli->query("UPDATE ".$mysql_tables['user']." SET ".$add2query."startpage='".$mysqli->escape_string($_POST['startpage'])."' WHERE id='".$mysqli->escape_string($userdata['id'])."' AND id != '0' LIMIT 1");
 				
 				
 				$query = "SELECT * FROM ".$mysql_tables['rights']." WHERE is_cat='0' AND hide='0' AND in_profile='1' ORDER BY catid,sortid";
-				$list = mysql_query($query);
+				$list = $mysqli->query($query);
 				$savequery = "";
-				while($row_save = mysql_fetch_assoc($list)){
+				while($row_save = $list->fetch_assoc()){
 					if(isset($_POST[$row_save['modul']."_".$row_save['idname']]))
-						$savequery .= $row_save['modul']."_".$row_save['idname']."='".mysql_real_escape_string($_POST[$row_save['modul']."_".$row_save['idname']])."', ";
+						$savequery .= $row_save['modul']."_".$row_save['idname']."='".$mysqli->escape_string($_POST[$row_save['modul']."_".$row_save['idname']])."', ";
 					}
 					
-				mysql_query("UPDATE ".$mysql_tables['user']." SET ".substr($savequery,0,strlen($savequery)-2)." WHERE id='".mysql_real_escape_string($userdata['id'])."' AND id != '0' LIMIT 1");
+				$mysqli->query("UPDATE ".$mysql_tables['user']." SET ".substr($savequery,0,strlen($savequery)-2)." WHERE id='".$mysqli->escape_string($userdata['id'])."' AND id != '0' LIMIT 1");
 				
 				echo "<p class=\"meldung_ok\">Daten wurden gespeichert.<br />
 					<a href=\"users.php?action=profil\">Weiter &raquo;</a></p>";
@@ -618,9 +609,8 @@ isset($_REQUEST['action']) && $_REQUEST['action'] == "profil" && $userdata['prof
 			$error = 1;
 			}
 		else{
-			$list = mysql_query("SELECT * FROM ".$mysql_tables['user']." WHERE id='".mysql_real_escape_string($_REQUEST['userid'])."' AND id != '0' AND (level < '".mysql_real_escape_string($userdata['level'])."' OR level = '10' AND level = '".mysql_real_escape_string($userdata['level'])."' OR id = '".mysql_real_escape_string($userdata['id'])."') LIMIT 1");
-			$count_erg = mysql_num_rows($list);
-			if($count_erg < 1) $error = 2;
+			$list = $mysqli->query("SELECT * FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($_REQUEST['userid'])."' AND id != '0' AND (level < '".$mysqli->escape_string($userdata['level'])."' OR level = '10' AND level = '".$mysqli->escape_string($userdata['level'])."' OR id = '".$mysqli->escape_string($userdata['id'])."') LIMIT 1");
+			if($list->num_rows < 1) $error = 2;
 			}
 			
 		$title = "Benutzer bearbeiten";
@@ -628,7 +618,7 @@ isset($_REQUEST['action']) && $_REQUEST['action'] == "profil" && $userdata['prof
 		$readonly = "";
 	  break;
 	  case "profil":
-	    $list = mysql_query("SELECT * FROM ".$mysql_tables['user']." WHERE id='".$userdata['id']."' AND id != '0' LIMIT 1");
+	    $list = $mysqli->query("SELECT * FROM ".$mysql_tables['user']." WHERE id='".$userdata['id']."' AND id != '0' LIMIT 1");
 		
 		$title = "Eigenes Profil";
 		$case = "profil";
@@ -650,7 +640,7 @@ isset($_REQUEST['action']) && $_REQUEST['action'] == "profil" && $userdata['prof
 		echo "<table border=\"0\" align=\"center\" width=\"100%\" cellpadding=\"3\" cellspacing=\"5\" class=\"rundrahmen\">";
 		
 		// Datensatz aus Datenbank holen und "besondere" Felder (Name, Passw etc.) ausgeben
-		while($datarow = mysql_fetch_assoc($list)){
+		while($datarow = $list->fetch_assoc()){
 			// Bearbeitungsrechte einschränken, wenn Userlevel < 10 ist und sich der User selber bearbeitet
 			if($datarow['id'] == $userdata['id'] && $userdata['level'] < 10)
 				$restricted = true;
@@ -751,9 +741,9 @@ isset($_REQUEST['action']) && $_REQUEST['action'] == "profil" && $userdata['prof
 								<td colspan=\"2\" class=\"".$class."\"><h3>".$echomodulname.$catvalue['name']."</h3></td>
 								</tr>";
 							
-								$query = "SELECT * FROM ".$mysql_tables['rights']." WHERE modul='".mysql_real_escape_string($modul_akt)."' AND is_cat='0' AND catid='".$catvalue['catid']."' AND hide='0' ORDER BY sortid";
-								$list = mysql_query($query);
-								while($row = mysql_fetch_assoc($list)){
+								$query = "SELECT * FROM ".$mysql_tables['rights']." WHERE modul='".$mysqli->escape_string($modul_akt)."' AND is_cat='0' AND catid='".$catvalue['catid']."' AND hide='0' ORDER BY sortid";
+								$list = $mysqli->query($query);
+								while($row = $list->fetch_assoc()){
 						            if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
 									
 									$row['idname'] = $modul_akt."_".$row['idname'];
@@ -813,8 +803,8 @@ isset($_REQUEST['action']) && $_REQUEST['action'] == "profil" && $userdata['prof
 				$modul = $modul_temp;
 				
 				$query = "SELECT * FROM ".$mysql_tables['rights']." WHERE is_cat='0' AND hide='0' AND in_profile='1' ORDER BY catid,sortid";
-				$list = mysql_query($query);
-				while($row = mysql_fetch_assoc($list)){
+				$list = $mysqli->query($query);
+				while($row = $list->fetch_assoc()){
 					if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
 					
 					$row['idname'] = $row['modul']."_".$row['idname'];

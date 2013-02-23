@@ -82,7 +82,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "change_pw"){
 	strlen($_POST['new_pw1']) >= PW_LAENGE &&
 	isset($_POST['old_pw']) && pwhashing($_POST['old_pw']) == $userdata['password']){
 		// Passwort ändern, DB aktualisieren, Session aktualisieren
-		mysql_query("UPDATE ".$mysql_tables['user']." SET password='".pwhashing($_POST['new_pw1'])."', cookiehash='' WHERE id='".$userdata['id']."' LIMIT 1");
+		$mysqli->query("UPDATE ".$mysql_tables['user']." SET password='".pwhashing($_POST['new_pw1'])."', cookiehash='' WHERE id='".$userdata['id']."' LIMIT 1");
 		$_SESSION['01_passsession_'.$salt] = pwhashing($_POST['new_pw1']);
 		
 		echo "<p class=\"meldung_ok\">Das Passwort wurde erfolgreich ge&auml;ndert.<br />
@@ -93,7 +93,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "change_pw"){
 			echo "<p class=\"meldung_error\"><b>Fehler:</b> Das Passwort konnte nicht ge&auml;ndert werden.
 				Bitte &uuml;berpr&uuml;fen Sie Ihre Eingaben!</p>";
 ?>
-	<h2><img src="images/icons/icon_pw.gif" alt="Icon: Schlü&szlig;el" title="Passwort &auml;ndern" /> Passwort &auml;ndern</h2>
+	<h2><img src="images/icons/icon_pw.gif" alt="Icon: Schlüssel" title="Passwort &auml;ndern" /> Passwort &auml;ndern</h2>
 	
 	<form action="<?PHP echo $filename; ?>" method="post">
 	<p style="text-align:right;">
@@ -118,10 +118,10 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "change_pw"){
 // PROFIL: Notizblock anzeigen
 if(isset($_REQUEST['action']) && $_REQUEST['action'] == "notepad" && $userdata['profil'] == 1){
 	if(isset($_POST['send']) && $_POST['send'] == 1)
-	    mysql_query("UPDATE ".$mysql_tables['user']." SET 01acp_notepad='".mysql_real_escape_string($_POST['notepad'])."' WHERE id='".$userdata['id']."' LIMIT 1");
+	    $mysqli->query("UPDATE ".$mysql_tables['user']." SET 01acp_notepad='".$mysqli->escape_string($_POST['notepad'])."' WHERE id='".$userdata['id']."' LIMIT 1");
 
-	$list = mysql_query("SELECT id,01acp_notepad FROM ".$mysql_tables['user']." WHERE id='".mysql_real_escape_string($userdata['id'])."' LIMIT 1");
-	while($row = mysql_fetch_assoc($list)){
+	$list = $mysqli->query("SELECT id,01acp_notepad FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($userdata['id'])."' LIMIT 1");
+	while($row = $list->fetch_assoc()){
 		$notepad_text = stripslashes($row['01acp_notepad']);
 		}
 ?>
@@ -205,11 +205,9 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "dir_del1" && $userdata[
    isset($_REQUEST['var1']) && !empty($_REQUEST['var1']) &&
    isset($_REQUEST['var2']) && !empty($_REQUEST['var2'])){
 
- 	$list = mysql_query("SELECT id FROM ".$mysql_tables['filedirs']." WHERE parentid='".mysql_real_escape_string($_REQUEST['var1'])."'");
-	$menge = 0;
-	$menge = mysql_num_rows($list);
+ 	$list = $mysqli->query("SELECT id FROM ".$mysql_tables['filedirs']." WHERE parentid='".$mysqli->escape_string($_REQUEST['var1'])."'");
 	
-	if($menge == 0)
+	if($list->num_rows == 0)
 		echo "<p class=\"meldung_frage\">M&ouml;chten Sie wirklich das Verzeichnis <i>".stripslashes($_REQUEST['var2'])."</i><br />
 		<b>inklusive aller enthaltenen Dateien (!!!) komplett l&ouml;schen?</b><br /><br />
 			<a href=\"".$filename."?action=dir_dodel&amp;id=".$_REQUEST['var1']."\">JA</a> |
@@ -227,9 +225,9 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "dir_del1" && $userdata[
 if(isset($_GET['action']) && $_GET['action'] == "dir_dodel" && $userdata['dateimanager'] == 2 &&
 	isset($_GET['id']) && !empty($_GET['id']) && is_numeric($_GET['id'])){
 
-	$error = false;
-	$list = mysql_query("SELECT id,type,name FROM ".$mysql_tables['files']." WHERE dir = '".mysql_real_escape_string($_GET['id'])."'");
-	while($row = mysql_fetch_assoc($list)){
+	$error = FALSE;
+	$list = $mysqli->query("SELECT id,type,name FROM ".$mysql_tables['files']." WHERE dir = '".$mysqli->escape_string($_GET['id'])."'");
+	while($row = $list->fetch_assoc()){
 		switch($row['type']){
 		  case "pic":
 		    $dir = $picuploaddir;
@@ -238,12 +236,12 @@ if(isset($_GET['action']) && $_GET['action'] == "dir_dodel" && $userdata['dateim
 		    $dir = $attachmentuploaddir;
 		  break;
 		  }
-		if(delfile($dir,$row['name'])) $error = false;
-		else $error = true;
+		if(delfile($dir,$row['name'])) $error = FALSE;
+		else $error = TRUE;
 		}
 
 	if(!$error){
-		mysql_query("DELETE FROM ".$mysql_tables['filedirs']." WHERE id='".mysql_real_escape_string($_GET['id'])."' LIMIT 1");
+		$mysqli->query("DELETE FROM ".$mysql_tables['filedirs']." WHERE id='".$mysqli->escape_string($_GET['id'])."' LIMIT 1");
 		echo "
 <script type=\"text/javascript\">
 opener.document.getElementById('del_erfolgsmeldung').style.display = 'block';
@@ -276,15 +274,12 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "file_del1" && $userdata
 if(isset($_REQUEST['action']) && $_REQUEST['action'] == "file_dodel" && $userdata['dateimanager'] >= 1 &&
 	isset($_REQUEST['id']) && !empty($_REQUEST['id']) && is_numeric($_REQUEST['id'])){
 	
-	if($userdata['dateimanager'] == 1) $query = "SELECT id,type,name FROM ".$mysql_tables['files']." WHERE uid = '".$userdata['id']."' AND id='".mysql_real_escape_string($_GET['id'])."' LIMIT 1";
-	elseif($userdata['dateimanager'] == 2) $query = "SELECT id,type,name FROM ".$mysql_tables['files']." WHERE id='".mysql_real_escape_string($_GET['id'])."' LIMIT 1";
+	if($userdata['dateimanager'] == 1) $query = "SELECT id,type,name FROM ".$mysql_tables['files']." WHERE uid = '".$userdata['id']."' AND id='".$mysqli->escape_string($_GET['id'])."' LIMIT 1";
+	elseif($userdata['dateimanager'] == 2) $query = "SELECT id,type,name FROM ".$mysql_tables['files']." WHERE id='".$mysqli->escape_string($_GET['id'])."' LIMIT 1";
 	
-	$list = mysql_query($query);
-	$menge = 0;
-	$menge = mysql_num_rows($list);
-	
-	if($menge == 1){
-		while($row = mysql_fetch_assoc($list)){
+	$list = $mysqli->query($query);	
+	if($list->num_rows == 1){
+		while($row = $list->fetch_assoc()){
 			switch($row['type']){
 			  case "pic":
 			    $dir = $picuploaddir;
@@ -320,8 +315,8 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "show_comment" && $userd
 		echo "<p class=\"meldung_erfolg\">Kommentar wurde erfolgreich bearbeitet!
 				<a href=\"javascript:window.close();\">Schlie&szlig;en</a></p>";
 	
-	$list = mysql_query("SELECT id,timestamp,ip,autor,email,url,comment,smilies,bbc FROM ".$mysql_tables['comments']." WHERE id='".mysql_real_escape_string($_REQUEST['var1'])."' LIMIT 1");
-	while($row = mysql_fetch_assoc($list)){
+	$list = $mysqli->query("SELECT id,timestamp,ip,autor,email,url,comment,smilies,bbc FROM ".$mysql_tables['comments']." WHERE id='".$mysqli->escape_string($_REQUEST['var1'])."' LIMIT 1");
+	while($row = $list->fetch_assoc()){
 		echo "<p>Geschrieben von <b>".stripslashes($row['autor'])."</b> (".$row['ip'].") 
 				am <b>".date("d.m.Y",$row['timestamp'])."</b>, <b>".date("H:i",$row['timestamp'])."</b> Uhr</p>";
 		
@@ -351,8 +346,8 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "edit_comment" && $userd
 	
 	echo "<h2>Kommentar bearbeiten</h2>";
 	
-	$list = mysql_query("SELECT id,timestamp,ip,autor,email,url,comment,smilies,bbc FROM ".$mysql_tables['comments']." WHERE id='".mysql_real_escape_string($_REQUEST['var1'])."' LIMIT 1");
-	while($row = mysql_fetch_assoc($list)){
+	$list = $mysqli->query("SELECT id,timestamp,ip,autor,email,url,comment,smilies,bbc FROM ".$mysql_tables['comments']." WHERE id='".$mysqli->escape_string($_REQUEST['var1'])."' LIMIT 1");
+	while($row = $list->fetch_assoc()){
 		if($row['bbc'] == 0) $c1 = " checked=\"checked\"";
 		else $c1 = "";
 		if($row['smilies'] == 0) $c2 = " checked=\"checked\"";
@@ -416,14 +411,14 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "save_comment" && $userd
 	elseif(!empty($_REQUEST['url'])) $url = $_REQUEST['url'];
 	else $url = "";
 	
-	mysql_query("UPDATE ".$mysql_tables['comments']." SET 
-				autor 	=	'".mysql_real_escape_string(htmlentities($_REQUEST['autor'], $htmlent_flags, $htmlent_encoding_acp))."',
-				email 	=	'".mysql_real_escape_string($email)."',
-				url		=	'".mysql_real_escape_string($url)."',
-				comment =	'".mysql_real_escape_string(htmlentities($_REQUEST['comment'], $htmlent_flags, $htmlent_encoding_acp))."',
+	$mysqli->query("UPDATE ".$mysql_tables['comments']." SET 
+				autor 	=	'".$mysqli->escape_string(htmlentities($_REQUEST['autor'], $htmlent_flags, $htmlent_encoding_acp))."',
+				email 	=	'".$mysqli->escape_string($email)."',
+				url		=	'".$mysqli->escape_string($url)."',
+				comment =	'".$mysqli->escape_string(htmlentities($_REQUEST['comment'], $htmlent_flags, $htmlent_encoding_acp))."',
 				bbc		=	'".$bbc."',
 				smilies =	'".$smilies."'
-				WHERE id='".mysql_real_escape_string($_REQUEST['var1'])."' LIMIT 1");
+				WHERE id='".$mysqli->escape_string($_REQUEST['var1'])."' LIMIT 1");
 
 	echo "
 <script type=\"text/javascript\">
@@ -451,7 +446,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "del_comment" && $userda
 if(isset($_REQUEST['action']) && $_REQUEST['action'] == "dodel_comment" && $userdata['editcomments'] == 1 &&
 	isset($_REQUEST['var1']) && !empty($_REQUEST['var1']) && is_numeric($_REQUEST['var1'])){
 	
-	mysql_query("DELETE FROM ".$mysql_tables['comments']." WHERE id='".mysql_real_escape_string($_REQUEST['var1'])."' LIMIT 1");
+	$mysqli->query("DELETE FROM ".$mysql_tables['comments']." WHERE id='".$mysqli->escape_string($_REQUEST['var1'])."' LIMIT 1");
 	
 	echo "
 <script type=\"text/javascript\">

@@ -72,12 +72,12 @@ if(isset($userdata['id']) && $userdata['id'] > 0 && $userdata['dateimanager'] >=
 	   isset($_POST['new_verzname']) && !empty($_POST['new_verzname'])){
 		//Eintragung in Datenbank vornehmen:
 		$sql_insert = "INSERT INTO ".$mysql_tables['filedirs']." (parentid,timestamp,name,uid) VALUES (
-					'".mysql_real_escape_string($_POST['parentfiledirid'])."',
+					'".$mysqli->escape_string($_POST['parentfiledirid'])."',
 					'".time()."',
-					'".mysql_real_escape_string($_POST['new_verzname'])."',
+					'".$mysqli->escape_string($_POST['new_verzname'])."',
 					'".$userdata['id']."'
 					)";
-		mysql_query($sql_insert) OR die(mysql_error());
+		$mysqli->query($sql_insert);
 		
 		$display = "block";
 		echo "
@@ -101,8 +101,8 @@ ShowAjaxError('<b>Fehler:</b><br />Sie haben nicht alle ben&ouml;tigen Felder au
 		
 		$cup = 0;
 		foreach($_POST['delfiles'] as $fileid){    
-			$list = mysql_query("SELECT type,name,uid FROM ".$mysql_tables['files']." WHERE id='".mysql_real_escape_string($fileid)."' LIMIT 1");
-			while($row = mysql_fetch_assoc($list)){
+			$list = $mysqli->query("SELECT type,name,uid FROM ".$mysql_tables['files']." WHERE id='".$mysqli->escape_string($fileid)."' LIMIT 1");
+			while($row = $list->fetch_assoc()){
 				
 				if($userdata['dateimanager'] == 2 || $userdata['dateimanager'] == 1 && $row['uid'] == $userdata['id']){
 					switch($row['type']){
@@ -146,17 +146,17 @@ ShowAjaxError('<b>Fehler:</b><br />Sie haben nicht alle ben&ouml;tigen Felder au
 	if(isset($_GET['sort']) && $_GET['sort'] == "desc") $sortorder = "DESC";
 	else{ $sortorder = "ASC"; $_GET['sort'] = "ASC"; }
 	
-	if(isset($_REQUEST['search']) && !empty($_REQUEST['search']) && $_REQUEST['search'] != "Nach Dateiennamen suchen") $where = " WHERE orgname LIKE '%".mysql_real_escape_string($_REQUEST['search'])."%'";
+	if(isset($_REQUEST['search']) && !empty($_REQUEST['search']) && $_REQUEST['search'] != "Nach Dateiennamen suchen") $where = " WHERE orgname LIKE '%".$mysqli->escape_string($_REQUEST['search'])."%'";
 	else{ $where = " WHERE 1 = 1"; $_GET['search'] = ""; }
 	
-	if(isset($_REQUEST['dir']) && !empty($_REQUEST['dir']) && is_numeric($_REQUEST['dir'])) $where .= " AND dir = '".mysql_real_escape_string($_REQUEST['dir'])."' ";
+	if(isset($_REQUEST['dir']) && !empty($_REQUEST['dir']) && is_numeric($_REQUEST['dir'])) $where .= " AND dir = '".$mysqli->escape_string($_REQUEST['dir'])."' ";
 	else{ $_REQUEST['dir'] = 0; $where .= " AND dir = '0' "; }
 	
 	if($userdata['dateimanager'] == 1) $where .= " AND uid='".$userdata['id']."' ";
 	
-	if(isset($_REQUEST['uid']) && !empty($_REQUEST['uid']) && $userdata['dateimanager'] == 2) $where .= " AND uid='".mysql_real_escape_string($_REQUEST['uid'])."' ";
+	if(isset($_REQUEST['uid']) && !empty($_REQUEST['uid']) && $userdata['dateimanager'] == 2) $where .= " AND uid='".$mysqli->escape_string($_REQUEST['uid'])."' ";
 	
-	if(isset($_REQUEST['type']) && ($_REQUEST['type'] == "pic" || $_REQUEST['type'] == "file")) $where .= " AND type = '".mysql_real_escape_string($_REQUEST['type'])."'";
+	if(isset($_REQUEST['type']) && ($_REQUEST['type'] == "pic" || $_REQUEST['type'] == "file")) $where .= " AND type = '".$mysqli->escape_string($_REQUEST['type'])."'";
 	else $_GET['type'] = "";
 
 	if(!isset($_GET['orderby'])) $_GET['orderby'] = "";

@@ -1,12 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2011 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Module verwalten
-	#fv.121#
+	#fv.122#
 */
 
 $menuecat = "01acp_module";
@@ -107,8 +107,8 @@ elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "install" &&
 	
 	// Nächste Modul-Nummer aus DB holen (für mehrere Parallelinstallationen)
 	$newnr = 0;
-	$list = mysql_query("SELECT nr FROM ".$mysql_tables['module']." WHERE modulname = '".mysql_real_escape_string($xml->name)."' ORDER BY nr DESC LIMIT 1");
-	while($row = mysql_fetch_array($list)){
+	$list = $mysqli->query("SELECT nr FROM ".$mysql_tables['module']." WHERE modulname = '".$mysqli->escape_string($xml->name)."' ORDER BY nr DESC LIMIT 1");
+	while($row = $list->fetch_assoc()){
 		$newnr = $row['nr'];
 		}
 	$newnr = $newnr+1;
@@ -117,24 +117,24 @@ elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "install" &&
 	$sql_insert = "INSERT INTO ".$mysql_tables['module']." (nr,aktiv,modulname,instname,idname,version,serialized_data) VALUES (
 					'".$newnr."',
 					'1',
-					'".mysql_real_escape_string($xml->name)."',
-					'".mysql_real_escape_string($_REQUEST['instname'])."',
-					'".mysql_real_escape_string($_REQUEST['modul'])."',
-					'".mysql_real_escape_string($xml->version)."',
+					'".$mysqli->escape_string($xml->name)."',
+					'".$mysqli->escape_string($_REQUEST['instname'])."',
+					'".$mysqli->escape_string($_REQUEST['modul'])."',
+					'".$mysqli->escape_string($xml->version)."',
 					''
 					)";
-	$result = mysql_query($sql_insert, $db) OR die(mysql_error());
+	$result = $mysqli->query($sql_insert, $db) OR die($mysqli->error);
 	
 	// CatID von cat_modulaccess holen:
-	$list = mysql_query("SELECT catid FROM ".$mysql_tables['rights']." WHERE idname='cat_modulaccess' LIMIT 1");
-	while($row = mysql_fetch_array($list)){
+	$list = $mysqli->query("SELECT catid FROM ".$mysql_tables['rights']." WHERE idname='cat_modulaccess' LIMIT 1");
+	while($row = $list->fetch_assoc()){
 		$catid = $row['catid'];
 		}
 	
 	// SortID der Datensätze von cat_modulaccess holen:
 	$sortid = 0;
-	$list = mysql_query("SELECT sortid FROM ".$mysql_tables['rights']." WHERE catid='".$catid."' AND is_cat='0' ORDER BY sortid DESC LIMIT 1");
-	while($row = mysql_fetch_array($list)){
+	$list = $mysqli->query("SELECT sortid FROM ".$mysql_tables['rights']." WHERE catid='".$catid."' AND is_cat='0' ORDER BY sortid DESC LIMIT 1");
+	while($row = $list->fetch_assoc()){
 		$sortid = $row['sortid'];
 		}
 	$sortid = $sortid+1;
@@ -145,8 +145,8 @@ elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "install" &&
 					'0',
 					'".$catid."',
 					'".$sortid."',
-					'".mysql_real_escape_string($_REQUEST['modul'])."',
-					'".mysql_real_escape_string($_REQUEST['instname'])."',
+					'".$mysqli->escape_string($_REQUEST['modul'])."',
+					'".$mysqli->escape_string($_REQUEST['instname'])."',
 					'',
 					'Zugriff erlaubt|Zugriff verboten',
 					'1|0',
@@ -155,13 +155,13 @@ elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "install" &&
 					'1',
 					'0',
 					'0')";
-	$result = mysql_query($sql_insert, $db) OR die(mysql_error());
+	$result = $mysqli->query($sql_insert, $db) OR die($mysqli->error);
 	
 	// Datenbankspalte für neues Recht erzeugen
-	mysql_query("ALTER TABLE `".$mysql_tables['user']."` ADD `01acp_".mysql_real_escape_string($_REQUEST['modul'])."` TINYINT( 1 ) NOT NULL DEFAULT '0'");
+	$mysqli->query("ALTER TABLE `".$mysql_tables['user']."` ADD `01acp_".$mysqli->escape_string($_REQUEST['modul'])."` TINYINT( 1 ) NOT NULL DEFAULT '0'");
 	
 	// Aktuellem Benutzer Zugriff gestatten
-	mysql_query("UPDATE ".$mysql_tables['user']." SET 01acp_".mysql_real_escape_string($_REQUEST['modul'])."='1' WHERE id='".$userdata['id']."'");
+	$mysqli->query("UPDATE ".$mysql_tables['user']." SET 01acp_".$mysqli->escape_string($_REQUEST['modul'])."='1' WHERE id='".$userdata['id']."'");
 ?>
 <h1>Installation wird fortgesetzt</h1>
 
@@ -202,8 +202,8 @@ elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "install" &&
 	// Modul-Infos aus DB holen
 	$sql_modulnr = 1;
 	$sql_modulidname = "";
-	$list = mysql_query("SELECT nr,idname FROM ".$mysql_tables['module']." WHERE modulname = '".mysql_real_escape_string($xml->name)."' ORDER BY nr DESC LIMIT 1");
-	while($row = mysql_fetch_array($list)){
+	$list = $mysqli->query("SELECT nr,idname FROM ".$mysql_tables['module']." WHERE modulname = '".$mysqli->escape_string($xml->name)."' ORDER BY nr DESC LIMIT 1");
+	while($row = $list->fetch_assoc()){
 		$sql_modulnr = $row['nr'];
 		$sql_modulidname = $row['idname'];
 		}
@@ -223,7 +223,7 @@ elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "install" &&
 	if(file_exists($moduldir.$_REQUEST['modul']."/_install.php"))
 		include_once($moduldir.$_REQUEST['modul']."/_install.php");
 
-		mysql_query("UPDATE ".$mysql_tables['module']." SET aktiv='1' WHERE idname='".mysql_real_escape_string($_REQUEST['modul'])."'");
+		$mysqli->query("UPDATE ".$mysql_tables['module']." SET aktiv='1' WHERE idname='".$mysqli->escape_string($_REQUEST['modul'])."'");
 		$xml = simplexml_load_file($moduldir.$_REQUEST['modul']."/_info.xml",NULL,LIBXML_NOCDATA);
 		
 		echo "<p class=\"meldung_ok\"><b>Das Modul wurde erfolgreich installiert!</b></p>";
@@ -352,21 +352,21 @@ elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "dodelete" &&
 
 	if(function_exists("_".$modul."_DeleteModul")){
 		// Modul-Eintrag entfernen
-		mysql_query("DELETE FROM ".$mysql_tables['module']." WHERE idname = '".$modul."' LIMIT 1");
+		$mysqli->query("DELETE FROM ".$mysql_tables['module']." WHERE idname = '".$modul."' LIMIT 1");
 		
 		// Menü-Einträge entfernen
-		mysql_query("DELETE FROM ".$mysql_tables['menue']." WHERE modul = '".$modul."'");
+		$mysqli->query("DELETE FROM ".$mysql_tables['menue']." WHERE modul = '".$modul."'");
 		
 		// Settings entfernen
-		mysql_query("DELETE FROM ".$mysql_tables['settings']." WHERE modul = '".$modul."'");
+		$mysqli->query("DELETE FROM ".$mysql_tables['settings']." WHERE modul = '".$modul."'");
 		
 		// Rechte entfernen
-		mysql_query("DELETE FROM ".$mysql_tables['rights']." WHERE modul = '".$modul."'");
-		mysql_query("DELETE FROM ".$mysql_tables['rights']." WHERE modul = '01acp' AND idname = '".$modul."' LIMIT 1");
-		mysql_query("ALTER TABLE `".$mysql_tables['user']."` DROP `01acp_".$modul."`");
+		$mysqli->query("DELETE FROM ".$mysql_tables['rights']." WHERE modul = '".$modul."'");
+		$mysqli->query("DELETE FROM ".$mysql_tables['rights']." WHERE modul = '01acp' AND idname = '".$modul."' LIMIT 1");
+		$mysqli->query("ALTER TABLE `".$mysql_tables['user']."` DROP `01acp_".$modul."`");
 		
 		// ACP-Startseite ggf zurücksetzen
-		mysql_query("UPDATE ".$mysql_tables['user']." SET startpage = '01acp' WHERE startpage = '".$modul."'");
+		$mysqli->query("UPDATE ".$mysql_tables['user']." SET startpage = '01acp' WHERE startpage = '".$modul."'");
 		
 		// Modulspezifische Aufräumarbeiten
 		call_user_func("_".$modul."_DeleteModul");
@@ -427,7 +427,7 @@ else{
 <?PHP
 // Module aktiv / deaktiv setzen
 if(isset($_GET['aktiv']) && ($_GET['aktiv'] == 1 || $_GET['aktiv'] == 0) && $_GET['aktiv'] != "" && isset($_GET['modul']) && !empty($_GET['modul'])){
-	mysql_query("UPDATE ".$mysql_tables['module']." SET aktiv='".mysql_real_escape_string($_GET['aktiv'])."' WHERE idname='".mysql_real_escape_string($_GET['modul'])."'");
+	$mysqli->query("UPDATE ".$mysql_tables['module']." SET aktiv='".$mysqli->escape_string($_GET['aktiv'])."' WHERE idname='".$mysqli->escape_string($_GET['modul'])."'");
 	
 	echo "
 <script type=\"text/javascript\">
