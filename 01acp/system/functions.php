@@ -235,13 +235,18 @@ return $return;
 
 // Installierte Module in Array einlesen
 /*&$inst_module			Array mit allen installierten Modulen [idnamen]
+ * $filter              Nur Module eines bestimmten Typs auflisten
 
 RETURN: Array(id => Modul-Idname);
 */
-function getModuls(&$inst_module){
+function getModuls(&$inst_module,$filter=NULL){
 global $mysqli,$mysql_tables;
 
-$list = $mysqli->query("SELECT * FROM ".$mysql_tables['module']." ORDER BY instname");
+if(!empty($filter))
+    $list = $mysqli->query("SELECT * FROM ".$mysql_tables['module']." WHERE modulname = '".mysql_real_escape_string($filter)."' ORDER BY instname");
+else
+    $list = $mysqli->query("SELECT * FROM ".$mysql_tables['module']." ORDER BY instname");
+
 $fieldmenge = $list->field_count;
 while($row = $list->fetch_assoc()){
 	for($i=0;$i < $fieldmenge;$i++){ 

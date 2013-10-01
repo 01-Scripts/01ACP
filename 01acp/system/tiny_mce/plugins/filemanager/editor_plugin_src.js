@@ -21,9 +21,13 @@
 		init : function(ed, url) {
 			// Register the command so that it can be invoked by using tinyMCE.activeEditor.execCommand('mceExample');
 			ed.addCommand('mceFilemanager_pic', function() {
-				ed.windowManager.open({
+                if(parent.document.getElementById('modulid')){
+                    var modul = parent.document.getElementById('modulid').value;
+                    }
+                else{ var modul = ''; }
+                ed.windowManager.open({
 					//file : url + '/dialog.htm',
-					file : url+'../../../../../popups.php?action=tiny_uploader&var1=pic&var2=post&var3=newsfeld&returnvalue=tinymce',
+					file : url+'../../../../../popups.php?action=tiny_uploader&modul='+modul+'&var1=pic&var2=post&var3=newsfeld&returnvalue=tinymce',
 					width : 620,
 					height : 480,
 					inline : 1,
@@ -32,11 +36,15 @@
 					plugin_url : url, // Plugin absolute URL
 					some_custom_arg : 'custom arg' // Custom argument
 				});
-			});
+            });
 			ed.addCommand('mceFilemanager_file', function() {
-				ed.windowManager.open({
+                if(parent.document.getElementById('modulid')){
+                    var modul = parent.document.getElementById('modulid').value;
+                    }
+                else{ var modul = ''; }
+                ed.windowManager.open({
 					//file : url + '/dialog.htm',
-					file : url+'../../../../../popups.php?action=tiny_uploader&var1=file&var2=post&var3=newsfeld&returnvalue=tinymce',
+					file : url+'../../../../../popups.php?action=tiny_uploader&modul='+modul+'&var1=file&var2=post&var3=newsfeld&returnvalue=tinymce',
 					width : 620,
 					height : 480,
 					inline : 1,
@@ -87,11 +95,11 @@
 		 */
 		getInfo : function() {
 			return {
-				longname : 'Filemanager and Picmanager',
+				longname : 'File- and Picturemanager',
 				author : 'Michael Lorer',
 				authorurl : 'http://www.01-scripts.de',
 				infourl : '',
-				version : "1.0"
+				version : "1.1"
 			};
 		}
 	});

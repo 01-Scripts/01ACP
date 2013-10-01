@@ -5,6 +5,21 @@ tinyMCEPopup.requireLangPack();
 
 		},
 
+		insertgalpics : function() {
+			// Insert the contents from the input into the document
+
+			var pics  = document.getElementsByName('pics_anzahl')[0].value;
+			var egalid = document.getElementById('sel_galid');
+			var galid = egalid.options[egalid.selectedIndex].value;
+			
+            var inhalt = '{Insert#'+pics+'GalleryPicsFrom#'+galid+'}';
+
+			if(pics > 0 && galid > 0){
+                tinyMCEPopup.editor.execCommand('mceInsertContent', false, inhalt);
+                tinyMCEPopup.close();
+                }
+		},
+
 		insertpic : function(path,file) {
 			// Insert the contents from the input into the document
 			var ed = tinyMCEPopup.editor, dom = ed.dom;
