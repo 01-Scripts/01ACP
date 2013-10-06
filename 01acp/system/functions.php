@@ -761,10 +761,11 @@ else{
   $load_plugins		Weitere TinyMCE-Plugins laden. Aufzählung mit einem , beginnen!
   $classname		Definierte Eigenschaften wirken sich nur auf Textareas, mit entsprechend definierter Klasse aus
   $bar_location		Plugin-Buttons top oder bottom der Textarea
-  $add_config		Weitere Konfigurationsvariablen hinzufügen (abschließendes Komma -> ,)
+  $add_config		Weitere Konfigurationsvariablen hinzufügen (abschließendes Komma -> ,). Default = ""
+  $special4art		Spezial-Parameter für 01article. Blendet ggf. Button für die Anbindung des 01-Artikelsystem an die 01-Gallery ein. Default = ""
 
   */
-function loadTinyMCE($barlook,$bar_own,$load_plugins,$classname,$bar_location,$add_config=""){
+function loadTinyMCE($barlook,$bar_own,$load_plugins,$classname,$bar_location,$add_config="",$special4art=""){
 global $_GLOBALS,$settings;
 
 $return = "";
@@ -818,7 +819,7 @@ switch($barlook){
   break;
   case "advanced":
 	$return .= "theme_advanced_buttons1 : \"bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,formatselect,fontsizeselect',|,tablecontrols,\",";
-	$return .= "theme_advanced_buttons2 : \"fontsizeselect,forecolor,backcolor,|,bullist,numlist,|,outdent,indent,|,cut,copy,paste,search,replace,|,undo,redo,|,link,unlink,anchor,|,emotions,image,filemanager_pic,filemanager_file,media,|,code\",";
+	$return .= "theme_advanced_buttons2 : \"fontsizeselect,forecolor,backcolor,|,bullist,numlist,|,outdent,indent,|,cut,copy,paste,search,replace,|,undo,redo,|,link,unlink,anchor,|,emotions,image,filemanager_pic,".$special4art."filemanager_file,media,|,code\",";
 	$return .= "theme_advanced_buttons3 : \"".$bar_own."\",";
 	$return .= "theme_advanced_blockformats : \"p,div,h1,h2,h3,h4,h5,h6,blockquote,code\",";
 	$return .= "table_cell_styles : \"Header 1=header1;Header 2=header2;Header 3=header3;Table Cell=tableCel1\",

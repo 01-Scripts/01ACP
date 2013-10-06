@@ -54,6 +54,23 @@
 					some_custom_arg : 'custom arg' // Custom argument
 				});
 			});
+			ed.addCommand('mceFilemanager_gal2art', function() {
+                if(parent.document.getElementById('modulid')){
+                    var modul = parent.document.getElementById('modulid').value;
+                    }
+                else{ var modul = ''; }
+                ed.windowManager.open({
+					//file : url + '/dialog.htm',
+					file : url+'../../../../../popups.php?action=art2gal&modul='+modul+'&var1=&var2=post&var3=newsfeld&returnvalue=tinymce',
+					width : 620,
+					height : 480,
+					inline : 1,
+					scrollbars: 'yes'
+				}, {
+					plugin_url : url, // Plugin absolute URL
+					some_custom_arg : 'custom arg' // Custom argument
+				});
+			});
 
 			// Register example button
 			ed.addButton('filemanager_pic', {
@@ -65,6 +82,11 @@
 				title : 'filemanager_file.desc',
 				cmd : 'mceFilemanager_file',
 				image : url + '/img/_files.gif'
+			});
+			ed.addButton('filemanager_gal2art', {
+				title : 'filemanager_gal2art.desc',
+				cmd : 'mceFilemanager_gal2art',
+				image : url + '/img/_photo.gif'
 			});
 
 			// Add a node change handler, selects the button in the UI when a image is selected
@@ -95,11 +117,11 @@
 		 */
 		getInfo : function() {
 			return {
-				longname : 'File- and Picturemanager',
+				longname : 'File- and Picturemanager for TinyMCE',
 				author : 'Michael Lorer',
 				authorurl : 'http://www.01-scripts.de',
 				infourl : '',
-				version : "1.1"
+				version : "1.2"
 			};
 		}
 	});
