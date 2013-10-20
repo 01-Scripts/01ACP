@@ -243,7 +243,7 @@ function getModuls(&$inst_module,$filter=NULL){
 global $mysqli,$mysql_tables;
 
 if(!empty($filter))
-    $list = $mysqli->query("SELECT * FROM ".$mysql_tables['module']." WHERE modulname = '".mysql_real_escape_string($filter)."' ORDER BY instname");
+    $list = $mysqli->query("SELECT * FROM ".$mysql_tables['module']." WHERE modulname = '".$mysqli->escape_string($filter)."' ORDER BY instname");
 else
     $list = $mysqli->query("SELECT * FROM ".$mysql_tables['module']." ORDER BY instname");
 
