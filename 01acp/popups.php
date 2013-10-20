@@ -33,7 +33,7 @@ include("system/main.php");
 <script src="system/js/javas.js" type="text/javascript"></script>
 <?PHP
 // Funktionen für TinyMCE-Editor
-if(isset($_REQUEST['action']) && $_REQUEST['action'] == "tiny_uploader"){
+if(isset($_REQUEST['action']) && ($_REQUEST['action'] == "tiny_uploader" || $_REQUEST['action'] == "art2gal")){
 ?>
 	<script language="javascript" type="text/javascript" src="system/tiny_mce/tiny_mce_popup.js"></script>
 	<script language="javascript" type="text/javascript" src="system/tiny_mce/plugins/filemanager/js/filemanager.js"></script>

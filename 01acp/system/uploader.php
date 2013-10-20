@@ -258,7 +258,7 @@ if(isset($_REQUEST['delfileid']) && !empty($_REQUEST['delfileid'])){
 		<?PHP echo getFileVerz_Rek(0,0,-1,"echo_FileVerz_select",0); ?>
 	</select>&nbsp;&nbsp;
 	<input type="submit" value="Hochladen" onclick="hide_unhide('loading');" class="input" /><br />
-	<b class="small">(Dateiname darf keine Leerzeichen oder andere Sonderzeichen enthalten!)</b></p>
+	<b class="small">(Keine Leer- oder Sonderzeichen im Dateiname!)</b></p>
 	
 	<div id="loading" style="display:none; float:right; margin-right:35px; text-align:center;">
 		<img src="images/icons/loading.gif" alt="Lade-Animation" title="Datei wird zum Server &uuml;bertragen - bitte warten..." /><br />
@@ -300,7 +300,7 @@ if($flag_showlist && (isset($_REQUEST['look']) && ($_REQUEST['look'] == "list" |
 
     if($_REQUEST['returnvalue'] == "tinymce" && $_REQUEST['type'] == "pic"){
         echo "<h2 style=\"clear: both;\">Bild ausw&auml;hlen</h2>";
-        echo "<p>Bildgr&ouml;&szlig;e nach dem Einf&uuml;gen &auml;ndern: Bild ausw&auml;hlen und auf <img src=\"system/tiny_mce/plugins/filemanager/img/old_pics.gif\" alt=\"Bild bearbeiten\" title=\"Bild-Eigenschaften bearbeiten\" /> klicken.</p>";
+        echo "<p>Die Bildgr&ouml;&szlig;e kann nach dem Einf&uuml;gen durch einen Klick auf <img src=\"system/tiny_mce/plugins/filemanager/img/old_pics.gif\" alt=\"Bild bearbeiten\" title=\"Bild-Eigenschaften bearbeiten\" /> geändert werden.</p>";
     }
     elseif($_REQUEST['returnvalue'] == "tinymce" && $_REQUEST['type'] == "file")
         echo "<h2 style=\"clear: both;\">Datei ausw&auml;hlen</h2>";
