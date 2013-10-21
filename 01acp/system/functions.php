@@ -2206,4 +2206,35 @@ if($flag_utf8)
 return htmlentities($string, $htmlent_flags,$htmlent_encoding_pub);
 }
 
+
+
+
+
+
+
+
+
+
+// Checkboxen checken bzw. Selectfields selecten
+ /* @params string $field_value Übergebener Wert
+  * @params string $standard_value Standardwert
+  * @params string $type=checkbox checkbox oder select default=checkbox
+  * @return string checked=\"checked\"
+ */
+ function check_checkbox($field_value,$standard_value=1,$type="checkbox"){
+
+ if($field_value == $standard_value && $type == "checkbox")
+     return " checked=\"checked\"";
+ elseif($field_value == $standard_value && $type == "select")
+     return " selected=\"selected\"";
+ else
+     return "";
+
+ }
+
+ // Funktion für selected=selected
+ function check_select($field_value,$standard_value=1){
+     return check_checkbox($field_value,$standard_value,"select");
+     }
+
 ?>
