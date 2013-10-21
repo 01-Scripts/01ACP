@@ -330,7 +330,7 @@ elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "delete" &&
 	file_exists($moduldir.$_REQUEST['modul']."/_functions.php") &&
 	file_exists($moduldir.$_REQUEST['modul']."/_headinclude.php")){
 	
-	if(function_exists("_".$modul."_DeleteModul"))	
+	if(function_exists("_".$module[$modul]['modulname']."_DeleteModul"))	
 		echo "<p class=\"meldung_error\">M&ouml;chten Sie das Modul <b>".$_REQUEST['modul']."</b> wirklich komplett
 		und unwiderruflich l&ouml;schen?<br />
 		<br />
@@ -350,7 +350,7 @@ elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "dodelete" &&
 	file_exists($moduldir.$_REQUEST['modul']."/_functions.php") &&
 	file_exists($moduldir.$_REQUEST['modul']."/_headinclude.php")){
 
-	if(function_exists("_".$modul."_DeleteModul")){
+	if(function_exists("_".$module[$modul]['modulname']."_DeleteModul")){
 		// Modul-Eintrag entfernen
 		$mysqli->query("DELETE FROM ".$mysql_tables['module']." WHERE idname = '".$modul."' LIMIT 1");
 		
@@ -369,7 +369,7 @@ elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "dodelete" &&
 		$mysqli->query("UPDATE ".$mysql_tables['user']." SET startpage = '01acp' WHERE startpage = '".$modul."'");
 		
 		// Modulspezifische Aufräumarbeiten
-		call_user_func("_".$modul."_DeleteModul");
+		call_user_func("_".$module[$modul]['modulname']."_DeleteModul");
 		
 		echo "<p class=\"meldung_ok\">Das Modul <b>".$_REQUEST['modul']."</b> wurde erfolgreich
 		aus der Datenbank entfernt<br />
