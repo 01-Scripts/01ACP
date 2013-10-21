@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <!--
-	01ACP - Copyright 2008 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	#fv.1002#
@@ -9,7 +9,7 @@
 	
 	Modul:		01ACP
 	Dateiinfo:	Layout für ACP
-	#fv.1200#
+	#fv.122#
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -40,13 +40,6 @@ if(isset($addCSSFile) && file_exists($modulpath.$addCSSFile) && !is_dir($modulpa
 </head>
 
 <body>
-<?php 
-if(strchr($_SERVER['HTTP_USER_AGENT'],"MSIE 6.0") && $flag_showIE6Warning)
-	echo "<p align=\"center\" class=\"meldung_error\" style=\"margin-top: 0;\">
-	Sie verwenden einen <b>veralteten Browser</b> (Internet Explorer 6) mit <b>Sicherheitsschwachstellen</b>
-	und <b>können nicht alle Funktionen dieser Webseite nutzen</b>.<br /><a href=\"http://browser-update.org/update.php\" target=\"_blank\">Hier erfahren Sie, wie 
-	einfach Sie Ihren Browser aktualisieren können.</a></p>";
-?>
 
 <div id="header">
 	<ul id="menu">

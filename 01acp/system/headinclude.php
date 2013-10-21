@@ -56,7 +56,6 @@ $flag_modcheck 		= FALSE;
 $flag_showacpRSS 	= TRUE;						// RSS-Feed auf der ACP-Startseite anzeigen?
 $flag_feedback		= TRUE;						// Feedback-Link im Footer des 01ACP anzeigen?
 $flag_credits       = TRUE;						// Credits-Link  im Footer des 01ACP anzeigen?
-$flag_showIE6Warning= TRUE;
 $flag_indivstorage	= FALSE;
 $stid				= 0;						// Formular-ID für Storage-Formlare (automatisches ++)
 $flag_oldfileupload = FALSE;					// Alten Datei-Upload für Filemanager nutzen?
