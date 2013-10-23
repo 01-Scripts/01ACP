@@ -457,7 +457,8 @@ while($dir = readdir($readverz)){
         {
 		$xml = simplexml_load_file($moduldir.$dir."/_info.xml",NULL,LIBXML_NOCDATA);
 		
-		$xml_modname = "_".$module[$dir]['modulname'];
+		if(isset($module[$dir]['modulname'])) $xml_modname = "_".$module[$dir]['modulname'];
+		if(!isset($module[$dir]['idname'])) $module[$dir]['idname'] = "";
 		
 		if(file_exists($moduldir.$dir."/".$xml->icon) && $xml->icon != "")
 			$icon = "<img src=\"".$moduldir.$dir."/".$xml->icon."\" alt=\"Icon\" title=\"".$xml->titel."\" />";
