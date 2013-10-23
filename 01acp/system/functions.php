@@ -1822,13 +1822,13 @@ RETURN: TRUE
 function parse_SQLLines($dumpline,$modulnr,$modulidname){
 global $instnr,$userdata;
 
-$dumpline = ereg_replace("\r\n$", "\n", $dumpline);
-$dumpline = ereg_replace("\r$", "\n", $dumpline);
-$dumpline = ereg_replace("01prefix_", "01_".$instnr."_", $dumpline);
-$dumpline = ereg_replace("01modulprefix_", "01_".$instnr."_".$modulnr."_", $dumpline);
-$dumpline = ereg_replace("#modul_idname#", $modulidname, $dumpline);
-$dumpline = ereg_replace("#UID_ADMIN_AKT#", $userdata['id'], $dumpline);
-$dumpline = ereg_replace("#01ACP_VERSION_NR#", _01ACP_VERSION_NR, $dumpline);
+$dumpline = preg_replace("/\r\n$/", "\n", $dumpline);
+$dumpline = preg_replace("/\r$/", "\n", $dumpline);
+$dumpline = preg_replace("/01prefix_/", "01_".$instnr."_", $dumpline);
+$dumpline = preg_replace("/01modulprefix_/", "01_".$instnr."_".$modulnr."_", $dumpline);
+$dumpline = preg_replace("/#modul_idname#/", $modulidname, $dumpline);
+$dumpline = preg_replace("/#UID_ADMIN_AKT#/", $userdata['id'], $dumpline);
+$dumpline = preg_replace("/#01ACP_VERSION_NR#/", _01ACP_VERSION_NR, $dumpline);
 
 return $dumpline;
 }

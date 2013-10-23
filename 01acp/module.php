@@ -123,7 +123,7 @@ elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "install" &&
 					'".$mysqli->escape_string($xml->version)."',
 					''
 					)";
-	$result = $mysqli->query($sql_insert, $db) OR die($mysqli->error);
+	$result = $mysqli->query($sql_insert) OR die($mysqli->error);
 	
 	// CatID von cat_modulaccess holen:
 	$list = $mysqli->query("SELECT catid FROM ".$mysql_tables['rights']." WHERE idname='cat_modulaccess' LIMIT 1");
@@ -155,7 +155,7 @@ elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "install" &&
 					'1',
 					'0',
 					'0')";
-	$result = $mysqli->query($sql_insert, $db) OR die($mysqli->error);
+	$result = $mysqli->query($sql_insert) OR die($mysqli->error);
 	
 	// Datenbankspalte für neues Recht erzeugen
 	$mysqli->query("ALTER TABLE `".$mysql_tables['user']."` ADD `01acp_".$mysqli->escape_string($_REQUEST['modul'])."` TINYINT( 1 ) NOT NULL DEFAULT '0'");

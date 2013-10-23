@@ -31,13 +31,13 @@ $file = FALSE;
 
 // max_upload_size kalkulieren
 $upload_max_filesize = ini_get("upload_max_filesize");
-if(eregi("([0-9]+)K",$upload_max_filesize,$tempregs)) $upload_max_filesize = $tempregs[1]*1024;
-if(eregi("([0-9]+)M",$upload_max_filesize,$tempregs)) $upload_max_filesize = $tempregs[1]*1024*1024;
-if(eregi("([0-9]+)G",$upload_max_filesize,$tempregs)) $upload_max_filesize = $tempregs[1]*1024*1024*1024;
+if(preg_match("/([0-9]+)K/i",$upload_max_filesize,$tempregs)) $upload_max_filesize = $tempregs[1]*1024;
+if(preg_match("/([0-9]+)M/i",$upload_max_filesize,$tempregs)) $upload_max_filesize = $tempregs[1]*1024*1024;
+if(preg_match("/([0-9]+)G/i",$upload_max_filesize,$tempregs)) $upload_max_filesize = $tempregs[1]*1024*1024*1024;
 
 //C harset setzten
 $result = $mysqli->get_charset();
-if(!$error && $db_connection_charset !== "" && $result['charset'] != "latin1") $mysqli->set_charset($db_connection_charset);
+if(!$error && $db_connection_charset !== "" && $result->charset != "latin1") $mysqli->set_charset($db_connection_charset);
 
 // sql-file öffnen
 if(!$error && isset($sql_filename)){
@@ -61,7 +61,7 @@ if(!$error && isset($sql_filename)){
 // START IMPORT SESSION HERE
 // ****************************************************
 
-if(!$error && isset($sql_start) && isset($sql_foffset) && eregi("(\.(sql|gz))$",$sql_filename)){
+if(!$error && isset($sql_start) && isset($sql_foffset) && preg_match("/(\.(sql|gz))$/i",$sql_filename)){
     $sql_start = floor($sql_start);
     $sql_foffset = floor($sql_foffset);
     }
@@ -142,7 +142,7 @@ if(!$error){
             }
 
         //Execute query if end of query detected (; as last character) AND NOT in parents
-        if(ereg(";$",trim($dumpline)) && !$inparents){
+        if(preg_match("/;$/",trim($dumpline)) && !$inparents){
             if(!$mysqli->query(trim($query))){
                 echo "<p class=\"meldung_error\">Fehler in Zeile ".$linenumber.": ". trim($dumpline)."<br /><br />\n";
                 echo "Query: ".trim(nl2br(htmlentities($query),$htmlent_flags,$htmlent_encoding_acp))."<br />\n";
