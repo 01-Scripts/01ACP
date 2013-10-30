@@ -227,7 +227,7 @@ elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "install" &&
 		$xml = simplexml_load_file($moduldir.$_REQUEST['modul']."/_info.xml",NULL,LIBXML_NOCDATA);
 		
 		echo "<p class=\"meldung_ok\"><b>Das Modul wurde erfolgreich installiert!</b></p>";
-		echo "<p>".$xml->includeinfo."</p>";
+		echo $xml->includeinfo;
 		
 	}
 	
