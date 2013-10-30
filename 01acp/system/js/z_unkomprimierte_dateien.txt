@@ -1,5 +1,5 @@
 Alle JavaScript-Dateien finden Sie hier in unkomprimierter Form:
-https://gist.github.com/622911
+https://github.com/01-Scripts/01ACP/tree/V1.2.2/01scripts/01acp/system/js
 
 Das JavaScript-Framework ist hier zu finden:
 http://mootools.net/

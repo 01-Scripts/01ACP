@@ -1,11 +1,12 @@
-/* 
-	01ACP - Copyright 2008-2009 by Michael Lorer - 01-Scripts.de
-	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
-	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
-	
-	Modul:		01ACP
-	Dateiinfo:	Globale Java-Script-Funktionen
-	#fv.1101#
+/*!
+  01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
+  Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
+  Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
+
+  Modul:    01ACP
+  Dateiinfo:  Globale JavaScript-Funktionen
+  Unkomprimierte Version der Datei: https://github.com/01-Scripts/01ACP/blob/V1.2.2/01scripts/01acp/system/js/javas.js
+  #fv.122#
 */
 
 
@@ -184,6 +185,3 @@ function bbcinsert(aTag, eTag) {
     input.value = input.value.substr(0, pos) + aTag + insText + eTag + input.value.substr(pos);
   }
 }
-
-
-/* 01ACP Copyright 2008-2009 by Michael Lorer - 01-Scripts.de */

@@ -1,4 +1,5 @@
 /* Drag & Drop-Funktion based on http://davidwalsh.name/mootools-drag-drop-lock */
+/* Unkomprimierte Version der Datei: https://github.com/01-Scripts/01ACP/blob/V1.2.2/01scripts/01acp/system/js/mootools-domready-dragdrop.js */
 
 document.ondragstart = function () { return false; }; //IE drag hack
 			

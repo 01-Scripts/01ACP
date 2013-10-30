@@ -7,6 +7,8 @@ Script: MooTools.Lang.js
 
 	Authors:
 		Aaron Newton
+
+	// Unkomprimierte Version der Datei: https://github.com/01-Scripts/01ACP/blob/V1.2.2/01scripts/01acp/system/js/mootools-more-lang.js
 */
 
 (function(){

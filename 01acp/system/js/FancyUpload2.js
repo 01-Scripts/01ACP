@@ -11,6 +11,8 @@
  * @copyright	Authors
  * 
  * translation2german: 100514 by 01-Scripts.de - Michael Lorer
+ *
+ * Unkomprimierte Version der Datei: https://github.com/01-Scripts/01ACP/blob/V1.2.2/01scripts/01acp/system/js/FancyUpload2.js
  */
 
 var FancyUpload2 = new Class({

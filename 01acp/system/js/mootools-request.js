@@ -1,13 +1,13 @@
-/* 
-	01ACP - Copyright 2009 by Michael Lorer - 01-Scripts.de
+/*!
+	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
-	
-	Modul:		01ACP
-	Dateiinfo:	JS-Funktionen für Ajax-MooTools-Requests
-	#fv.1101#
-*/
 
+	Modul:		01ACP
+	Dateiinfo:	JavaScript-Funktionen für AJAX-Requests and Answers
+	Unkomprimierte Version der Datei: https://github.com/01-Scripts/01ACP/blob/V1.2.2/01scripts/01acp/system/js/mootools-request.js
+	#fv.122#
+*/
 
 // Überprüfen ob eine Funktion existiert
 function function_exists(fName, pObj) {
@@ -65,7 +65,6 @@ function Success_CFree(id) {
 	$$('div.ajax_erfolg').fade(1);
 	setTimeout(function(){ $$('div.ajax_erfolg').fade(0); },2000);
 }
-
 
 
 

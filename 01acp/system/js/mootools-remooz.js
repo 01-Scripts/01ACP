@@ -8,6 +8,8 @@
  * @license		MIT-style license
  * @author		Harald Kirschner <mail [at] digitarald.de>
  * @copyright	Author
+ *
+ * Unkomprimierte Version der Datei: https://github.com/01-Scripts/01ACP/blob/V1.2.2/01scripts/01acp/system/js/mootools-remooz.js
  */
 
 var ReMooz = new Class({
