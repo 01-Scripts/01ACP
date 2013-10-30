@@ -25,14 +25,14 @@ function check_mail($email){
   $perpage			Anzahl Elemente pro Seite
 */
 function makepages(&$query,&$sites,$get_var,$perpage){
-global $mysqli,$_GET;
+global $mysqli,$_REQUEST;
 
 $slc = $mysqli->query($query);
 $sc = $slc->num_rows;
 $sites = ceil($sc/$perpage);
 
-if(isset($_GET[$get_var]) && $_GET[$get_var] != "" && $_GET[$get_var] <= $sites){
-    $start = $_GET[$get_var]*$perpage-$perpage;
+if(isset($_REQUEST[$get_var]) && $_REQUEST[$get_var] != "" && $_REQUEST[$get_var] <= $sites){
+    $start = $_REQUEST[$get_var]*$perpage-$perpage;
     $query .= " LIMIT ".$mysqli->escape_string($start).",".$mysqli->escape_string($perpage)."";
     }
 else{
