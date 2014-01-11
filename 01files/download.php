@@ -1,6 +1,6 @@
 <?php
 /*
-	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2014 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 
@@ -38,12 +38,14 @@ if(isset($_GET['fileid']) && !empty($_GET['fileid']) && is_numeric($_GET['fileid
 			if(!isset($_GET['nocount']))
 				$mysqli->query("UPDATE ".$mysql_tables['files']." SET downloads = downloads+1 WHERE id = '".$mysqli->escape_string($_GET['fileid'])."' LIMIT 1");
 			
+			$path_parts = pathinfo(basename($row['orgname']));
+
 			header("Pragma: public");
 			header("Expires: 0");
 			header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 			header("Cache-Control: private",false);
 			header("Content-Type: application/force-download");
-			header("Content-Disposition: attachment; filename=\"".basename($row['orgname'])."\";" );
+			header("Content-Disposition: attachment; filename=\"".$path_parts['filename'].".".strtoupper($path_parts['extension'])."\"" );
 			header("Content-Transfer-Encoding: binary");
 			header("Content-Length: ".filesize($folder.$row['name']));
 			readfile($folder.$row['name']);
