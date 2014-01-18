@@ -1,6 +1,6 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2014 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
@@ -441,7 +441,8 @@ redirect('module.php')
     <tr>
 		<td class="tra" style="width:20px;">&nbsp;</td>
 		<td class="tra" style="width:35px;">&nbsp;</td>
-        <td class="tra" style="width:130px;"><b>Modul-ID-Name</b></td>
+        <td class="tra" style="width:110px;"><b>Modul-ID-Name</b></td>
+        <td class="tra" style="width:20px;"><b>Nr.</b></td>
 		<td class="tra"><b>Titel</b></td>
 		<td class="tra" style="width:100px;"><b>Version</b></td>
 		<td class="tra" style="width:30px;">&nbsp;<!-- Info --></td>
@@ -518,6 +519,7 @@ while($dir = readdir($readverz)){
 		<td class=\"".$class."\" align=\"center\">".$warning."</td>
 		<td class=\"".$class."\" align=\"center\">".$icon."</td>
 		<td class=\"".$class."\">".$module[$dir]['idname']."</td>
+		<td class=\"".$class."\" align=\"center\">".$module[$dir]['nr']."</td>
 		<td class=\"".$class."\"><b>".$titel."</b>".$installed."<br />".$xml->beschreibung."</td>
 		<td class=\"".$class."\" align=\"center\"><b class=\"".$vcolorclass."\">".$version."</b></td>
 		<td class=\"".$class."\" align=\"center\">".$install."</td>
@@ -526,7 +528,7 @@ while($dir = readdir($readverz)){
 </tr>";
 
 		echo "<tr id=\"_".$module[$dir]['idname']."\" style=\"display:none;\">
-		<td class=\"".$class."\" colspan=\"8\">".$xml->includeinfo."</td>
+		<td class=\"".$class."\" colspan=\"9\">".$xml->includeinfo."</td>
 </tr>";
         }
 	clearstatcache(); 
