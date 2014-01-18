@@ -1,6 +1,6 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2014 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
@@ -1733,18 +1733,41 @@ return $message;
 
 
 
-// RSS-"Framework" (Head/Footer) generieren
+// RSS-Framework (Head/Footer) generieren
 /*$titel			RSS-Feed-Titel
   $url				URL zur zu verlinkenden Datei
   $descr			RSS-Feed-Beschreibung
+  $utf8				TRUE/FALSE um Framework UTF-8-Codiert auszugeben
   
-RETURN: Array mit $array['header'] für RSS-Kopfdaten und $array['footer'] für RSS-Abschluß
+RETURN: Array mit $array['header'] für RSS-Kopfdaten und $array['footer'] für RSS-Abschluss
   */
-function create_RSSFramework($titel,$url,$descr){
+function create_RSSFramework($titel,$url,$descr,$utf8=false){
 global $settings;
 
 $return = FALSE;
-if($settings['rss_aktiv'] == 1){
+// UTF-8-Version:
+if($settings['rss_aktiv'] == 1 && $utf8){
+	$return['header'] = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<rss version=\"2.0\">
+  <channel>
+    <title>".utf8_encode(stripslashes($titel))."</title>
+    <link>".str_replace("&","&amp;",utf8_encode(stripslashes($url)))."</link>
+    <description>".utf8_encode(stripslashes($descr))."</description>
+    <copyright>".utf8_encode($settings['rss_copyright'])."</copyright>
+    <language>".utf8_encode($settings['rss_sprache'])."</language>
+    <pubDate>".date("r")."</pubDate>
+    <lastBuildDate>".date("r")."</lastBuildDate>
+    <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+    <generator>".RSS_GENERATOR."</generator>
+    <webMaster>".$settings['email_absender']."</webMaster>
+";
+
+	$return['footer'] = "
+  </channel>
+</rss>";
+	}
+// Latin-ISO-8859-1-Version:
+elseif($settings['rss_aktiv'] == 1){
 	$return['header'] = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>
 <rss version=\"2.0\">
   <channel>
