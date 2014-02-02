@@ -1,10 +1,10 @@
--- 01ACP - Copyright 2008-2011 by Michael Lorer - 01-Scripts.de
+-- 01ACP - Copyright 2008-2014 by Michael Lorer - 01-Scripts.de
 -- Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 -- Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 
 -- Modul:		01acp
--- Dateiinfo:	SQL-Befehle für die Erstinstallation des 01acp
--- #fv.121#
+-- Dateiinfo:	SQL-Befehle für die Erstinstallation des 01ACP
+-- #fv.122#
 --  **  **  **  **  **  **  **  **  **  **  **  **  **  **  **  **  *  *
 
 -- --------------------------------------------------------
@@ -260,11 +260,12 @@ CREATE TABLE IF NOT EXISTS `01prefix_user` (
   `id` int(10) NOT NULL auto_increment,
   `username` varchar(50) NULL,
   `mail` varchar(50) NULL,
-  `password` varchar(40) NULL,
+  `userpassword` varchar(40) NULL,
   `level` int(3) NOT NULL default '0',
   `lastlogin` int(10) NOT NULL default '0',
   `startpage` varchar(25) NOT NULL DEFAULT '01acp',
-  `cookiehash` varchar(32) NULL DEFAULT NULL,
+  `cookiehash` varchar(40) NULL DEFAULT NULL,
+  `sessionhash` varchar(40) NULL DEFAULT NULL,
   `sperre` tinyint(1) NOT NULL default '0',
   `01acp_rights` tinyint(1) NOT NULL default '0',
   `01acp_profil` tinyint(1) NOT NULL default '1',
@@ -287,7 +288,7 @@ CREATE TABLE IF NOT EXISTS `01prefix_user` (
 -- Daten für Tabelle `01prefix_user`
 --
 
-INSERT INTO `01prefix_user` (`id`, `username`, `mail`, `password`, `level`, `lastlogin`, `sperre`, `01acp_rights`, `01acp_profil`, `01acp_upload`, `01acp_dateimanager`, `01acp_settings`, `01acp_userverwaltung`, `01acp_signatur`, `01acp_addsettings`, `01acp_devmode`, `01acp_module`, `01acp_editcomments`) VALUES
+INSERT INTO `01prefix_user` (`id`, `username`, `mail`, `userpassword`, `level`, `lastlogin`, `sperre`, `01acp_rights`, `01acp_profil`, `01acp_upload`, `01acp_dateimanager`, `01acp_settings`, `01acp_userverwaltung`, `01acp_signatur`, `01acp_addsettings`, `01acp_devmode`, `01acp_module`, `01acp_editcomments`) VALUES
 (0, 'Unbekannt', '', '', 0, 0, 1, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 0);
 
 -- --------------------------------------------------------

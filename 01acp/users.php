@@ -48,7 +48,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "add_user" && $userdata[
 				}
 			
 			// Eintrag in DB vornehmen
-			$sql_insert = "INSERT INTO ".$mysql_tables['user']." (username,mail,password,level) VALUES (
+			$sql_insert = "INSERT INTO ".$mysql_tables['user']." (username,mail,userpassword,level) VALUES (
 							'".$mysqli->escape_string(trim($_POST['username']))."',
 							'".$mysqli->escape_string($_POST['mail'])."',
 							'".$passmd5."',
@@ -489,7 +489,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 						isset($_POST['password']) && !empty($_POST['password']) && 
 						strlen($_POST['password']) >= PW_LAENGE){
 						
-						$mysqli->query("UPDATE ".$mysql_tables['user']." SET password='".pwhashing($_POST['password'])."', cookiehash='' WHERE id='".$mysqli->escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
+						$mysqli->query("UPDATE ".$mysql_tables['user']." SET userpassword='".pwhashing($_POST['password'])."', cookiehash='' WHERE id='".$mysqli->escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
 						$pwerror = false;
 						}
 					elseif(isset($_POST['pwwahl']) && $_POST['pwwahl'] == "random" ||
@@ -499,7 +499,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 				        $newpassmd5 = pwhashing($newpass);
 
 				        // Datenbank aktualisieren:
-				        $mysqli->query("UPDATE ".$mysql_tables['user']." SET password='".$newpassmd5."', cookiehash='' WHERE id='".$mysqli->escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
+				        $mysqli->query("UPDATE ".$mysql_tables['user']." SET userpassword='".$newpassmd5."', cookiehash='' WHERE id='".$mysqli->escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
 
 				        $header = "From:".$settings['email_absender']."<".$settings['email_absender'].">\n";
 				        $email_betreff = $settings['sitename']." - Neues Passwort für Administrationsbereich";

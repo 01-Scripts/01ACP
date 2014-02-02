@@ -80,10 +80,9 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "change_pw"){
 	isset($_POST['new_pw1']) && !empty($_POST['new_pw1']) &&
 	$_POST['new_pw1'] == $_POST['new_pw2'] &&
 	strlen($_POST['new_pw1']) >= PW_LAENGE &&
-	isset($_POST['old_pw']) && pwhashing($_POST['old_pw']) == $userdata['password']){
-		// Passwort ändern, DB aktualisieren, Session aktualisieren
-		$mysqli->query("UPDATE ".$mysql_tables['user']." SET password='".pwhashing($_POST['new_pw1'])."', cookiehash='' WHERE id='".$userdata['id']."' LIMIT 1");
-		$_SESSION['01_passsession_'.$salt] = pwhashing($_POST['new_pw1']);
+	isset($_POST['old_pw']) && pwhashing($_POST['old_pw']) == $userdata['userpassword']){
+		// Passwort ändern, DB aktualisieren
+		$mysqli->query("UPDATE ".$mysql_tables['user']." SET userpassword='".pwhashing($_POST['new_pw1'])."', cookiehash='' WHERE id='".$userdata['id']."' LIMIT 1");
 		
 		echo "<p class=\"meldung_ok\">Das Passwort wurde erfolgreich ge&auml;ndert.<br />
 			<a href=\"javascript:window.close();\">Fenster schlie&szlig;en</a></p>";

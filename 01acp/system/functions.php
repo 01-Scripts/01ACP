@@ -1446,9 +1446,9 @@ while($row = $list->fetch_assoc()){
 	}
 
 if($login)
-	$list = $mysqli->query("SELECT id,username,mail,password,level,lastlogin,startpage,sperre,".implode(",",$loadrights)." FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($_SESSION['01_idsession_'.$salt])."' AND password='".$mysqli->escape_string($_SESSION['01_passsession_'.$salt])."' LIMIT 1");
+	$list = $mysqli->query("SELECT id,username,mail,userpassword,level,lastlogin,startpage,sperre,".implode(",",$loadrights)." FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($_SESSION['01_idsession_'.sha1($salt)])."' AND sessionhash='".$mysqli->escape_string($_SESSION['01_passsession_'.sha1($salt)])."' AND sessionhash!='' LIMIT 1");
 if(!empty($uid) && $uid > 0 && is_numeric($uid) && $login)
-	$list = $mysqli->query("SELECT id,username,mail,password,level,lastlogin,startpage,sperre,".implode(",",$loadrights)." FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($uid)."' LIMIT 1");
+	$list = $mysqli->query("SELECT id,username,mail,userpassword,level,lastlogin,startpage,sperre,".implode(",",$loadrights)." FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($uid)."' LIMIT 1");
 $fieldmenge = $list->field_count;
 while($row = $list->fetch_assoc()){
 
@@ -1466,7 +1466,11 @@ while($row = $list->fetch_assoc()){
 		$userdata['sperre'] = 1;
 		}
 	}
-return $userdata;
+
+if(isset($userdata))
+	return $userdata;
+else
+	return FALSE;
 }
 
 

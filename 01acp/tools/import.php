@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <!--
-	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2014 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
@@ -357,8 +357,7 @@ if(isset($_REQUEST['step']) && $_REQUEST['step'] == 5 &&
 		}
 		
 	if($uc > 0){
-		$sql_insert = "INSERT INTO ".$mysql_tables['user']." (id,username,mail,password,level,lastlogin,sperre) VALUES ".$insertquery.";";
-		//echo $sql_insert;
+		$sql_insert = "INSERT INTO ".$mysql_tables['user']." (id,username,mail,userpassword,level,lastlogin,sperre) VALUES ".$insertquery.";";
 		$result = $mysqli->query($sql_insert) OR die($mysqli->error);
 		}
 		

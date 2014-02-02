@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <!--
-	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2014 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
@@ -53,7 +53,7 @@ if(isset($_REQUEST['step']) && $_REQUEST['step'] == 7 &&
 		$mysqli->query("UPDATE ".$mysql_tables['settings']." SET wert = '".$mysqli->escape_string($_POST['kontaktemail'])."' WHERE idname = 'email_absender' LIMIT 1");
 		
 		// Eintrag in DB vornehmen
-		$sql_insert = "INSERT INTO ".$mysql_tables['user']." (username,mail,password,level,lastlogin,sperre,01acp_rights,01acp_profil,01acp_upload,01acp_dateimanager,01acp_settings,01acp_userverwaltung,01acp_signatur,01acp_addsettings,01acp_devmode,01acp_module,01acp_editcomments) VALUES (
+		$sql_insert = "INSERT INTO ".$mysql_tables['user']." (username,mail,userpassword,level,lastlogin,sperre,01acp_rights,01acp_profil,01acp_upload,01acp_dateimanager,01acp_settings,01acp_userverwaltung,01acp_signatur,01acp_addsettings,01acp_devmode,01acp_module,01acp_editcomments) VALUES (
 						'".$mysqli->escape_string($_POST['username'])."',
 						'".$mysqli->escape_string($_POST['email'])."',
 						'".pwhashing($_POST['passwort1'])."',

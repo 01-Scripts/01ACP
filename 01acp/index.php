@@ -1,6 +1,6 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2014 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
@@ -26,13 +26,15 @@ include("system/main.php");
 if(isset($_GET['action']) && $_GET['action'] == "logout"){
     session_destroy();
 
-	$des_cookie = $_COOKIE[$instnr.'_start_auth_01acp'];
-	setcookie($instnr."_start_auth_01acp", "", time() - 3600);
-	$zahl = mt_rand(100000, 999999999999);	
-	$cookiehash = md5($zahl.time().$salt.$instnr);
-	
+	if(isset($_COOKIE[$instnr.'_start_auth_01acp'])){
+		$des_cookie = $_COOKIE[$instnr.'_start_auth_01acp'];
+		setcookie($instnr."_start_auth_01acp", "", time() - 3600);
+		}
+
 	if(!empty($des_cookie))
-		$mysqli->query("UPDATE ".$mysql_tables['user']." SET cookiehash='".$cookiehash."' WHERE cookiehash='".$mysqli->escape_string($des_cookie)."' AND id != '0' LIMIT 1");
+		$mysqli->query("UPDATE ".$mysql_tables['user']." SET cookiehash='".sha1(mt_rand().time().$salt.$instnr)."', sessionhash='".sha1(mt_rand().time().$salt.$instnr.$filename)."' WHERE (cookiehash='".$mysqli->escape_string($des_cookie)."' OR id = '".$userdata['id']."') AND id != '0' LIMIT 1");
+	else
+		$mysqli->query("UPDATE ".$mysql_tables['user']." SET sessionhash='".sha1(mt_rand().time().$salt.$instnr.$filename)."' WHERE id = '".$userdata['id']."' AND id != '0' LIMIT 1");
     
 	$message = "<script type=\"text/javascript\">redirect(\"index.php?logout=1\");</script>";
     $message .= "<p class=\"meldung_hinweis\"><b>Sie werden weitergeleitet.</b><br />Falls Ihr Browser keine Weiterleitung unterstützt klicken Sie bitte <a href=\"index.php?logout=1\">hier</a>.</p>";
@@ -42,16 +44,22 @@ if(isset($_GET['logout']) && $_GET['logout'] == 1)
 
 
 // Cookie vorhanden?
-if(isset($_COOKIE[$instnr.'_start_auth_01acp']) && !empty($_COOKIE[$instnr.'_start_auth_01acp']) && strlen($_COOKIE[$instnr.'_start_auth_01acp']) == 32 && !isset($_GET['action']) && !isset($_GET['logout'])){
-	$list = $mysqli->query("SELECT id,username,password,startpage,cookiehash FROM ".$mysql_tables['user']." WHERE cookiehash='".$mysqli->escape_string($_COOKIE[$instnr.'_start_auth_01acp'])."' AND id != '0' LIMIT 1");
+if(isset($_COOKIE[$instnr.'_start_auth_01acp']) && !empty($_COOKIE[$instnr.'_start_auth_01acp']) && strlen($_COOKIE[$instnr.'_start_auth_01acp']) == 40 && !isset($_GET['action']) && !isset($_GET['logout'])){
+	$list = $mysqli->query("SELECT id,username,userpassword,startpage,cookiehash,sessionhash FROM ".$mysql_tables['user']." WHERE cookiehash='".$mysqli->escape_string($_COOKIE[$instnr.'_start_auth_01acp'])."' AND id != '0' LIMIT 1");
 	$menge = $list->num_rows;
 	while($row = $list->fetch_assoc()){
-		// Session erstellen
-		$_SESSION['01_idsession_'.$salt] = $row['id'];
-		$_SESSION['01_passsession_'.$salt] = $row['password'];
-		
-		// LastLogin in DB aktualisieren
-		$mysqli->query("UPDATE ".$mysql_tables['user']." SET lastlogin='".time()."' WHERE id='".$row['id']."' LIMIT 1");
+		// Session erstellen/abrufen / Lastlogin speichern
+		if(empty($row['sessionhash'])){
+			$sessionhash = sha1(mt_rand().time().$salt.$instnr.$row['id'].$row['username'].$row['startpage']);
+			$mysqli->query("UPDATE ".$mysql_tables['user']." SET lastlogin='".time()."', sessionhash='".$sessionhash."' WHERE id='".$row['id']."' LIMIT 1");
+		}
+		else{
+			$sessionhash = $row['sessionhash'];
+			$mysqli->query("UPDATE ".$mysql_tables['user']." SET lastlogin='".time()."' WHERE id='".$row['id']."' LIMIT 1");
+		}
+
+		$_SESSION['01_idsession_'.sha1($salt)] = $row['id'];
+		$_SESSION['01_passsession_'.sha1($salt)] = $sessionhash;
 		
 		//Weiterleiten:
 		if($row['startpage'] == "01acp")
@@ -69,27 +77,31 @@ if(isset($_POST['send']) && $_POST['send'] == 1){
 	if($settings['acp_captcha4login'] == 0 || isset($_POST['antispam']) && md5($_POST['antispam']) == $_SESSION['antispam01'] && $settings['acp_captcha4login'] == 1){
 		$loginpass = pwhashing($_POST['password']);
 		
-		$list = $mysqli->query("SELECT id,username,password,startpage,cookiehash FROM ".$mysql_tables['user']." WHERE username='".$mysqli->escape_string($_POST['username'])."' AND password='".$loginpass."' AND id != '0' LIMIT 1");
+		$list = $mysqli->query("SELECT id,username,userpassword,startpage,cookiehash,sessionhash FROM ".$mysql_tables['user']." WHERE username='".$mysqli->escape_string($_POST['username'])."' AND userpassword='".$loginpass."' AND id != '0' LIMIT 1");
 		$menge = $list->num_rows;
 		while($row = $list->fetch_assoc()){
-			// Session erstellen
-			$_SESSION['01_idsession_'.$salt] = $row['id'];
-			$_SESSION['01_passsession_'.$salt] = $row['password'];
+			// Session erstellen/abrufen / Lastlogin speichern
+			if(empty($row['sessionhash'])){
+				$sessionhash = sha1(mt_rand().time().$salt.$instnr.$row['id'].$row['username'].$row['startpage']);
+				$mysqli->query("UPDATE ".$mysql_tables['user']." SET lastlogin='".time()."', sessionhash='".$sessionhash."' WHERE id='".$row['id']."' LIMIT 1");
+			}
+			else{
+				$sessionhash = $row['sessionhash'];
+				$mysqli->query("UPDATE ".$mysql_tables['user']." SET lastlogin='".time()."' WHERE id='".$row['id']."' LIMIT 1");
+			}
+			$_SESSION['01_idsession_'.sha1($salt)] = $row['id'];
+			$_SESSION['01_passsession_'.sha1($salt)] = $sessionhash;
 			
 			// Cookie erstellen
 			if(isset($_POST['setcookie']) && $_POST['setcookie'] == 1){
 				if(empty($row['cookiehash'])){
-					$zahl = mt_rand(100000, 999999999999);	
-					$cookiehash = md5($zahl.time().$salt.$instnr);
+					$cookiehash = sha1(mt_rand().time().$salt.$instnr);
 					
 					$mysqli->query("UPDATE ".$mysql_tables['user']." SET cookiehash='".$cookiehash."' WHERE id='".$row['id']."' LIMIT 1");
 					$row['cookiehash'] = $cookiehash;
 					}
 				setcookie($instnr."_start_auth_01acp",$row['cookiehash'],time()+60*60*24*14);
 				}
-			
-			// LastLogin in DB aktualisieren
-			$mysqli->query("UPDATE ".$mysql_tables['user']." SET lastlogin='".time()."' WHERE id='".$row['id']."' LIMIT 1");
 			
 			//Weiterleiten:
 			if($row['startpage'] == "01acp")
@@ -116,7 +128,7 @@ elseif(isset($_POST['send']) && $_POST['send'] == 2){
         $newpassmd5 = pwhashing($newpass);
 
         // Datenbank aktualisieren:
-        $mysqli->query("UPDATE ".$mysql_tables['user']." SET password='".$newpassmd5."' WHERE id='".$row['id']."'");
+        $mysqli->query("UPDATE ".$mysql_tables['user']." SET userpassword='".$newpassmd5."' WHERE id='".$row['id']."'");
 
         $header = "From:".$settings['email_absender']."<".$settings['email_absender'].">\n";
         $email_betreff = $settings['sitename']." - Neues Passwort für Administrationsbereich";
