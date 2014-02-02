@@ -10,6 +10,7 @@
 */
 
 include("../01acp/system/functions.php");
+include("../01acp/cache/thumbwidth.php");
 define('ACP_TB_WIDTH', 40);
 define('ACP_TB_WIDTH200', 200);
 define('FILE_404_THUMB', '404thumb.gif');
@@ -38,7 +39,7 @@ if(file_exists($_GET['img'])){
 		echo $file; 
 		fclose($file);
 		}
-	elseif(isset($_GET['img']) && !empty($_GET['img']) && isset($_GET['size']) && !empty($_GET['size'])){
+	elseif(isset($_GET['img']) && !empty($_GET['img']) && isset($_GET['size']) && !empty($_GET['size']) && is_numeric($_GET['size'])){
 	    showpic($_GET['img'],$_GET['size']);
 	    }
 	elseif(isset($_GET['img']) && !empty($_GET['img'])){

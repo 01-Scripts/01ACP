@@ -1,6 +1,6 @@
 <?PHP
 /*
-	01ACP - Copyright 2008-2012 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2014 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 
@@ -73,6 +73,7 @@ $forbidden_chars = array("ä","Ä","ö","Ö","ü","Ü","ß","-",".",";",",","_","/","\$
 define('_01ACP_VERSION_NR', '1.2.2');         // Versionsnummer des 01ACP
 define('ACPSTART_RSSFEED_URL', 'http://www.01-scripts.de/01scripts/01module/01article/01article.php?rss=show_rssfeed&modul=01article&catid=15');				// URL zum RSS-Feed, der auf der Startseite des ACP angezeigt werden soll
 define('RSS_CACHEFILE', $admindir.'cache/01rss.xml');
+define('THUMBWIDTH_CACHEFILE', $admindir.'cache/thumbwidth.php');
 define('ACP_PER_PAGE', 15); 					// Einträge pro Seite im ACP
 define('ACP_TB_WIDTH', 40); 					// Max. Kantenlänge von Bildern im ACP (1) (in showpics.php zusätzlich definieren)
 define('ACP_TB_WIDTH200', 200); 				// Max. Kantenlänge von Bildern im ACP (größer) (z.B. Popup-Vorschau nach Hochladen und vor dem Löschen)

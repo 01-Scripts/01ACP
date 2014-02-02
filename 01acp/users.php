@@ -1,6 +1,6 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2014 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
@@ -514,11 +514,13 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 					}
 
 				// Alle Datensätze in DB durchgehen und neue Formularwerte ggf. speichern
-				$query = "SELECT id,modul,idname FROM ".$mysql_tables['rights']." WHERE is_cat='0' AND hide='0'";
+				$query = "SELECT id,modul,idname,formename FROM ".$mysql_tables['rights']." WHERE is_cat='0' AND hide='0'";
 				$list = $mysqli->query($query);
 				$savequery = "";
 				while($row_save = $list->fetch_assoc()){
-					if(isset($_POST[$row_save['modul']."_".$row_save['idname']]))
+					if($row_save['formename'] == "function" && isset($_POST[$row_save['modul']."_".$row_save['idname']]))
+						$savequery .= $row_save['modul']."_".$row_save['idname']."='".mysql_real_escape_string(call_RightSettingsFunction_Write($row_save['modul'],$row_save['idname'],$_POST[$row_save['modul']."_".$row_save['idname']]))."', ";
+					elseif(isset($_POST[$row_save['modul']."_".$row_save['idname']]))
 						$savequery .= $row_save['modul']."_".$row_save['idname']."='".$mysqli->escape_string($_POST[$row_save['modul']."_".$row_save['idname']])."', ";
 					}
 

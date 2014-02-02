@@ -1,6 +1,6 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2014 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
@@ -43,12 +43,17 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "add_right" && $userdata
 		$result = $mysqli->query($sql_insert) OR die($mysqli->error);
 		
 		//Datenbankspalte erzeugen
-		$query = "ALTER TABLE `".$mysql_tables['user']."` ADD `".$mysqli->escape_string($_POST['modulname'])."_".$mysqli->escape_string($_POST['idname'])."` VARCHAR( 255 ) NOT NULL DEFAULT '".$mysqli->escape_string($_POST['standardwert'])."'";
+		if($_POST['formwerte'] == "text")
+			$query = "ALTER TABLE `".$mysql_tables['user']."` ADD `".$mysqli->escape_string($_POST['modulname'])."_".$mysqli->escape_string($_POST['idname'])."` TEXT NOT NULL DEFAULT '".$mysqli->escape_string($_POST['standardwert'])."'";
+		else
+			$query = "ALTER TABLE `".$mysql_tables['user']."` ADD `".$mysqli->escape_string($_POST['modulname'])."_".$mysqli->escape_string($_POST['idname'])."` VARCHAR( 255 ) NOT NULL DEFAULT '".$mysqli->escape_string($_POST['standardwert'])."'";
+			
 		$mysqli->query($query);
+		
 
 		if($userdata['devmode'] == 1){
-			echo $sql_insert."<br />";
-			echo $query."<br /><br />";
+			echo htmlentities($sql_insert)."<br />";
+			echo htmlentities($query)."<br /><br />";
 			}
 		echo "<p class=\"meldung_ok\"><b>Datensatz wurde hinzugefügt</b></p>";
 		}
@@ -66,7 +71,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "add_right" && $userdata
 		Für jedes neue Benutzerrecht wird sowohl ein neuer Eintrag in der Tabelle <i><?PHP echo $mysql_tables['rights']; ?></i>
 		angelegt, als auch in der Tabelle <i><?PHP echo $mysql_tables['user']; ?></i> für jedes "Recht" eine Spalte angelegt, die mit dem 
 		eingetragenen Standardwert gefüllt wird.<br />
-        Fragen werden gerne im <a href="http://www.01-scripts.de/board/" target="_blank">01-Supportforum</a> gerne beantwortet.</td>
+        Fragen werden gerne im <a href="http://forum.01-scripts.de/" target="_blank">01-Supportforum</a> gerne beantwortet.</td>
     </tr>
 
     <tr>
@@ -112,12 +117,12 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "add_right" && $userdata
     </tr>
 
     <tr>
-        <td class="trb"><b>Formular-Type*:</b><br /><span class="small">formename(text):<br /><b>1:</b> text = einfaches Textfeld<br /><b>2:</b> textarea = Textarea<br /><b>3:</b> wahl1|wahl2 = Radiobutton Wahl1 X Wahl2 X<br /><b>4:</b> wahl1|wahl2|wahl3|... = Auswahlliste</span></td>
+        <td class="trb"><b>Formular-Type*:</b><br /><span class="small">formename(text):<br /><b>1:</b> text = einfaches Textfeld<br /><b>2:</b> textarea = Textarea<br /><b>3:</b> wahl1|wahl2 = Radiobutton Wahl1 X Wahl2 X<br /><b>4:</b> wahl1|wahl2|wahl3|... = Auswahlliste<br /><b>5:</b> function = Funktionsaufruf von <i>modul_right_Idname()</i></span></td>
         <td class="trb"><textarea name="formename" rows="5" cols="60" style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; font-style: normal;"></textarea></td>
     </tr>
 
     <tr>
-        <td class="tra"><b>Formwerte*:</b><br /><span class="small">formwerte(varchar,255):<br /><b>1:</b> 123 = size<br /><b>2:</b> 5|50 = rows|cols<br /><b>3:</b> Wert1|Wert2 = Zu speichernder Wert<br /><b>4:</b> Wert1|Wert2|Wert3|... = zu speichernde Werte</span></td>
+        <td class="tra"><b>Formwerte*:</b><br /><span class="small">formwerte(varchar,255):<br /><b>1:</b> 123 = size<br /><b>2:</b> 5|50 = rows|cols<br /><b>3:</b> Wert1|Wert2 = Zu speichernder Wert<br /><b>4:</b> Wert1|Wert2|Wert3|... = zu speichernde Werte<br /><b>5:</b> text|varchar = Feldtyp f&uuml;r die Rights-Tabelle</span></td>
         <td class="tra"><input type="text" name="formwerte" value="" size="50" maxlength="255" /></td>
     </tr>
 
@@ -132,7 +137,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "add_right" && $userdata
     </tr>
 
     <tr>
-        <td class="trb"><b>Ausblenden:</b><br /><span class="small">hide(tinyint,1): Einstellung ausblenden? (1/0)</span></td>
+        <td class="trb"><b>Ausblenden (Benutzer):</b><br /><span class="small">hide(tinyint,1): Einstellung beim Benutzer bearbeiten ausblenden? (1/0)</span></td>
         <td class="trb"><input type="text" name="hide" value="0" size="2" maxlength="1" /></td>
     </tr>
 

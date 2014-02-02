@@ -1,6 +1,6 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2014 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
@@ -46,7 +46,10 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "settings" && $userdata[
 	if(isset($_POST['do']) && $_POST['do'] == "save"){
         $list_save = $mysqli->query("SELECT * FROM ".$mysql_tables['settings']." WHERE modul='".$mysqli->escape_string($modul)."' AND is_cat='0' AND hide='0'");
         while($row_save = $list_save->fetch_assoc()){
-            $mysqli->query("UPDATE ".$mysql_tables['settings']." SET wert='".$mysqli->escape_string($_POST[$row_save['idname']])."' WHERE id='".$row_save['id']."'");
+			if($row_save['formename'] == "function" && isset($_POST[$row_save['idname']]))
+            	$mysqli->query("UPDATE ".$mysql_tables['settings']." SET wert='".$mysqli->escape_string(call_RightSettingsFunction_Write($row_save['modul'],$row_save['idname'],$_POST[$row_save['idname']]))."' WHERE id='".$row_save['id']."'");
+			elseif(isset($_POST[$row_save['idname']]))
+				$mysqli->query("UPDATE ".$mysql_tables['settings']." SET wert='".$mysqli->escape_string($_POST[$row_save['idname']])."' WHERE id='".$row_save['id']."'");
             }
         echo "<p class=\"meldung_ok\"><b>Einstellungen wurden erfolgreich gespeichert.</b></p>";
         }
@@ -121,7 +124,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "add_setting" && $userda
         <td colspan="2">Auf dieser Seite k&ouml;nnen neue Datens&auml;tze zur MySQL-Settings-Tabelle (<?PHP echo $mysql_tables['settings']; ?>) hinzugef&uuml;gt werden.<br />
         Dieser Bereich ist normalerweise nur für Entwickler von Modifikationen für das 01ACP interessant. Ein Funktion zur Bearbeitung von Datens&auml;tzen
         ist nicht vorhanden. Datens&auml;tze m&uuml;ssen ggf. per PHPMyAdmin bearbeitet werden.<br />
-        Fragen werden gerne im <a href="http://www.01-scripts.de/board/" target="_blank">01-Supportforum</a> gerne beantwortet.</td>
+        Fragen werden gerne im <a href="http://forum.01-scripts.de/" target="_blank">01-Supportforum</a> gerne beantwortet.</td>
     </tr>
 
     <tr>
@@ -167,7 +170,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "add_setting" && $userda
     </tr>
 
     <tr>
-        <td class="trb"><b>Formular-Type*:</b><br /><span class="small">formename(text):<br /><b>1:</b> text = einfaches Textfeld<br /><b>2:</b> textarea = Textarea<br /><b>3:</b> wahl1|wahl2 = Radiobutton Wahl1 X Wahl2 X<br /><b>4:</b> wahl1|wahl2|wahl3|... = Auswahlliste</span></td>
+        <td class="trb"><b>Formular-Type*:</b><br /><span class="small">formename(text):<br /><b>1:</b> text = einfaches Textfeld<br /><b>2:</b> textarea = Textarea<br /><b>3:</b> wahl1|wahl2 = Radiobutton Wahl1 X Wahl2 X<br /><b>4:</b> wahl1|wahl2|wahl3|... = Auswahlliste<br /><b>5:</b> function = Funktionsaufruf von <i>modul_right_Idname()</i></span></td>
         <td class="trb"><textarea name="formename" rows="5" cols="60" style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; font-style: normal;"></textarea></td>
     </tr>
 

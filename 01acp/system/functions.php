@@ -374,6 +374,12 @@ elseif($row['formename'] == "textarea"){
 	@list($nrrows, $nrcols) = explode("|", stripslashes($row['formwerte']),2);
 	$inputfield = "<textarea name=\"".$row['idname']."\" rows=\"".$nrrows."\" cols=\"".$nrcols."\" style=\"font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; font-style: normal;\">".stripslashes($row['wert'])."</textarea>";
 	}
+
+// Funktionsaufruf
+elseif($row['formename'] == "function"){
+	// Hinweis: Bei Userrights gilt: $row['idname'] = $modul_akt."_".$row['idname'];
+	$inputfield = call_RightSettingsFunction_Read($row['modul'],str_replace($row['modul']."_","",$row['idname']),$row['wert']);
+	}
 	
 //Radiobutton oder Auswahlliste
 elseif(strstr($row['formename'], "|")){
@@ -733,7 +739,6 @@ else{
 		imagepng($echofile_id);
 	  break;
 	  default:
-		echo $settings['thumbwidth'];
         header("Content-type: image/jpg");
 		imagecopyresampled($echofile_id, $sourcefile_id, 0, 0, 0, 0, $picwidth, $picheight, $info[0], $info[1]);
 		if($resize == ACP_TB_WIDTH || $resize == ACP_TB_WIDTH200 || $resize == $settings['thumbwidth'])
@@ -2239,25 +2244,143 @@ return htmlentities($string, $htmlent_flags,$htmlent_encoding_pub);
 
 
 // Checkboxen checken bzw. Selectfields selecten
- /* @params string $field_value Übergebener Wert
-  * @params string $standard_value Standardwert
-  * @params string $type=checkbox checkbox oder select default=checkbox
-  * @return string checked=\"checked\"
- */
- function check_checkbox($field_value,$standard_value=1,$type="checkbox"){
+/* @params string $field_value Übergebener Wert
+*  @params string $standard_value Standardwert
+*  @params string $type=checkbox checkbox oder select default=checkbox
+*  @return string checked=\"checked\"
+*/
+function check_checkbox($field_value,$standard_value=1,$type="checkbox"){
 
- if($field_value == $standard_value && $type == "checkbox")
-     return " checked=\"checked\"";
- elseif($field_value == $standard_value && $type == "select")
-     return " selected=\"selected\"";
- else
-     return "";
+if($field_value == $standard_value && $type == "checkbox")
+    return " checked=\"checked\"";
+elseif($field_value == $standard_value && $type == "select")
+    return " selected=\"selected\"";
+else
+    return "";
+}
 
- }
+// Funktion für selected=selected
+function check_select($field_value,$standard_value=1){
+    return check_checkbox($field_value,$standard_value,"select");
+    }
 
- // Funktion für selected=selected
- function check_select($field_value,$standard_value=1){
-     return check_checkbox($field_value,$standard_value,"select");
-     }
+
+
+
+
+
+
+// Ruft eine modulspezifische Right/Settings-Funktion zur Wertdarstellung auf
+/*$modul			Modul dessen Funktion aufgerufen werden soll
+  $idname			ID-Name des "Rechts" bzw. des Settings
+  $wert				Aktueller Wert des Feldes
+
+RETURN: HTML-Formatiertes Formularfeld
+*/
+function call_RightSettingsFunction_Read($modul,$idname,$wert){
+global $module,$mysql_tables,$moduldir,$instnr;
+
+if(!isset($modul) || empty($modul) || !isset($idname) || empty($idname)) return "";
+
+// Sonderbehandlung bei zentralen 01ACP-Funktionen
+if($modul == "01acp"){
+	return call_user_func("_".$modul."_".$idname."_Read",$idname,$wert);
+}
+
+if(file_exists($moduldir.$modul."/_headinclude.php"))
+	include_once($moduldir.$modul."/_headinclude.php");
+if(file_exists($moduldir.$modul."/_functions.php"))
+	include_once($moduldir.$modul."/_functions.php");
+if(function_exists("_".$modul."_".$idname."_Read"))
+	return call_user_func("_".$modul."_".$idname."_Read",$modul."_".$idname,$wert);
+else return "Fehler bei der Darstellung der gespeicherten Werte dieses Feldes.";
+
+}
+
+
+
+
+
+
+
+// Ruft eine modulspezifische Right/Settings-Funktion zur Speicherung von abgesendeten Werten auf
+/*$modul			Modul dessen Funktion aufgerufen werden soll
+  $idname			ID-Name des "Rechts" bzw. des Settings
+  $wert				Zu speichernder Wert des Feldes
+
+RETURN: String zum Speichern in der MySQL-Tabelle
+*/
+function call_RightSettingsFunction_Write($modul,$idname,$wert){
+global $module,$mysql_tables,$moduldir,$instnr;
+
+if(!isset($modul) || empty($modul) || !isset($idname) || empty($idname)) return "";
+
+// Sonderbehandlung bei zentralen 01ACP-Funktionen
+if($modul == "01acp"){
+	return call_user_func("_".$modul."_".$idname."_Write",$idname,$wert);
+}
+
+if(file_exists($moduldir.$modul."/_headinclude.php"))
+	include_once($moduldir.$modul."/_headinclude.php");
+if(file_exists($moduldir.$modul."/_functions.php"))
+	include_once($moduldir.$modul."/_functions.php");
+if(function_exists("_".$modul."_".$idname."_Read"))
+	return call_user_func("_".$modul."_".$idname."_Write",$modul."_".$idname,$wert);
+else return "";
+
+}
+
+
+
+
+
+
+
+
+
+// Formularfeld der Standard Thumbnail-Größe.
+/* @params string $idname		IDName des Feldes (modul_idname)
+ * @params string $wert			Enthält bisherigen gespeicherten Wert des Feldes
+
+RETURN: Entsprechendes Formularfeld mit aktuellem Wert
+  */
+if(!function_exists("_01acp_thumbwidth_Read")){
+function _01acp_thumbwidth_Read($idname,$wert){
+
+return "<input type=\"text\" name=\"".$idname."\" value=\"".$wert."\" size=\"5\" />";
+
+}
+}
+
+
+
+
+
+
+
+
+
+// Funktion gibt den Wert unbearbeitet an die Speicherfunktion durch - legt ihn allerdings gleichzeitig
+/* in einer temporären Datei für den Zugriff der showpics.php->showpic()-Funktion ab
+ * @params string $idname		IDName des Feldes (modul_idname)
+ * @params string $wert			Enthält den zu speichernden Wert des Feldes
+
+RETURN: Eingangswert = Ausgangswert
+  */
+if(!function_exists("_01acp_thumbwidth_Write")){
+function _01acp_thumbwidth_Write($idname,$wert){
+
+$content = "<?PHP
+\$settings['thumbwidth'] = ".intval($wert).";
+?>";
+
+$cachefile = fopen(THUMBWIDTH_CACHEFILE,"w");
+$wrotez = fwrite($cachefile, $content);
+fclose($cachefile);
+
+return intval($wert);
+
+}
+}
 
 ?>
