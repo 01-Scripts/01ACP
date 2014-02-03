@@ -547,7 +547,7 @@ function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="
 					}
 
                 //Eintragung in Datenbank vornehmen:
-                $sql_insert = "INSERT INTO ".$mysql_tables['files']." (type,modul,timestamp,dir,orgname,name,size,ext,uid) VALUES (
+                $sql_insert = "INSERT INTO ".$mysql_tables['files']." (type,modul,utimestamp,dir,orgname,name,size,ext,uid) VALUES (
 							'".$mysqli->escape_string($fupload['fileart'])."',
 							'".$mysqli->escape_string($modul)."',
 							'".time()."',
@@ -1026,7 +1026,7 @@ while($row = $list->fetch_assoc()){
 	   $return .= "<td>".$drag_start.$link1.substr(stripslashes($row['orgname']),0,40).$downloads.$link2.$drag_ende."</td>\n    ";
 	
     $return .= "<td align=\"center\">".parse_size($row['size'],"KB")." KB</td>\n    ";
-	if($show_date) $return .= "<td align=\"center\">".date("d.m.Y",$row['timestamp'])."</td>\n    ";
+	if($show_date) $return .= "<td align=\"center\">".date("d.m.Y",$row['utimestamp'])."</td>\n    ";
 	if($show_username) $return .= "<td><a href=\"".$url."&amp;uid=".$row['uid']."\">".$usernames[$row['uid']]."</a></td>\n    ";
 	
 	if($show_edit){
@@ -1169,7 +1169,7 @@ while($row = $list->fetch_assoc()){
 	$return .= "<tr id=\"id".$row['id']."\">
 	<td class=\"".$class."\" width=\"25\" align=\"center\"><input type=\"checkbox\" name=\"cdelid[]\" value=\"".$row['id']."\" /></td>
 	<td class=\"".$class."\"".$colspan." onclick=\"popup('show_comment','".$row['id']."','','',580,450);\" style=\"cursor: pointer;\">
-		Am ".date("d.m.Y - H:i",$row['timestamp'])."Uhr von <b>".stripslashes($row['autor'])."</b> (".$row['ip'].") verfasst:<br />
+		Am ".date("d.m.Y - H:i",$row['utimestamp'])."Uhr von <b>".stripslashes($row['autor'])."</b> (".$row['ip'].") verfasst:<br />
 		<b>".call_user_func("_".$module[$modul]['modulname']."_getCommentParentTitle",$row['postid'])."</b><br />
 		".substr(strip_tags(bb_code_comment(stripslashes($row['message']),1,$row['bbc'],$row['smilies'])),0,250)." [...]
 	</td>\n";
@@ -1672,7 +1672,7 @@ if(isset($autor) && !empty($autor) &&
 	if($clist->num_rows == 0){
 	
 		// Eintragung in Datenbank vornehmen:
-		$sql_insert = "INSERT INTO ".$mysql_tables['comments']." (modul,postid,subpostid,uid,frei,timestamp,ip,autor,email,url,message,smilies,bbc) VALUES (
+		$sql_insert = "INSERT INTO ".$mysql_tables['comments']." (modul,postid,subpostid,uid,frei,utimestamp,ip,autor,email,url,message,smilies,bbc) VALUES (
 						'".$mysqli->escape_string($modul)."',
 						'".$mysqli->escape_string($postid)."',
 						'".$mysqli->escape_string($subpostid)."',

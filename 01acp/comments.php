@@ -63,7 +63,7 @@ if($modul != "01acp"){
 		// Kommentare zu Sub-Posts auflisten:
 		if(isset($_GET['subpostid']) && !empty($_GET['subpostid'])){
 			$sites = 0;
-			$query = "SELECT id,postid,subpostid,frei,timestamp,ip,autor,email,message,smilies,bbc FROM ".$mysql_tables['comments']." WHERE postid='".$mysqli->escape_string($_GET['postid'])."' AND subpostid='".$mysqli->escape_string($_GET['subpostid'])."' AND modul='".$mysqli->escape_string($modul)."' ORDER BY timestamp DESC";
+			$query = "SELECT id,postid,subpostid,frei,utimestamp,ip,autor,email,message,smilies,bbc FROM ".$mysql_tables['comments']." WHERE postid='".$mysqli->escape_string($_GET['postid'])."' AND subpostid='".$mysqli->escape_string($_GET['subpostid'])."' AND modul='".$mysqli->escape_string($modul)."' ORDER BY utimestamp DESC";
 			$query = makepages($query,$sites,"site",ACP_PER_PAGE);		
 			$list = $mysqli->query($query);
 			
@@ -94,7 +94,7 @@ if($modul != "01acp"){
 		// Kommentare zu Posts auflisten:
 		else{
 			$sites = 0;
-			$query = "SELECT id,postid,frei,timestamp,ip,autor,email,message,smilies,bbc FROM ".$mysql_tables['comments']." WHERE postid='".$mysqli->escape_string($_GET['postid'])."' AND modul='".$mysqli->escape_string($modul)."' ORDER BY timestamp DESC";
+			$query = "SELECT id,postid,frei,utimestamp,ip,autor,email,message,smilies,bbc FROM ".$mysql_tables['comments']." WHERE postid='".$mysqli->escape_string($_GET['postid'])."' AND modul='".$mysqli->escape_string($modul)."' ORDER BY utimestamp DESC";
 			$query = makepages($query,$sites,"site",ACP_PER_PAGE);		
 			$list = $mysqli->query($query);
 			
@@ -112,7 +112,7 @@ if($modul != "01acp"){
 		// Kommentare, die freigeschaltet werden müssen auflisten:
 		$sites = 0;
 		$menge = 0;
-		$query = "SELECT id,postid,timestamp,ip,autor,email,message,smilies,bbc FROM ".$mysql_tables['comments']." WHERE frei = '0' AND modul='".$mysqli->escape_string($modul)."' ORDER BY timestamp DESC";
+		$query = "SELECT id,postid,utimestamp,ip,autor,email,message,smilies,bbc FROM ".$mysql_tables['comments']." WHERE frei = '0' AND modul='".$mysqli->escape_string($modul)."' ORDER BY utimestamp DESC";
 		$query = makepages($query,$sites,"commentfreesite",ACP_PER_PAGE);
 		
 		$list = $mysqli->query($query);

@@ -294,8 +294,8 @@ if($flag_showlist && (isset($_REQUEST['look']) && ($_REQUEST['look'] == "list" |
 	else{ $_REQUEST['dir'] = 0; $where = " AND dir = '0' "; }
 	
 	$sites = 0;
-	if($userdata['dateimanager'] == 1) $query = "SELECT * FROM ".$mysql_tables['files']." WHERE type='".$mysqli->escape_string($_REQUEST['type'])."' AND uid='".$userdata['id']."'".$where." ORDER BY timestamp DESC,orgname,id";
-	elseif($userdata['dateimanager'] == 2) $query = "SELECT * FROM ".$mysql_tables['files']." WHERE type='".$mysqli->escape_string($_REQUEST['type'])."'".$where." ORDER BY timestamp DESC,orgname,id";
+	if($userdata['dateimanager'] == 1) $query = "SELECT * FROM ".$mysql_tables['files']." WHERE type='".$mysqli->escape_string($_REQUEST['type'])."' AND uid='".$userdata['id']."'".$where." ORDER BY utimestamp DESC,orgname,id";
+	elseif($userdata['dateimanager'] == 2) $query = "SELECT * FROM ".$mysql_tables['files']." WHERE type='".$mysqli->escape_string($_REQUEST['type'])."'".$where." ORDER BY utimestamp DESC,orgname,id";
 	$query = makepages($query,$sites,"site",ACP_PER_PAGE);
 
     if($_REQUEST['returnvalue'] == "tinymce" && $_REQUEST['type'] == "pic"){

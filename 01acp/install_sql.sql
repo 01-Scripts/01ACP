@@ -46,10 +46,10 @@ CREATE TABLE IF NOT EXISTS `01prefix_comments` (
 CREATE TABLE IF NOT EXISTS `01prefix_files` (
   `id` int(10) NOT NULL auto_increment,
   `type` varchar(4) NULL COMMENT 'Dateityp "pic" oder "file"',
-  `modul` varchar(25) NULL,
-  `timestamp` int(10) NULL,
+  `modul` varchar(25) NULL DEFAULT NULL,
+  `utimestamp` int(15) NULL default '0',
   `dir` int(10) NOT NULL default '0',
-  `orgname` varchar(50) default NULL,
+  `orgname` varchar(50) NULL default NULL,
   `name` varchar(25) NOT NULL default '',
   `size` varchar(20) NULL default NULL,
   `ext` varchar(5) NULL default NULL,
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `01prefix_files` (
 CREATE TABLE IF NOT EXISTS `01prefix_filedirs` (
   `id` INT( 10 ) NOT NULL AUTO_INCREMENT,
   `parentid` INT( 10 ) NOT NULL default '0',
-  `timestamp` INT( 10 ) NOT NULL default '0',
+  `utimestamp` INT( 15 ) NOT NULL default '0',
   `name` VARCHAR( 50 ) NULL,
   `uid` INT( 10 ) NOT NULL default '0',
   `hide` TINYINT( 1 ) NOT NULL DEFAULT '0',

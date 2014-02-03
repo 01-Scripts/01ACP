@@ -71,7 +71,7 @@ if(isset($userdata['id']) && $userdata['id'] > 0 && $userdata['dateimanager'] >=
 	if(isset($_POST['create_new_dir']) && $_POST['create_new_dir'] == 1 &&
 	   isset($_POST['new_verzname']) && !empty($_POST['new_verzname'])){
 		//Eintragung in Datenbank vornehmen:
-		$sql_insert = "INSERT INTO ".$mysql_tables['filedirs']." (parentid,timestamp,name,uid) VALUES (
+		$sql_insert = "INSERT INTO ".$mysql_tables['filedirs']." (parentid,utimestamp,name,uid) VALUES (
 					'".$mysqli->escape_string($_POST['parentfiledirid'])."',
 					'".time()."',
 					'".$mysqli->escape_string($_POST['new_verzname'])."',
@@ -171,10 +171,10 @@ ShowAjaxError('<b>Fehler:</b><br />Sie haben nicht alle ben&ouml;tigen Felder au
 	    $orderby = "size+0 ".$sortorder.",orgname,id";
 	  break;
 	  case "date":
-	    $orderby = "timestamp ".$sortorder.",orgname,id";
+	    $orderby = "utimestamp ".$sortorder.",orgname,id";
 	  break;  
 	  default:
-	    $orderby = "timestamp DESC,orgname,id";
+	    $orderby = "utimestamp DESC,orgname,id";
 	  break;
 	  }
 

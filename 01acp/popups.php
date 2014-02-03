@@ -314,10 +314,10 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "show_comment" && $userd
 		echo "<p class=\"meldung_erfolg\">Kommentar wurde erfolgreich bearbeitet!
 				<a href=\"javascript:window.close();\">Schlie&szlig;en</a></p>";
 	
-	$list = $mysqli->query("SELECT id,timestamp,ip,autor,email,url,message,smilies,bbc FROM ".$mysql_tables['comments']." WHERE id='".$mysqli->escape_string($_REQUEST['var1'])."' LIMIT 1");
+	$list = $mysqli->query("SELECT id,utimestamp,ip,autor,email,url,message,smilies,bbc FROM ".$mysql_tables['comments']." WHERE id='".$mysqli->escape_string($_REQUEST['var1'])."' LIMIT 1");
 	while($row = $list->fetch_assoc()){
 		echo "<p>Geschrieben von <b>".stripslashes($row['autor'])."</b> (".$row['ip'].") 
-				am <b>".date("d.m.Y",$row['timestamp'])."</b>, <b>".date("H:i",$row['timestamp'])."</b> Uhr</p>";
+				am <b>".date("d.m.Y",$row['utimestamp'])."</b>, <b>".date("H:i",$row['utimestamp'])."</b> Uhr</p>";
 		
 		echo "<p style=\"float:right;\">
 		<a href=\"".$filename."?action=edit_comment&amp;var1=".$_REQUEST['var1']."\"><img src=\"images/icons/icon_edit.gif\" alt=\"Stift+Papier\" title=\"Kommentar bearbeiten\" /></a>
@@ -345,7 +345,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "edit_comment" && $userd
 	
 	echo "<h2>Kommentar bearbeiten</h2>";
 	
-	$list = $mysqli->query("SELECT id,timestamp,ip,autor,email,url,message,smilies,bbc FROM ".$mysql_tables['comments']." WHERE id='".$mysqli->escape_string($_REQUEST['var1'])."' LIMIT 1");
+	$list = $mysqli->query("SELECT id,utimestamp,ip,autor,email,url,message,smilies,bbc FROM ".$mysql_tables['comments']." WHERE id='".$mysqli->escape_string($_REQUEST['var1'])."' LIMIT 1");
 	while($row = $list->fetch_assoc()){
 		if($row['bbc'] == 0) $c1 = " checked=\"checked\"";
 		else $c1 = "";
