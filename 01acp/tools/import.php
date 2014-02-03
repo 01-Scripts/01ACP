@@ -438,7 +438,7 @@ if(isset($_REQUEST['step']) && $_REQUEST['step'] == 5 &&
 		}
 		
 	if($cc > 0){
-		$sql_insert = "INSERT INTO ".$mysql_tables['comments']." (modul,postid,uid,frei,timestamp,ip,autor,email,url,comment,smilies,bbc) VALUES ".$insertquery.";";
+		$sql_insert = "INSERT INTO ".$mysql_tables['comments']." (modul,postid,uid,frei,timestamp,ip,autor,email,url,message,smilies,bbc) VALUES ".$insertquery.";";
 		$result = $mysqli->query($sql_insert) OR die($mysqli->error);
 		}
 ?>

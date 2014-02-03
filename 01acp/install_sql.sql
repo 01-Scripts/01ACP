@@ -21,17 +21,17 @@ START TRANSACTION;
 
 CREATE TABLE IF NOT EXISTS `01prefix_comments` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
-  `modul` varchar(25) DEFAULT NULL,
+  `modul` varchar(25) NULL DEFAULT NULL,
   `postid` varchar(255) NOT NULL DEFAULT '0',
   `subpostid` varchar(255) NOT NULL DEFAULT '0',
   `uid` varchar(32) NOT NULL DEFAULT '0',
   `frei` tinyint(1) NOT NULL DEFAULT '0',
-  `timestamp` int(10) NOT NULL DEFAULT '0',
-  `ip` varchar(15) DEFAULT NULL,
-  `autor` varchar(50) DEFAULT NULL,
-  `email` varchar(75) DEFAULT NULL,
-  `url` varchar(100) DEFAULT NULL,
-  `comment` text,
+  `utimestamp` int(15) NOT NULL DEFAULT '0',
+  `ip` varchar(15) NULL DEFAULT NULL,
+  `autor` varchar(50) NULL DEFAULT NULL,
+  `email` varchar(75) NULL DEFAULT NULL,
+  `url` varchar(100) NULL DEFAULT NULL,
+  `message` text NULL DEFAULT NULL,
   `smilies` tinyint(1) NOT NULL DEFAULT '0',
   `bbc` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
@@ -51,9 +51,9 @@ CREATE TABLE IF NOT EXISTS `01prefix_files` (
   `dir` int(10) NOT NULL default '0',
   `orgname` varchar(50) default NULL,
   `name` varchar(25) NOT NULL default '',
-  `size` varchar(20) default NULL,
-  `ext` varchar(5) default NULL,
-  `uid` int(10) default NULL COMMENT 'uid=0 für gelöschte Benutzer',
+  `size` varchar(20) NULL default NULL,
+  `ext` varchar(5) NULL default NULL,
+  `uid` int(10) NULL default NULL COMMENT 'uid=0 für gelöschte Benutzer',
   `downloads` int(10) NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 ;

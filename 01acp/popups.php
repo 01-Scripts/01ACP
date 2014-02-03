@@ -314,7 +314,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "show_comment" && $userd
 		echo "<p class=\"meldung_erfolg\">Kommentar wurde erfolgreich bearbeitet!
 				<a href=\"javascript:window.close();\">Schlie&szlig;en</a></p>";
 	
-	$list = $mysqli->query("SELECT id,timestamp,ip,autor,email,url,comment,smilies,bbc FROM ".$mysql_tables['comments']." WHERE id='".$mysqli->escape_string($_REQUEST['var1'])."' LIMIT 1");
+	$list = $mysqli->query("SELECT id,timestamp,ip,autor,email,url,message,smilies,bbc FROM ".$mysql_tables['comments']." WHERE id='".$mysqli->escape_string($_REQUEST['var1'])."' LIMIT 1");
 	while($row = $list->fetch_assoc()){
 		echo "<p>Geschrieben von <b>".stripslashes($row['autor'])."</b> (".$row['ip'].") 
 				am <b>".date("d.m.Y",$row['timestamp'])."</b>, <b>".date("H:i",$row['timestamp'])."</b> Uhr</p>";
@@ -332,7 +332,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "show_comment" && $userd
 		
 		
 		
-		echo "<p>".bb_code_comment(stripslashes($row['comment']),1,$row['bbc'],$row['smilies'])."</p>";
+		echo "<p>".bb_code_comment(stripslashes($row['message']),1,$row['bbc'],$row['smilies'])."</p>";
 		}
 	}
 	
@@ -345,7 +345,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "edit_comment" && $userd
 	
 	echo "<h2>Kommentar bearbeiten</h2>";
 	
-	$list = $mysqli->query("SELECT id,timestamp,ip,autor,email,url,comment,smilies,bbc FROM ".$mysql_tables['comments']." WHERE id='".$mysqli->escape_string($_REQUEST['var1'])."' LIMIT 1");
+	$list = $mysqli->query("SELECT id,timestamp,ip,autor,email,url,message,smilies,bbc FROM ".$mysql_tables['comments']." WHERE id='".$mysqli->escape_string($_REQUEST['var1'])."' LIMIT 1");
 	while($row = $list->fetch_assoc()){
 		if($row['bbc'] == 0) $c1 = " checked=\"checked\"";
 		else $c1 = "";
@@ -371,7 +371,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "edit_comment" && $userd
 
 		<tr>
 			<td colspan=\"2\" class=\"trb\">
-				<textarea name=\"comment\" rows=\"10\" cols=\"65\" style=\"font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; font-style: normal;\">".stripslashes($row['comment'])."</textarea><br />
+				<textarea name=\"comment\" rows=\"10\" cols=\"65\" style=\"font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; font-style: normal;\">".stripslashes($row['message'])."</textarea><br />
 				<input type=\"checkbox\" value=\"1\" name=\"bbc\"".$c1." /> BB-Code <b>de</b>aktivieren<br />
 				<input type=\"checkbox\" value=\"1\" name=\"smilies\"".$c2." /> Smilies <b>de</b>aktivieren
 			</td>
@@ -414,7 +414,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "save_comment" && $userd
 				autor 	=	'".$mysqli->escape_string(htmlentities($_REQUEST['autor'], $htmlent_flags, $htmlent_encoding_acp))."',
 				email 	=	'".$mysqli->escape_string($email)."',
 				url		=	'".$mysqli->escape_string($url)."',
-				comment =	'".$mysqli->escape_string(htmlentities($_REQUEST['comment'], $htmlent_flags, $htmlent_encoding_acp))."',
+				message =	'".$mysqli->escape_string(htmlentities($_REQUEST['comment'], $htmlent_flags, $htmlent_encoding_acp))."',
 				bbc		=	'".$bbc."',
 				smilies =	'".$smilies."'
 				WHERE id='".$mysqli->escape_string($_REQUEST['var1'])."' LIMIT 1");

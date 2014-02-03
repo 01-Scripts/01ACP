@@ -1171,7 +1171,7 @@ while($row = $list->fetch_assoc()){
 	<td class=\"".$class."\"".$colspan." onclick=\"popup('show_comment','".$row['id']."','','',580,450);\" style=\"cursor: pointer;\">
 		Am ".date("d.m.Y - H:i",$row['timestamp'])."Uhr von <b>".stripslashes($row['autor'])."</b> (".$row['ip'].") verfasst:<br />
 		<b>".call_user_func("_".$module[$modul]['modulname']."_getCommentParentTitle",$row['postid'])."</b><br />
-		".substr(strip_tags(bb_code_comment(stripslashes($row['comment']),1,$row['bbc'],$row['smilies'])),0,250)." [...]
+		".substr(strip_tags(bb_code_comment(stripslashes($row['message']),1,$row['bbc'],$row['smilies'])),0,250)." [...]
 	</td>\n";
 	
 	if($option == "free" && $row['frei'] == 0) $return .= "<td class=\"".$class."\" align=\"center\"><img src=\"images/icons/ok.gif\" alt=\"OK\" title=\"Kommentar freischalten\" id=\"cfree".$row['id']."\" onclick=\"AjaxRequest.send('modul=01acp&ajaxaction=freecomment&id=".$row['id']."');\" /></td>\n";
@@ -1667,12 +1667,12 @@ if(isset($autor) && !empty($autor) &&
 		$comment = utf8_decode($comment);
 	}
 
-	$clist = $mysqli->query("SELECT id,postid,uid,comment FROM ".$mysql_tables['comments']." WHERE postid='".$mysqli->escape_string($postid)."' AND uid='".$mysqli->escape_string($uid)."' OR postid='".$mysqli->escape_string($postid)."' AND comment='".$mysqli->escape_string(htmlentities($comment, $htmlent_flags, $htmlent_encoding_pub))."'");
+	$clist = $mysqli->query("SELECT id,postid,uid,message FROM ".$mysql_tables['comments']." WHERE postid='".$mysqli->escape_string($postid)."' AND uid='".$mysqli->escape_string($uid)."' OR postid='".$mysqli->escape_string($postid)."' AND comment='".$mysqli->escape_string(htmlentities($comment, $htmlent_flags, $htmlent_encoding_pub))."'");
 
 	if($clist->num_rows == 0){
 	
 		// Eintragung in Datenbank vornehmen:
-		$sql_insert = "INSERT INTO ".$mysql_tables['comments']." (modul,postid,subpostid,uid,frei,timestamp,ip,autor,email,url,comment,smilies,bbc) VALUES (
+		$sql_insert = "INSERT INTO ".$mysql_tables['comments']." (modul,postid,subpostid,uid,frei,timestamp,ip,autor,email,url,message,smilies,bbc) VALUES (
 						'".$mysqli->escape_string($modul)."',
 						'".$mysqli->escape_string($postid)."',
 						'".$mysqli->escape_string($subpostid)."',
