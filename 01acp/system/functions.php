@@ -1669,7 +1669,7 @@ if(isset($autor) && !empty($autor) &&
 
 	$clist = $mysqli->query("SELECT id,postid,uid,message FROM ".$mysql_tables['comments']." WHERE postid='".$mysqli->escape_string($postid)."' AND uid='".$mysqli->escape_string($uid)."' OR postid='".$mysqli->escape_string($postid)."' AND comment='".$mysqli->escape_string(htmlentities($comment, $htmlent_flags, $htmlent_encoding_pub))."'");
 
-	if($clist->num_rows == 0){
+	if($mysqli->affected_rows == 0){
 	
 		// Eintragung in Datenbank vornehmen:
 		$sql_insert = "INSERT INTO ".$mysql_tables['comments']." (modul,postid,subpostid,uid,frei,utimestamp,ip,autor,email,url,message,smilies,bbc) VALUES (

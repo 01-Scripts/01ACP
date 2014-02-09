@@ -22,7 +22,8 @@ if($flag_sessionbugfix && isset($_GET['sessiondata']) && !empty($_GET['sessionda
 
 // Userberechtigungen in Array $userdata[] einlesen:
 if(!isset($hide_userdata)){
-	if(isset($_SESSION['01_idsession_'.sha1($salt)]) && isset($_SESSION['01_passsession_'.sha1($salt)]) && !empty($_SESSION['01_passsession_'.sha1($salt)]) && strlen($_SESSION['01_passsession_'.sha1($salt)]) == 40){
+	$shasalt = sha1($salt);
+	if(isset($_SESSION['01_idsession_'.$shasalt]) && isset($_SESSION['01_passsession_'.$shasalt]) && !empty($_SESSION['01_passsession_'.$shasalt]) && strlen($_SESSION['01_passsession_'.$shasalt]) == 40){
 		$userdata = getUserdata("",TRUE);
 		if($userdata['sperre'] == 1){
 			$flag_loginerror = true;
