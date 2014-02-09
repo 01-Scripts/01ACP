@@ -31,8 +31,8 @@ if(isset($userdata['id']) && $userdata['id'] > 0){
 	if(isset($_POST['upload']) && $_POST['upload'] == 1 && isset($_FILES['new_datei']['name']) && $_FILES['new_datei']['name'] != "" && $userdata['upload'] == 1){
 		
 		if(isset($_REQUEST['delfileid']) && !empty($_REQUEST['delfileid'])){
-			if($userdata['dateimanager'] == 1) $query = "SELECT id,type,name FROM ".$mysql_tables['files']." WHERE uid = '".$userdata['id']."' AND id='".$mysqli->escape_string($_REQUEST['delfileid'])."' LIMIT 1";
-			elseif($userdata['dateimanager'] == 2) $query = "SELECT id,type,name FROM ".$mysql_tables['files']." WHERE id='".$mysqli->escape_string($_REQUEST['delfileid'])."' LIMIT 1";
+			if($userdata['dateimanager'] == 1) $query = "SELECT id,filetype,name FROM ".$mysql_tables['files']." WHERE uid = '".$userdata['id']."' AND id='".$mysqli->escape_string($_REQUEST['delfileid'])."' LIMIT 1";
+			elseif($userdata['dateimanager'] == 2) $query = "SELECT id,filetype,name FROM ".$mysql_tables['files']." WHERE id='".$mysqli->escape_string($_REQUEST['delfileid'])."' LIMIT 1";
 			
 			$list = $mysqli->query($query);
 			if($list->num_rows == 1){
@@ -294,8 +294,8 @@ if($flag_showlist && (isset($_REQUEST['look']) && ($_REQUEST['look'] == "list" |
 	else{ $_REQUEST['dir'] = 0; $where = " AND dir = '0' "; }
 	
 	$sites = 0;
-	if($userdata['dateimanager'] == 1) $query = "SELECT * FROM ".$mysql_tables['files']." WHERE type='".$mysqli->escape_string($_REQUEST['type'])."' AND uid='".$userdata['id']."'".$where." ORDER BY utimestamp DESC,orgname,id";
-	elseif($userdata['dateimanager'] == 2) $query = "SELECT * FROM ".$mysql_tables['files']." WHERE type='".$mysqli->escape_string($_REQUEST['type'])."'".$where." ORDER BY utimestamp DESC,orgname,id";
+	if($userdata['dateimanager'] == 1) $query = "SELECT * FROM ".$mysql_tables['files']." WHERE filetype='".$mysqli->escape_string($_REQUEST['type'])."' AND uid='".$userdata['id']."'".$where." ORDER BY utimestamp DESC,orgname,id";
+	elseif($userdata['dateimanager'] == 2) $query = "SELECT * FROM ".$mysql_tables['files']." WHERE filetype='".$mysqli->escape_string($_REQUEST['type'])."'".$where." ORDER BY utimestamp DESC,orgname,id";
 	$query = makepages($query,$sites,"site",ACP_PER_PAGE);
 
     if($_REQUEST['returnvalue'] == "tinymce" && $_REQUEST['type'] == "pic"){

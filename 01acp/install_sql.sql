@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `01prefix_comments` (
 
 CREATE TABLE IF NOT EXISTS `01prefix_files` (
   `id` int(10) NOT NULL auto_increment,
-  `type` varchar(4) NULL COMMENT 'Dateityp "pic" oder "file"',
+  `filetype` varchar(4) NULL COMMENT 'Dateityp pic oder file',
   `modul` varchar(25) NULL DEFAULT NULL,
   `utimestamp` int(15) NULL default '0',
   `dir` int(10) NOT NULL default '0',

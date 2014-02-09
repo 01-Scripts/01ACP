@@ -547,7 +547,7 @@ function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="
 					}
 
                 //Eintragung in Datenbank vornehmen:
-                $sql_insert = "INSERT INTO ".$mysql_tables['files']." (type,modul,utimestamp,dir,orgname,name,size,ext,uid) VALUES (
+                $sql_insert = "INSERT INTO ".$mysql_tables['files']." (filetype,modul,utimestamp,dir,orgname,name,size,ext,uid) VALUES (
 							'".$mysqli->escape_string($fupload['fileart'])."',
 							'".$mysqli->escape_string($modul)."',
 							'".time()."',
@@ -964,7 +964,7 @@ $downloads = $drag_start = $drag_ende = "";
 $list = $mysqli->query($query);
 while($row = $list->fetch_assoc()){
 	
-	switch($row['type']){
+	switch($row['filetype']){
 	  case "pic":
 	    $popuph = 400;
 	  break;
@@ -982,7 +982,7 @@ while($row = $list->fetch_assoc()){
     if($show_tb){
 		$return .= "<td align=\"center\">";
 		
-		if($row['type'] == "pic"){
+		if($row['filetype'] == "pic"){
 			$split = pathinfo(strtolower($row['name']));
 			$filename = $split['filename'];
 			$fileType = $split['extension'];
@@ -998,7 +998,7 @@ while($row = $list->fetch_assoc()){
 		}
 		
 	// Links für die verschiedenen Einfüge-Arten vorbereiten
-    if($insert == "tinymce" && $row['type'] == "file"){
+    if($insert == "tinymce" && $row['filetype'] == "file"){
 		$link1 = "<a href=\"javascript:FileDialog.insertfile('".$attachmentuploaddir."','".$row['id']."','".stripslashes($row['orgname'])."');\">";
 		$link2 = "</a>";
 		}
@@ -1012,7 +1012,7 @@ while($row = $list->fetch_assoc()){
 	
     // Zusätzliche Felder für Hits und Drag&Drop
     if($show_edit && $userdata['dateimanager'] == 2){
-		if($row['type'] == "file")
+		if($row['filetype'] == "file")
 			$downloads = "<span style=\"float:right;\">".$row['downloads']."</span>";
 		else
 			$downloads = "<span style=\"float:right;\">-</span>";
@@ -1020,7 +1020,7 @@ while($row = $list->fetch_assoc()){
 		$drag_ende = "</div>";
 		}
 	
-	if($insert == "tinymce" && $row['type'] == "pic")
+	if($insert == "tinymce" && $row['filetype'] == "pic")
 		$return .= "<td>".substr(stripslashes($row['orgname']),0,40)."<br />Einf&uuml;gen: <a href=\"javascript:FileDialog.insertpic_flist('".$picuploaddir."','".stripslashes($row['name'])."','');\">Original</a> | <a href=\"javascript:FileDialog.insertpic_flist('".$picuploaddir."','".stripslashes($row['name'])."','".$settings['thumbwidth']."');\">Verkleinert</a></td>\n    ";
 	else
 	   $return .= "<td>".$drag_start.$link1.substr(stripslashes($row['orgname']),0,40).$downloads.$link2.$drag_ende."</td>\n    ";
@@ -1030,8 +1030,8 @@ while($row = $list->fetch_assoc()){
 	if($show_username) $return .= "<td><a href=\"".$url."&amp;uid=".$row['uid']."\">".$usernames[$row['uid']]."</a></td>\n    ";
 	
 	if($show_edit){
-		$return .= "<td align=\"center\"><a href=\"javascript:popup('reuploader','".$row['type']."','".$row['id']."','".stripslashes($row['orgname'])."',620,480);\"><img src=\"images/icons/icon_edit.gif\" alt=\"Icon: Datei bearbeiten\" title=\"Datei bearbeiten / ersetzen\" /></a></td>\n";
-		$return .= "<td align=\"center\"><a href=\"javascript:popup('file_del1','".$row['id']."','".$row['type']."','".$row['name']."-3-3-".stripslashes($row['orgname'])."',450,".$popuph.");\"><img src=\"images/icons/icon_delete.gif\" alt=\"Icon: Datei l&ouml;schen\" title=\"Datei l&ouml;schen\" /></a></td>\n    ";
+		$return .= "<td align=\"center\"><a href=\"javascript:popup('reuploader','".$row['filetype']."','".$row['id']."','".stripslashes($row['orgname'])."',620,480);\"><img src=\"images/icons/icon_edit.gif\" alt=\"Icon: Datei bearbeiten\" title=\"Datei bearbeiten / ersetzen\" /></a></td>\n";
+		$return .= "<td align=\"center\"><a href=\"javascript:popup('file_del1','".$row['id']."','".$row['filetype']."','".$row['name']."-3-3-".stripslashes($row['orgname'])."',450,".$popuph.");\"><img src=\"images/icons/icon_delete.gif\" alt=\"Icon: Datei l&ouml;schen\" title=\"Datei l&ouml;schen\" /></a></td>\n    ";
 		}
 	
 	$return .= "</tr>\n\n";
@@ -1410,8 +1410,8 @@ global $mysqli,$mysql_tables;
 
 if(isset($userid) && is_integer(intval($userid))){
 	$picmenge = $filemenge = 0;
-	list($picmenge) = $mysqli->query("SELECT COUNT(*) FROM ".$mysql_tables['files']." WHERE type='pic' AND uid='".$mysqli->escape_string($userid)."'")->fetch_array(MYSQLI_NUM);
-	list($filemenge) = $mysqli->query("SELECT COUNT(*) FROM ".$mysql_tables['files']." WHERE type='file' AND uid='".$mysqli->escape_string($userid)."'")->fetch_array(MYSQLI_NUM);
+	list($picmenge) = $mysqli->query("SELECT COUNT(*) FROM ".$mysql_tables['files']." WHERE filetype='pic' AND uid='".$mysqli->escape_string($userid)."'")->fetch_array(MYSQLI_NUM);
+	list($filemenge) = $mysqli->query("SELECT COUNT(*) FROM ".$mysql_tables['files']." WHERE filetype='file' AND uid='".$mysqli->escape_string($userid)."'")->fetch_array(MYSQLI_NUM);
 	
 	$ustats[] = array("statcat"	=> "Hochgeladene Bilder:",
 						"statvalue"	=> $picmenge);

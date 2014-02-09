@@ -101,11 +101,11 @@ ShowAjaxError('<b>Fehler:</b><br />Sie haben nicht alle ben&ouml;tigen Felder au
 		
 		$cup = 0;
 		foreach($_POST['delfiles'] as $fileid){    
-			$list = $mysqli->query("SELECT type,name,uid FROM ".$mysql_tables['files']." WHERE id='".$mysqli->escape_string($fileid)."' LIMIT 1");
+			$list = $mysqli->query("SELECT filetype,name,uid FROM ".$mysql_tables['files']." WHERE id='".$mysqli->escape_string($fileid)."' LIMIT 1");
 			while($row = $list->fetch_assoc()){
 				
 				if($userdata['dateimanager'] == 2 || $userdata['dateimanager'] == 1 && $row['uid'] == $userdata['id']){
-					switch($row['type']){
+					switch($row['filetype']){
 					  case "pic":
 					    if(delfile($picuploaddir,$row['name']))
 					        $cup++;
@@ -156,7 +156,7 @@ ShowAjaxError('<b>Fehler:</b><br />Sie haben nicht alle ben&ouml;tigen Felder au
 	
 	if(isset($_REQUEST['uid']) && !empty($_REQUEST['uid']) && $userdata['dateimanager'] == 2) $where .= " AND uid='".$mysqli->escape_string($_REQUEST['uid'])."' ";
 	
-	if(isset($_REQUEST['type']) && ($_REQUEST['type'] == "pic" || $_REQUEST['type'] == "file")) $where .= " AND type = '".$mysqli->escape_string($_REQUEST['type'])."'";
+	if(isset($_REQUEST['type']) && ($_REQUEST['type'] == "pic" || $_REQUEST['type'] == "file")) $where .= " AND filetype = '".$mysqli->escape_string($_REQUEST['type'])."'";
 	else $_GET['type'] = "";
 
 	if(!isset($_GET['orderby'])) $_GET['orderby'] = "";

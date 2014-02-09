@@ -225,9 +225,9 @@ if(isset($_GET['action']) && $_GET['action'] == "dir_dodel" && $userdata['dateim
 	isset($_GET['id']) && !empty($_GET['id']) && is_numeric($_GET['id'])){
 
 	$error = FALSE;
-	$list = $mysqli->query("SELECT id,type,name FROM ".$mysql_tables['files']." WHERE dir = '".$mysqli->escape_string($_GET['id'])."'");
+	$list = $mysqli->query("SELECT id,filetype,name FROM ".$mysql_tables['files']." WHERE dir = '".$mysqli->escape_string($_GET['id'])."'");
 	while($row = $list->fetch_assoc()){
-		switch($row['type']){
+		switch($row['filetype']){
 		  case "pic":
 		    $dir = $picuploaddir;
 		  break;
@@ -273,13 +273,13 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "file_del1" && $userdata
 if(isset($_REQUEST['action']) && $_REQUEST['action'] == "file_dodel" && $userdata['dateimanager'] >= 1 &&
 	isset($_REQUEST['id']) && !empty($_REQUEST['id']) && is_numeric($_REQUEST['id'])){
 	
-	if($userdata['dateimanager'] == 1) $query = "SELECT id,type,name FROM ".$mysql_tables['files']." WHERE uid = '".$userdata['id']."' AND id='".$mysqli->escape_string($_GET['id'])."' LIMIT 1";
-	elseif($userdata['dateimanager'] == 2) $query = "SELECT id,type,name FROM ".$mysql_tables['files']." WHERE id='".$mysqli->escape_string($_GET['id'])."' LIMIT 1";
+	if($userdata['dateimanager'] == 1) $query = "SELECT id,filetype,name FROM ".$mysql_tables['files']." WHERE uid = '".$userdata['id']."' AND id='".$mysqli->escape_string($_GET['id'])."' LIMIT 1";
+	elseif($userdata['dateimanager'] == 2) $query = "SELECT id,filetype,name FROM ".$mysql_tables['files']." WHERE id='".$mysqli->escape_string($_GET['id'])."' LIMIT 1";
 	
 	$list = $mysqli->query($query);	
 	if($list->num_rows == 1){
 		while($row = $list->fetch_assoc()){
-			switch($row['type']){
+			switch($row['filetype']){
 			  case "pic":
 			    $dir = $picuploaddir;
 			  break;

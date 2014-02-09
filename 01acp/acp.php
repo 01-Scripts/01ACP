@@ -62,8 +62,8 @@ else
 		<b>01ACP-Version:</b> <?PHP echo $settings['acpversion'].$newerversion; ?><br />
 		<br />
 		<b>Benutzer:</b> <?PHP list($usermenge) = $mysqli->query("SELECT COUNT(*) FROM ".$mysql_tables['user']." WHERE id!='0'")->fetch_array(MYSQLI_NUM); echo $usermenge; ?><br />
-		<b>Dateien:</b> <?PHP list($filemenge) = $mysqli->query("SELECT COUNT(*) FROM ".$mysql_tables['files']." WHERE type='file'")->fetch_array(MYSQLI_NUM); echo $filemenge; ?><br />
-		<b>Bilder:</b> <?PHP list($picmenge) = $mysqli->query("SELECT COUNT(*) FROM ".$mysql_tables['files']." WHERE type='pic'")->fetch_array(MYSQLI_NUM); echo $picmenge; ?>
+		<b>Dateien:</b> <?PHP list($filemenge) = $mysqli->query("SELECT COUNT(*) FROM ".$mysql_tables['files']." WHERE filetype='file'")->fetch_array(MYSQLI_NUM); echo $filemenge; ?><br />
+		<b>Bilder:</b> <?PHP list($picmenge) = $mysqli->query("SELECT COUNT(*) FROM ".$mysql_tables['files']." WHERE filetype='pic'")->fetch_array(MYSQLI_NUM); echo $picmenge; ?>
 		<br /><br />
 		<a href="http://board.01-scripts.de" target="_blank">Supportforum &amp; FAQ &raquo;</a><br />
 		<a href="http://www.01-scripts.de/contact.php" target="_blank">Kontakt &raquo;</a><br />
