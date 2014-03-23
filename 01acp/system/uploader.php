@@ -123,7 +123,7 @@ window.setTimeout(\"opener.document.getElementById('ers_erfolgsmeldung').style.d
 			elseif($fupload['fileart'] == "file" && $_REQUEST['returnvalue'] == "tinymce" && 
 				!empty($_REQUEST['formname']) && !empty($_REQUEST['formfield'])){
 				echo "<br /><b>Datei einf&uuml;gen:</b><br />
-				<input type=\"button\" value=\"Einf&uuml;gen\" class=\"input\" onclick=\"FileDialog.insertfile('".$attachmentuploaddir."','".$fupload['fileid']."','".$fupload['orgname']."');\" />
+				<input type=\"button\" value=\"Einf&uuml;gen\" class=\"input\" onclick=\"FileDialog.insertfile('".$attachmentuploaddir."','".$fupload['name']."','".$fupload['orgname']."');\" />
 				<br /><br />
 				
 				<a href=\"".$filename."&amp;deltype=file&amp;del=1&amp;file=".$fupload['name']."\" style=\"color:red;\"><img src=\"images/icons/icon_delete.gif\" alt=\"Icon: L&ouml;schen\" title=\"Datei l&ouml;schen\" style=\"border:0; margin-right:8px;\" />Datei l&ouml;schen</a><br />

@@ -214,41 +214,42 @@ CREATE TABLE IF NOT EXISTS `01prefix_settings` (
   `hide` tinyint(1) default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `modul` (`modul`,`idname`)
-) ENGINE=MyISAM AUTO_INCREMENT=24 ;
+) ENGINE=MyISAM AUTO_INCREMENT=1 ;
 
 --
 -- Daten für Tabelle `01prefix_settings`
 --
 
-INSERT INTO `01prefix_settings` (`id`, `modul`, `is_cat`, `catid`, `sortid`, `idname`, `name`, `exp`, `formename`, `formwerte`, `input_exp`, `standardwert`, `wert`, `nodelete`, `hide`) VALUES
-(1, '01acp', 1, 1, 1, 'cat_global', 'Globale Einstellungen', NULL, 'text', '', NULL, NULL, NULL, 0, 0),
-(2, '01acp', 1, 4, 4, 'cat_rss', 'RSS-Feed', NULL, 'text', '', NULL, NULL, NULL, 0, 0),
-(3, '01acp', 0, 1, 1, 'email_absender', 'Kontakt-E-Mail-Adresse', 'Diese Adresse wird als Kontakt- und Absende-Adresse verwendet.', 'text', '50', '', '', '', 0, 0),
-(4, '01acp', 0, 1, 2, 'sitename', 'Seitentitel', '', 'text', '50', '', 'Seitentitel', 'Seitentitel', 0, 0),
-(5, '01acp', 1, 2, 2, 'cat_manager', 'Datei- und Bildmanager', NULL, 'text', '', NULL, NULL, NULL, 0, 0),
-(6, '01acp', 0, 2, 1, 'pic_end', 'Bilder: Erlaubte Dateiendungen', 'Dateiendungen mit Kommas trennen', 'text', '50', '', 'jpg,jpeg,gif,bmp,png', 'jpg,jpeg,gif,bmp,png', 0, 0),
-(7, '01acp', 0, 2, 2, 'pic_size', 'Bilder: Maximale Dateigr&ouml;&szlig;e', '', 'text', '5', 'KB', '500', '500', 0, 0),
-(8, '01acp', 0, 2, 4, 'attachment_end', 'Dateien: Erlaubte Dateiendungen', 'Dateiendungen mit Kommas trennen', 'text', '50', '', 'zip,rar,pdf,txt', 'zip,rar,pdf,txt', 0, 0),
-(9, '01acp', 0, 2, 5, 'attachment_size', 'Dateien: Maximale Dateigr&ouml;&szlig;e', '', 'text', '5', 'KB', '500', '500', 0, 0),
-(10, '01acp', 0, 1, 3, 'absolut_url', 'Absolute URL', 'Bitte geben Sie die absolute URL (inkl. http://) zum Verzeichnis <i>01scripts/</i> ein.\r\nBeispiel: http://www.domainname.de/pfad/01scripts/', 'text', '50', '', '', '', 1, 0),
-(11, '01acp', 0, 2, 3, 'thumbwidth', 'Maximale Thumbnail-Seitenl&auml;nge', '', 'text', '5', 'px', '200', '200', 1, 1),
-(12, '01acp', 1, 3, 3, 'commentsettings', 'Kommentarfunktion', NULL, '', '', NULL, NULL, NULL, 0, 0),
-(13, '01acp', 0, 3, 1, 'comments', 'Kommentarfunktion', '', 'aktivieren|deaktivieren', '1|0', '', '1', '1', 0, 0),
-(14, '01acp', 0, 3, 2, 'comments_perpage', 'Kommentare pro Seite', '', 'text', '5', '', '25', '25', 0, 0),
-(15, '01acp', 0, 3, 3, 'commentfreischaltung', 'Kommentare freischalten?', '', 'keine Freischaltung|manuelle Freischaltung', '0|1', '', '0', '0', 0, 0),
-(16, '01acp', 0, 3, 4, 'spamschutz', 'Spamschutz', '', 'Captcha-Bild|kein Spamschutz', '1|0', '', '1', '1', 0, 0),
-(17, '01acp', 0, 3, 5, 'comments_smilies', 'Smilies aktivieren?', '', 'Ja|Nein', '1|0', '', '1', '1', 0, 0),
-(18, '01acp', 0, 3, 6, 'comments_bbc', 'BB-Code aktivieren?', '', 'Ja|Nein', '1|0', '', '1', '1', 0, 0),
-(19, '01acp', 0, 4, 1, 'rss_aktiv', 'RSS-Feed aktivieren?', 'Hat Auswirkungen auf die RSS-Feeds <b>aller</b> installierter Module!', 'Ja|Nein', '1|0', '', '1', '1', 0, 0),
-(20, '01acp', 0, 4, 2, 'rss_sprache', 'Sprache', 'In welcher Sprache stellen Sie Ihre Informationen bereit? Eine &Uuml;bersicht der Sprachk&uuml;rzel finden Sie <a href=\\"http://de.selfhtml.org/diverses/sprachenkuerzel.htm\\" target=\\"_blank\\">hier</a>.', 'text', '10', '', 'de-de', 'de-de', 0, 0),
-(21, '01acp', 0, 4, 3, 'rss_copyright', 'Copyright-Informationen', '', 'textarea', '5|50', '', 'Die Inhalte werden unter einer Creative-Commons-Lizenz veröffentlicht, die <a href=\\"http://creativecommons.org/licenses/by-nc-sa/3.0/de/\\" target=\\"_blank\\">hier</a> einsehbar ist.', 'Die Inhalte werden unter einer Creative-Commons-Lizenz veröffentlicht, die unter folgender URL einsehbar ist:\r\nhttp://creativecommons.org/licenses/by-nc-sa/3.0/de/', 0, 0),
-(22, '01acp', 0, 1, 0, 'acpversion', 'ACP-Version', '', 'text', '10', '', '1.2.1', '1.2.1', 0, 1),
-(23, '01acp', 0, 1, 0, 'cachetime', 'Cachetime (XML)', '', 'text', '10', '', '', '0', 0, 1),
-(24, '01acp', 0, 1, 0, 'installed', 'installiert', '', 'text', '10', '', '1', '0', 0, 1),
-(25, '01acp', 0, 3, 7, 'comments_zensur','Zensur aktivieren?','','Ja|Nein','1|0','','0','1', 0, 0),
-(26, '01acp', 0, 3, 8, 'comments_badwords','Zu zensierende W&ouml;rter','Pro Zeile ein Wort eingeben, welches zensiert werden soll.','textarea','5|50','','','', 0, 0),
-(27, '01acp', 0, 3, 9, 'comments_zensurlimit','Kommentar abweisen ab','-1 weist keine Kommentare ab','text','4','erkannten W&ouml;rtern.','5','5', 0, 0),
-(28, '01acp', 0, 1, 4, 'acp_captcha4login', 'Captcha bei ACP-Login verwenden?', '', 'Ja|Nein', '1|0', '', '0', '0', 1, 0);
+INSERT INTO `01prefix_settings` (`modul`, `is_cat`, `catid`, `sortid`, `idname`, `name`, `exp`, `formename`, `formwerte`, `input_exp`, `standardwert`, `wert`, `nodelete`, `hide`) VALUES
+('01acp', 1, 1, 1, 'cat_global', 'Globale Einstellungen', NULL, 'text', '', NULL, NULL, NULL, 0, 0),
+('01acp', 1, 4, 4, 'cat_rss', 'RSS-Feed', NULL, 'text', '', NULL, NULL, NULL, 0, 0),
+('01acp', 0, 1, 1, 'email_absender', 'Kontakt-E-Mail-Adresse', 'Diese Adresse wird als Kontakt- und Absende-Adresse verwendet.', 'text', '50', '', '', '', 0, 0),
+('01acp', 0, 1, 2, 'sitename', 'Seitentitel', '', 'text', '50', '', 'Seitentitel', 'Seitentitel', 0, 0),
+('01acp', 1, 2, 2, 'cat_manager', 'Datei- und Bildmanager', NULL, 'text', '', NULL, NULL, NULL, 0, 0),
+('01acp', 0, 2, 1, 'pic_end', 'Bilder: Erlaubte Dateiendungen', 'Dateiendungen mit Kommas trennen', 'text', '50', '', 'jpg,jpeg,gif,bmp,png', 'jpg,jpeg,gif,bmp,png', 0, 0),
+('01acp', 0, 2, 2, 'pic_size', 'Bilder: Maximale Dateigr&ouml;&szlig;e', '', 'text', '5', 'KB', '500', '500', 0, 0),
+('01acp', 0, 2, 4, 'attachment_end', 'Dateien: Erlaubte Dateiendungen', 'Dateiendungen mit Kommas trennen', 'text', '50', '', 'zip,rar,pdf,txt', 'zip,rar,pdf,txt', 0, 0),
+('01acp', 0, 2, 5, 'attachment_size', 'Dateien: Maximale Dateigr&ouml;&szlig;e', '', 'text', '5', 'KB', '500', '500', 0, 0),
+('01acp', 0, 1, 3, 'absolut_url', 'Absolute URL', 'Bitte geben Sie die absolute URL (inkl. http://) zum Verzeichnis <i>01scripts/</i> ein.\r\nBeispiel: http://www.domainname.de/pfad/01scripts/', 'text', '50', '', '', '', 1, 0),
+('01acp', 0, 2, 3, 'thumbwidth', 'Maximale Thumbnail-Seitenl&auml;nge', '', 'text', '5', 'px', '200', '200', 1, 1),
+('01acp', 1, 3, 3, 'commentsettings', 'Kommentarfunktion', NULL, '', '', NULL, NULL, NULL, 0, 0),
+('01acp', 0, 3, 1, 'comments', 'Kommentarfunktion', '', 'aktivieren|deaktivieren', '1|0', '', '1', '1', 0, 0),
+('01acp', 0, 3, 2, 'comments_perpage', 'Kommentare pro Seite', '', 'text', '5', '', '25', '25', 0, 0),
+('01acp', 0, 3, 3, 'commentfreischaltung', 'Kommentare freischalten?', '', 'keine Freischaltung|manuelle Freischaltung', '0|1', '', '0', '0', 0, 0),
+('01acp', 0, 3, 4, 'spamschutz', 'Spamschutz', '', 'Captcha-Bild|kein Spamschutz', '1|0', '', '1', '1', 0, 0),
+('01acp', 0, 3, 5, 'comments_smilies', 'Smilies aktivieren?', '', 'Ja|Nein', '1|0', '', '1', '1', 0, 0),
+('01acp', 0, 3, 6, 'comments_bbc', 'BB-Code aktivieren?', '', 'Ja|Nein', '1|0', '', '1', '1', 0, 0),
+('01acp', 0, 4, 1, 'rss_aktiv', 'RSS-Feed aktivieren?', 'Hat Auswirkungen auf die RSS-Feeds <b>aller</b> installierter Module!', 'Ja|Nein', '1|0', '', '1', '1', 0, 0),
+('01acp', 0, 4, 2, 'rss_sprache', 'Sprache', 'In welcher Sprache stellen Sie Ihre Informationen bereit? Eine &Uuml;bersicht der Sprachk&uuml;rzel finden Sie <a href=\\"http://de.selfhtml.org/diverses/sprachenkuerzel.htm\\" target=\\"_blank\\">hier</a>.', 'text', '10', '', 'de-de', 'de-de', 0, 0),
+('01acp', 0, 4, 3, 'rss_copyright', 'Copyright-Informationen', '', 'textarea', '5|50', '', 'Die Inhalte werden unter einer Creative-Commons-Lizenz veröffentlicht, die <a href=\\"http://creativecommons.org/licenses/by-nc-sa/3.0/de/\\" target=\\"_blank\\">hier</a> einsehbar ist.', 'Die Inhalte werden unter einer Creative-Commons-Lizenz veröffentlicht, die unter folgender URL einsehbar ist:\r\nhttp://creativecommons.org/licenses/by-nc-sa/3.0/de/', 0, 0),
+('01acp', 0, 1, 0, 'acpversion', 'ACP-Version', '', 'text', '10', '', '1.2.1', '1.2.1', 0, 1),
+('01acp', 0, 1, 0, 'cachetime', 'Cachetime (XML)', '', 'text', '10', '', '', '0', 0, 1),
+('01acp', 0, 1, 0, 'installed', 'installiert', '', 'text', '10', '', '1', '0', 0, 1),
+('01acp', 0, 3, 7, 'comments_zensur','Zensur aktivieren?','','Ja|Nein','1|0','','0','1', 0, 0),
+('01acp', 0, 3, 8, 'comments_badwords','Zu zensierende W&ouml;rter','Pro Zeile ein Wort eingeben, welches zensiert werden soll.','textarea','5|50','','','', 0, 0),
+('01acp', 0, 3, 9, 'comments_zensurlimit','Kommentar abweisen ab','-1 weist keine Kommentare ab','text','4','erkannten W&ouml;rtern.','5','5', 0, 0),
+('01acp', 0, 1, 4, 'acp_captcha4login', 'Captcha bei ACP-Login verwenden?', '', 'Ja|Nein', '1|0', '', '0', '0', 1, 0),
+('01acp', 0, 2, 0, 'filesecid','File Security ID','From this ID on only Hash values are allowed to access an uploaded file.','text','5','','0','0',0,1);
 
 -- --------------------------------------------------------
 

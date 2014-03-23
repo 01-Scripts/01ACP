@@ -1005,14 +1005,14 @@ while($row = $list->fetch_assoc()){
 				$return .= "<a href=\"".$picuploaddir.$row['name']."\" target=\"_blank\" class=\"lightbox\"><img src=\"".$picuploaddir."showpics.php?img=".$row['name']."&amp;size=".ACP_TB_WIDTH."&amp;hidegif=normal\" alt=\"Hochgeladenes Bild\" /></a>";
 			}
 		else
-			$return .= "<a href=\"".$attachmentuploaddir."download.php?fileid=".$row['id']."&amp;nocount=1\">".filetypes($row['ext'])."</a>";
+			$return .= "<a href=\"".$attachmentuploaddir."download.php?fileid=".$row['name']."&amp;nocount=1\">".filetypes($row['ext'])."</a>";
 		
 		$return .= "</td>\n    ";
 		}
 		
 	// Links für die verschiedenen Einfüge-Arten vorbereiten
     if($insert == "tinymce" && $row['filetype'] == "file"){
-		$link1 = "<a href=\"javascript:FileDialog.insertfile('".$attachmentuploaddir."','".$row['id']."','".stripslashes($row['orgname'])."');\">";
+		$link1 = "<a href=\"javascript:FileDialog.insertfile('".$attachmentuploaddir."','".$row['name']."','".stripslashes($row['orgname'])."');\">";
 		$link2 = "</a>";
 		}
 	elseif($insert == "js" && !empty($_REQUEST['formname']) && !empty($_REQUEST['formfield'])){

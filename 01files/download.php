@@ -17,10 +17,18 @@ include("../01acp/system/headinclude.php");
 if(ini_get('zlib.output_compression'))
 	ini_set('zlib.output_compression', 'Off');
 
-if(isset($_GET['fileid']) && !empty($_GET['fileid']) && is_numeric($_GET['fileid'])){
-	$list = $mysqli->query("SELECT id,type,orgname,name FROM ".$mysql_tables['files']." WHERE id='".$mysqli->escape_string($_GET['fileid'])."' LIMIT 1");
+// More security for file download
+if(isset($_GET['fileid']) && !empty($_GET['fileid']) && is_numeric($_GET['fileid']) && isset($settings['filesecid']) && $settings['filesecid'] > 0 && $_GET['fileid'] <= $settings['filesecid'] ||
+   isset($_GET['fileid']) && !empty($_GET['fileid']) && is_numeric($_GET['fileid']) && !isset($settings['filesecid'])  )
+	$query = "SELECT id,filetype,orgname,name FROM ".$mysql_tables['files']." WHERE id='".$mysqli->escape_string($_GET['fileid'])."' LIMIT 1";
+elseif(isset($_GET['fileid']) && !empty($_GET['fileid']))
+	$query = "SELECT id,filetype,orgname,name FROM ".$mysql_tables['files']." WHERE name='".$mysqli->escape_string($_GET['fileid'])."' LIMIT 1";
+
+
+if(isset($query)){
+	$list = $mysqli->query($query);
 	while($row = $list->fetch_assoc()){
-		switch($row['type']){
+		switch($row['filetype']){
 		  case "pic":
 		    $folder = $picuploaddir;
 		    break;
@@ -45,7 +53,7 @@ if(isset($_GET['fileid']) && !empty($_GET['fileid']) && is_numeric($_GET['fileid
 			header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 			header("Cache-Control: private",false);
 			header("Content-Type: application/force-download");
-			header("Content-Disposition: attachment; filename=\"".$path_parts['filename'].".".strtoupper($path_parts['extension'])."\"" );
+			header("Content-Disposition: attachment; filename=\"".$path_parts['filename'].".".strtolower($path_parts['extension'])."\"" );
 			header("Content-Transfer-Encoding: binary");
 			header("Content-Length: ".filesize($folder.$row['name']));
 			readfile($folder.$row['name']);
@@ -53,9 +61,9 @@ if(isset($_GET['fileid']) && !empty($_GET['fileid']) && is_numeric($_GET['fileid
 			}
 		}
 	if(!isset($folder))
-		echo "Fehler: Es konnte keine zur &uuml;bergebenen ID passende Datei gefunden werden!";
+		echo "Fehler: Datei nicht gefunden.";
 	}
 else
-	echo "Fehler: Keine korrekte Datei-ID &uuml;bergeben (fileid = empty)";
+	echo "Fehler: Keine Datei gefunden!";
 
 ?>
