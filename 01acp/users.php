@@ -58,6 +58,9 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "add_user" && $userdata[
 			$lastinsertid = $mysqli->insert_id;
 			
 			if($lastinsertid > 0){
+				// Passwort mit richtigem Passwort aus pwhasing2-Funkion ersetzen
+				$mysqli->query("UPDATE ".$mysql_tables['user']." SET userpassword = '".pwhashing2($password, $lastinsertid)."' WHERE id='".$lastinsertid."' LIMIT 1");
+
 				// ggf. E-Mail @ Benutzer versenden
 				if($_POST['pwwahl'] == "random" || isset($_POST['emailinfo']) && $_POST['emailinfo'] == 1){
 					$header = "From:".$settings['email_absender']."<".$settings['email_absender'].">\n";
@@ -489,17 +492,17 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 						isset($_POST['password']) && !empty($_POST['password']) && 
 						strlen($_POST['password']) >= PW_LAENGE){
 						
-						$mysqli->query("UPDATE ".$mysql_tables['user']." SET userpassword='".pwhashing($_POST['password'])."', cookiehash='' WHERE id='".$mysqli->escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
+						$mysqli->query("UPDATE ".$mysql_tables['user']." SET userpassword='".pwhashing2($_POST['password'], $_POST['userid'])."', cookiehash='' WHERE id='".$mysqli->escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
 						$pwerror = false;
 						}
 					elseif(isset($_POST['pwwahl']) && $_POST['pwwahl'] == "random" ||
 						isset($_POST['pwwahl']) && $_POST['pwwahl'] == "eigen" && empty($_POST['password'])){
 					
 						$newpass = create_NewPassword(PW_LAENGE);
-				        $newpassmd5 = pwhashing($newpass);
+				        $newpassHash = pwhashing2($newpass, $_POST['userid']);
 
 				        // Datenbank aktualisieren:
-				        $mysqli->query("UPDATE ".$mysql_tables['user']." SET userpassword='".$newpassmd5."', cookiehash='' WHERE id='".$mysqli->escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
+				        $mysqli->query("UPDATE ".$mysql_tables['user']." SET userpassword='".$newpassHash."', cookiehash='' WHERE id='".$mysqli->escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
 
 				        $header = "From:".$settings['email_absender']."<".$settings['email_absender'].">\n";
 				        $email_betreff = $settings['sitename']." - Neues Passwort für Administrationsbereich";

@@ -15,6 +15,7 @@ $sitetitle = "Anmelden";
 $filename = $_SERVER['PHP_SELF'];
 $message = "";
 $menge = 0;
+$error = 0;
 $des_cookie = "";
 
 if(!isset($_POST['username'])) $_POST['username'] = "";
@@ -75,11 +76,15 @@ if(isset($_COOKIE[$instnr.'_start_auth_01acp']) && !empty($_COOKIE[$instnr.'_sta
 if(isset($_POST['send']) && $_POST['send'] == 1){
 
 	if($settings['acp_captcha4login'] == 0 || isset($_POST['antispam']) && md5($_POST['antispam']) == $_SESSION['antispam01'] && $settings['acp_captcha4login'] == 1){
-		$loginpass = pwhashing($_POST['password']);
-		
-		$list = $mysqli->query("SELECT id,username,userpassword,startpage,cookiehash,sessionhash FROM ".$mysql_tables['user']." WHERE username='".$mysqli->escape_string($_POST['username'])."' AND userpassword='".$loginpass."' AND id != '0' LIMIT 1");
-		$menge = $list->num_rows;
+
+		$list = $mysqli->query("SELECT id,username,userpassword,startpage,cookiehash,sessionhash FROM ".$mysql_tables['user']." WHERE username='".$mysqli->escape_string($_POST['username'])."' AND id != '0' LIMIT 1");
 		while($row = $list->fetch_assoc()){
+			// Check password for this user:
+			if(pwhashing2($_POST['password'],$row['id']) != $row['userpassword']){
+				$error = 1;
+				break;
+			}
+
 			// Session erstellen/abrufen / Lastlogin speichern
 			if(empty($row['sessionhash'])){
 				$sessionhash = sha1(mt_rand().time().$salt.$instnr.$row['id'].$row['username'].$row['startpage']);
@@ -111,7 +116,7 @@ if(isset($_POST['send']) && $_POST['send'] == 1){
 			$message .= "<p class=\"meldung_ok\"><b>Login erfolgreich, Sie werden weitergeleitet.</b><br />Falls Ihr Browser keine Weiterleitung unterst&uuml;tzt klicken Sie bitte <a href=\"acp.php\">hier</a>.</p>";
 			}
 			
-		if($menge < 1)
+		if($error == 1)
 			$message = "<p class=\"meldung_error\"><b>Login war nicht erfolgreich!</b><br />Bitte &uuml;berpr&uuml;fen Sie
 				Benutzernamen und Passwort und probieren Sie es erneut.</p>";
 		}
@@ -125,14 +130,14 @@ elseif(isset($_POST['send']) && $_POST['send'] == 2){
 	$menge = $list->num_rows;
 	while($row = $list->fetch_assoc()){
         $newpass = create_NewPassword(PW_LAENGE);
-        $newpassmd5 = pwhashing($newpass);
+        $newpassmd5 = pwhashing2($newpass, $row['id']);
 
         // Datenbank aktualisieren:
         $mysqli->query("UPDATE ".$mysql_tables['user']." SET userpassword='".$newpassmd5."' WHERE id='".$row['id']."'");
 
         $header = "From:".$settings['email_absender']."<".$settings['email_absender'].">\n";
         $email_betreff = $settings['sitename']." - Neues Passwort für Administrationsbereich";
-        $emailbody = "Mit dieser E-Mail erhalten Sie ein neues Passwort für den Adminbereich\n\nName: ".stripslashes($row['username'])."\nE-Mail-Adresse: ".stripslashes($row['mail'])."\nNeues Passwort: ".$newpass."\n\n---\nWebmailer";
+        $emailbody = "Mit dieser E-Mail erhalten Sie ein neues Passwort für den Administrationsbereich\n\nName: ".stripslashes($row['username'])."\nE-Mail-Adresse: ".stripslashes($row['mail'])."\nNeues Passwort: ".$newpass."\n\n---\nWebmailer";
 
         mail(stripslashes($row['mail']),$email_betreff,$emailbody,$header);
 
@@ -180,7 +185,7 @@ echo $message;
 </div>
 </form>
 
-<p align="center">Um den Administrationsbereich nutzen zu können, müssen Sie 
+<p align="center">Um den Administrationsbereich nutzen zu können müssen Sie 
 <a href="http://de.wikipedia.org/wiki/HTTP-Cookie" target="_blank">Cookies</a> aktiviert haben.</p>
 
 <img src="images/layout/img04.gif" alt="Layout-Bild" style="display:none;" />

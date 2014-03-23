@@ -56,7 +56,7 @@ if(isset($_REQUEST['step']) && $_REQUEST['step'] == 7 &&
 		$sql_insert = "INSERT INTO ".$mysql_tables['user']." (username,mail,userpassword,level,lastlogin,sperre,01acp_rights,01acp_profil,01acp_upload,01acp_dateimanager,01acp_settings,01acp_userverwaltung,01acp_signatur,01acp_addsettings,01acp_devmode,01acp_module,01acp_editcomments) VALUES (
 						'".$mysqli->escape_string($_POST['username'])."',
 						'".$mysqli->escape_string($_POST['email'])."',
-						'".pwhashing($_POST['passwort1'])."',
+						'".pwhashing2($_POST['passwort1'], 1)."',
 						'10',
 						'0',
 						'0',

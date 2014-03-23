@@ -202,6 +202,19 @@ for($i=0;$i<=500;$i++){
 return sha1($password.$salt);
 }
 
+// New Passwort Hash-Funktion (increase safty)
+/*$password				Zu hashendes Passwort
+  $uid					Userid des Users, für den das Passwort gehast wird*/
+function pwhashing2($password, $uid){
+global $salt;
+
+$password = pwhashing($password);
+
+for($i=0;$i<=10000;$i++){
+	$password = sha1($password.$uid.$salt);
+	}
+return $password;
+}
 
 
 
