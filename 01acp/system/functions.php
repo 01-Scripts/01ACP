@@ -816,6 +816,7 @@ theme_advanced_statusbar_location : 'bottom',
 ".$cssfile."
 theme_advanced_resizing : true,
 theme_advanced_font_sizes : '1,2,3,4,5,6',
+gecko_spellcheck: true,
 dialog_type : 'modal',
 ".$add_config;
 
