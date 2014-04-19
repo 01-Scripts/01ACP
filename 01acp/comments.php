@@ -6,7 +6,7 @@
 	
 	Modul:		01ACP
 	Dateiinfo:	Kommentare verwalten
-	#fv.122#
+	#fv.130#
 */
 
 $menuecat = "01acp_comments";

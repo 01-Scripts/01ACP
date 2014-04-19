@@ -6,7 +6,7 @@
 	
 	Modul:		01ACP
 	Dateiinfo:	Login-Formular für ACP-Bereich
-	#fv.122#
+	#fv.130#
 */
 
 $dontshow = true;

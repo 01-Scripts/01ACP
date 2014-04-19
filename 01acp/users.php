@@ -6,7 +6,7 @@
 	
 	Modul:		01ACP
 	Dateiinfo:	Benutzerverwaltung (Benutzer hinzufügen und bearbeiten; Eigenes Profil)
-	#fv.122#
+	#fv.130#
 */
 
 $menuecat = "01acp_users";

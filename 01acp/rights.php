@@ -6,7 +6,7 @@
 	
 	Modul:		01ACP
 	Dateiinfo:	Benutzerrechte verwalten (hinzufügen & sortieren)
-	#fv.122#
+	#fv.130#
 */
 
 $menuecat = "01acp_users";

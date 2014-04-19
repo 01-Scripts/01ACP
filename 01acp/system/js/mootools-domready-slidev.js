@@ -6,7 +6,7 @@
     Modul:      01ACP
     Dateiinfo:  JavaScript-Befehl: Vertikales Slide In/Out
     Unkomprimierte Version der Datei: https://github.com/01-Scripts/01ACP/blob/V1.2.2/01scripts/01acp/system/js/mootools-domready-slidev.js
-    #fv.122#
+    #fv.130#
 */
     var links = $$('tr.fx_opener');
     var contents = $$('tr.fx_content');

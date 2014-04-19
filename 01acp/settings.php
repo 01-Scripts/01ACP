@@ -6,7 +6,7 @@
 	
 	Modul:		01ACP
 	Dateiinfo:	Einstellungen verwalten (bearbeiten, hinzufügen, sortieren)
-	#fv.122#
+	#fv.130#
 */
 
 $menuecat = "01acp_settings";

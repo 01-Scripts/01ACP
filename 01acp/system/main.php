@@ -7,7 +7,7 @@
 	Modul:		01ACP
 	Dateiinfo:  Nur für den Administrationsbereich nötige globale Grundeinstellungen und Variablendefinitionen
 				Wird auf jeder ACP-Seite als aller erste Datei includiert und enthält include für headinclude.php
-	#fv.122#
+	#fv.130#
 */
 
 $flag_acp = true;

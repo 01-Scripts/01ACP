@@ -6,7 +6,7 @@
 	
 	Modul:		01ACP
 	Dateiinfo:	Formular & Logik für Dateiupload + Ausgabe innerhalb des TinyMCE-Editor
-	#fv.122#
+	#fv.130#
 */
 
 if(!isset($filename)) $filename = $_SERVER['PHP_SELF'];

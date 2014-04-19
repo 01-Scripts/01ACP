@@ -6,7 +6,7 @@
     Modul:      01ACP
     Dateiinfo:  JavaScript-Befehl: Sortables-Call
     Unkomprimierte Version der Datei: https://github.com/01-Scripts/01ACP/blob/V1.2.2/01scripts/01acp/system/js/mootools-domready-sortables.js
-    #fv.122#
+    #fv.130#
 */
 var mySortables = new Sortables('sortliste', {
     revert: { duration: 500, transition: 'elastic:out' },

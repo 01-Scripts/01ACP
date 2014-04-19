@@ -6,7 +6,7 @@
 	
 	Modul:		01ACP
 	Dateiinfo:	Datei- & Bildverwaltung (Hochgeladenen Bilder und andere Dateien verwalten sowie neue Dateien hochladen)
-	#fv.122#
+	#fv.130#
 */
 
 $menuecat = "01acp_filemanager";

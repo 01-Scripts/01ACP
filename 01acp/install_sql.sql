@@ -4,7 +4,7 @@
 
 -- Modul:		01acp
 -- Dateiinfo:	SQL-Befehle für die Erstinstallation des 01ACP
--- #fv.122#
+-- #fv.130#
 --  **  **  **  **  **  **  **  **  **  **  **  **  **  **  **  **  *  *
 
 -- --------------------------------------------------------
@@ -242,7 +242,7 @@ INSERT INTO `01prefix_settings` (`modul`, `is_cat`, `catid`, `sortid`, `idname`,
 ('01acp', 0, 4, 1, 'rss_aktiv', 'RSS-Feed aktivieren?', 'Hat Auswirkungen auf die RSS-Feeds <b>aller</b> installierter Module!', 'Ja|Nein', '1|0', '', '1', '1', 0, 0),
 ('01acp', 0, 4, 2, 'rss_sprache', 'Sprache', 'In welcher Sprache stellen Sie Ihre Informationen bereit? Eine &Uuml;bersicht der Sprachk&uuml;rzel finden Sie <a href=\\"http://de.selfhtml.org/diverses/sprachenkuerzel.htm\\" target=\\"_blank\\">hier</a>.', 'text', '10', '', 'de-de', 'de-de', 0, 0),
 ('01acp', 0, 4, 3, 'rss_copyright', 'Copyright-Informationen', '', 'textarea', '5|50', '', 'Die Inhalte werden unter einer Creative-Commons-Lizenz veröffentlicht, die <a href=\\"http://creativecommons.org/licenses/by-nc-sa/3.0/de/\\" target=\\"_blank\\">hier</a> einsehbar ist.', 'Die Inhalte werden unter einer Creative-Commons-Lizenz veröffentlicht, die unter folgender URL einsehbar ist:\r\nhttp://creativecommons.org/licenses/by-nc-sa/3.0/de/', 0, 0),
-('01acp', 0, 1, 0, 'acpversion', 'ACP-Version', '', 'text', '10', '', '1.2.1', '1.2.1', 0, 1),
+('01acp', 0, 1, 0, 'acpversion', 'ACP-Version', '', 'text', '10', '', '1.3.0', '1.3.0', 0, 1),
 ('01acp', 0, 1, 0, 'cachetime', 'Cachetime (XML)', '', 'text', '10', '', '', '0', 0, 1),
 ('01acp', 0, 1, 0, 'installed', 'installiert', '', 'text', '10', '', '1', '0', 0, 1),
 ('01acp', 0, 3, 7, 'comments_zensur','Zensur aktivieren?','','Ja|Nein','1|0','','0','1', 0, 0),
