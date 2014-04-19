@@ -1,11 +1,59 @@
 <?PHP
 /* Datei enthält alle für das 01ACP zuständigen Update-Anweisungen und wird in die Datei
    update.php includiert.
-   Ein manueller Aufruf ist nicht möglich:
+   Ein manueller Aufruf ist nicht möglich!
 */
 if(!$update_ok) exit;
 
-if(isset($_POST['update']) && $_POST['update'] == "1200_zu_121"){
+if(isset($_POST['update']) && $_POST['update'] == "121_zu_130"){
+	
+	// #495 Setting 'thumbwidth' wieder einblenden (revert #29)
+	// + Setting-Typ des Feldes 'thumbwidth' auf den neuen Typ 'function' ändern
+	$mysqli->query("UPDATE ".$mysql_tables['settings']." name = 'Standardwert Bild-Kantenl&auml;nge', exp = 'Per Editor eingef&uuml;gte Bilder werden standardm&auml;&szlig;ig mit dieser Gr&ouml;&szlig;e in den Text eingef&uuml;gt.', formename  = 'function', hide = '0' WHERE modul = '01acp' AND idname = 'thumbwidth' LIMIT 1");
+
+	// Spaltenname 'timestamp' umbenennen in 'utimestamp' #680
+	$mysqli->query("ALTER TABLE ".$mysql_tables['comments']." CHANGE `timestamp` `utimestamp` INT( 15 ) NULL DEFAULT '0'");
+	$mysqli->query("ALTER TABLE ".$mysql_tables['filedirs']." CHANGE `timestamp` `utimestamp` INT( 15 ) NULL DEFAULT '0'");
+	$mysqli->query("ALTER TABLE ".$mysql_tables['files']." CHANGE `timestamp` `utimestamp` INT( 15 ) NULL DEFAULT '0'");
+	// Spaltenname 'type' umbenennen in 'filetype' #680
+	$mysqli->query("ALTER TABLE ".$mysql_tables['files']." CHANGE `type` `filetype` VARCHAR( 4 ) NULL DEFAULT NULL COMMENT 'Dateityp pic oder file'");
+	// Spaltenname 'comment' umbenennen in 'message' #680
+	$mysqli->query("ALTER TABLE ".$mysql_tables['comments']." CHANGE `comment` `message` TEXT NULL DEFAULT NULL");
+	// Spaltenname 'password' umbenennen:
+	$mysqli->query("ALTER TABLE ".$mysql_tables['user']." CHANGE `password` `userpassword`  VARCHAR( 40 ) NULL DEFAULT NULL");
+	$mysqli->query("ALTER TABLE ".$mysql_tables['user']." CHANGE `cookiehash` `cookiehash`  VARCHAR( 40 ) NULL DEFAULT NULL");
+	// Neue Spalte zur Speicherung eines Sessions-Hash um in der Session nicht das gehashte Passwort verwenden zu müssen:
+	$mysqli->query("ALTER TABLE ".$mysql_tables['user']." ADD `sessionhash` VARCHAR( 40 ) NULL DEFAULT NULL AFTER `cookiehash`");
+
+	// Alle bestehenden Passwörter mit neuer Hash-Funktion aktualisieren:
+	$list = $mysqli->query("SELECT id,userpassword FROM ".$mysql_tables['user']."");
+	while($row = $list->fetch_assoc()){
+		$password = $row['userpassword'];
+
+		for($i=0;$i<=10000;$i++){
+		$password = sha1($password.$row['id'].$salt);
+		}
+
+		$mysqli->query("UPDATE ".$mysql_tables['user']." SET userpassword = '".$password."' WHERE id = '".$row['id']."' LIMIT 1");
+		}
+
+	// 01acp #681 - Sicherheit von hochgeladenen Dateien verbessern
+	$list = $mysqli->query("SELECT id FROM ".$mysql_tables['files']." ORDER BY id DESC LIMIT 1");
+	$row = $list->fetch_assoc();
+	$sql_insert = "INSERT INTO ".$mysql_tables['settings']." (modul,is_cat,catid,sortid,idname,name,exp,formename,formwerte,input_exp,standardwert,wert,nodelete,hide) VALUES
+				('01acp',0,2,0,'filesecid','File Security ID','From this ID on only Hash values are allowed to access an uploaded file.','text','5','','".$row['id']."','".$row['id']."',0,1);";
+	$result = $mysqli->query($sql_insert) OR die($mysqli->error);
+
+	// Versionsnummer aktualisieren
+	$mysqli->query("UPDATE ".$mysql_tables['settings']." SET standardwert = '1.3.0', wert = '1.3.0' WHERE idname = 'acpversion' LIMIT 1");
+?>
+<div class="meldung_ok">
+	<b>Herzlichen Gl&uuml;ckwunsch!</b><br />
+	Das Update auf <b>Version 1.3.0 des 01ACP</b> wurde erfolgreich beendet.<br />
+</div>
+<?PHP
+	}
+elseif(isset($_POST['update']) && $_POST['update'] == "1200_zu_121"){
 	// Neue Einstellung anlegen:
 	$sql_insert = "INSERT INTO ".$mysql_tables['settings']." (modul,is_cat,catid,sortid,idname,name,exp,formename,formwerte,input_exp,standardwert,wert,nodelete,hide) VALUES
 				('01acp', 0, 1, 4, 'acp_captcha4login', 'Captcha bei ACP-Login verwenden?', '', 'Ja|Nein', '1|0', '', '0', '0', 1, 0);";
