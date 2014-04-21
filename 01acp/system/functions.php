@@ -268,7 +268,11 @@ while($row = $list->fetch_assoc()){
 		}
 	$inst_module[] = stripslashes($row['idname']);
 	}
-return $module;
+
+if(isset($module))
+	return $module;
+else
+	return;
 }
 
 

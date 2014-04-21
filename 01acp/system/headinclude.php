@@ -60,6 +60,7 @@ $flag_indivstorage	= FALSE;
 $stid				= 0;						// Formular-ID für Storage-Formlare (automatisches ++)
 $flag_oldfileupload = FALSE;					// Alten Datei-Upload für Filemanager nutzen?
 $inst_module 		= array();
+if(!defined('ENT_HTML401')) define('ENT_HTML401', 0);
 $htmlent_flags		= ENT_COMPAT | ENT_HTML401;	// Standard-Flags für die htmlentities()-Funktion
 $htmlent_encoding_acp = "ISO-8859-1";			// Standard-Encoding für alle htmlentities()-Funktionen innerhalb des ACP
 // Standard-Encoding für alle htmlentities()-Funktionen im Frontend abhängig vo $flag_utf8:

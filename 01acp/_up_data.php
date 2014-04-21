@@ -12,9 +12,9 @@ if(isset($_POST['update']) && $_POST['update'] == "121_zu_130"){
 	$mysqli->query("UPDATE ".$mysql_tables['settings']." name = 'Standardwert Bild-Kantenl&auml;nge', exp = 'Per Editor eingef&uuml;gte Bilder werden standardm&auml;&szlig;ig mit dieser Gr&ouml;&szlig;e in den Text eingef&uuml;gt.', formename  = 'function', hide = '0' WHERE modul = '01acp' AND idname = 'thumbwidth' LIMIT 1");
 
 	// Spaltenname 'timestamp' umbenennen in 'utimestamp' #680
-	$mysqli->query("ALTER TABLE ".$mysql_tables['comments']." CHANGE `timestamp` `utimestamp` INT( 15 ) NULL DEFAULT '0'");
-	$mysqli->query("ALTER TABLE ".$mysql_tables['filedirs']." CHANGE `timestamp` `utimestamp` INT( 15 ) NULL DEFAULT '0'");
-	$mysqli->query("ALTER TABLE ".$mysql_tables['files']." CHANGE `timestamp` `utimestamp` INT( 15 ) NULL DEFAULT '0'");
+	$mysqli->query("ALTER TABLE ".$mysql_tables['comments']." CHANGE `timestamp` `utimestamp` INT( 15 ) NOT NULL DEFAULT '0'");
+	$mysqli->query("ALTER TABLE ".$mysql_tables['filedirs']." CHANGE `timestamp` `utimestamp` INT( 15 ) NOT NULL DEFAULT '0'");
+	$mysqli->query("ALTER TABLE ".$mysql_tables['files']." CHANGE `timestamp` `utimestamp` INT( 15 ) NOT NULL DEFAULT '0'");
 	// Spaltenname 'type' umbenennen in 'filetype' #680
 	$mysqli->query("ALTER TABLE ".$mysql_tables['files']." CHANGE `type` `filetype` VARCHAR( 4 ) NULL DEFAULT NULL COMMENT 'Dateityp pic oder file'");
 	// Spaltenname 'comment' umbenennen in 'message' #680
