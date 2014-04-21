@@ -4,8 +4,8 @@
 	<name>01acp</name>
 	<titel>01ACP</titel>
 	<beschreibung>01ACP, Zentraler Administrationsbereich fuer alle 01-PHP-Scripte (Module)</beschreibung>
-	<version>1.2.1</version>
-	<datum>21.04.2011</datum>
+	<version>1.3.0</version>
+	<datum>21.04.2014</datum>
 
 	<updates>
 		<v1000_v1001>
@@ -43,6 +43,11 @@
 			<zielv>1.2.1</zielv>
 			<action>1200_zu_121</action>
 		</v1200_v121>
+		<v121_v130>
+			<startv>1.2.1</startv>
+			<zielv>1.3.0</zielv>
+			<action>121_zu_130</action>
+		</v121_v130>
 	</updates>	
 
 </modul>
