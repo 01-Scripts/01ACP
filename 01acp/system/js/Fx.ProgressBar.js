@@ -1,4 +1,4 @@
-/**
+/*!
  * Fx.ProgressBar
  *
  * @version		1.1

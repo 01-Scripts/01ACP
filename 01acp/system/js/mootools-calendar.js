@@ -1,4 +1,4 @@
-/*
+/*!
  * DatePicker
  * @author Rick Hopkins (http://www.styledisplay.com/mootoolsdatepicker/)
  * @modified by Micah Nolte and Martin Vasina

@@ -1,4 +1,4 @@
-/**
+/*!
  * ReMooz - Zoomer
  *
  * Inspired by so many boxes and zooms

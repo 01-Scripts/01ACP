@@ -1,4 +1,4 @@
-/**
+/*!
  * FancyUpload - Flash meets Ajax for powerful and elegant uploads.
  * 
  * Updated to latest 3.0 API. Hopefully 100% compat!

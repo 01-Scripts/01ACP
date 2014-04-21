@@ -1,4 +1,4 @@
-/*
+/*!
 Script: MooTools.Lang.js
 	Provides methods for localization.
 
@@ -8,7 +8,7 @@ Script: MooTools.Lang.js
 	Authors:
 		Aaron Newton
 
-	// Unkomprimierte Version der Datei: https://github.com/01-Scripts/01ACP/blob/V1.3.0/01scripts/01acp/system/js/mootools-more-lang.js
+	Unkomprimierte Version der Datei: https://github.com/01-Scripts/01ACP/blob/V1.3.0/01scripts/01acp/system/js/mootools-more-lang.js
 */
 
 (function(){

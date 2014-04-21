@@ -1,4 +1,4 @@
-/**
+/*!
  * Swiff.Uploader - Flash FileReference Control
  *
  * @version		3.0
@@ -8,6 +8,8 @@
  * @author		Harald Kirschner <http://digitarald.de>
  * @author		Valerio Proietti, <http://mad4milk.net>
  * @copyright	Authors
+ *
+ * Unkomprimierte Version der Datei: https://github.com/01-Scripts/01ACP/blob/V1.3.0/01scripts/01acp/system/js/Swiff.Uploader.js
  */
 
 Swiff.Uploader = new Class({
