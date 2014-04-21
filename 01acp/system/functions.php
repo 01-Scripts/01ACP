@@ -801,7 +801,7 @@ if(!isset($_GLOBALS['tiny_loaded']) OR isset($_GLOBALS['tiny_loaded']) && $_GLOB
 // CSS-Datei einbinden
 if(isset($settings['extern_css']) && !empty($settings['extern_css']))
 	$cssfile = "content_css : '".$settings['extern_css']."',";
-elseif(isset($settings['csscode']) && !empty($settings['csscode']) && (empty($settings['extern_css']) || $settings['extern_css'] == "http://"))
+elseif(isset($settings['csscode']) && !empty($settings['csscode']) && (empty($settings['extern_css']) || $settings['extern_css'] == "http://") && defined('CSS_CACHE_DATEI'))
 	$cssfile = "content_css : '".CSS_CACHE_DATEI."',";
 else
 	$cssfile = "";

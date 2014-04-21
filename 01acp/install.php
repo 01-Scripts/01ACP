@@ -517,7 +517,7 @@ else{
 	</tr>
 	
 	<tr>
-		<td width="70%" class="<?PHP echo $phpv_class; ?>"><b>PHP-Version</b> (Version 5.2 oder höher)</td>
+		<td width="70%" class="<?PHP echo $phpv_class; ?>"><b>PHP-Version</b> (Version 5.3 oder höher)</td>
 		<td class="<?PHP echo $phpv_class; ?>"><b><?PHP echo PHP_VERSION; ?></b></td>
 	</tr>
 
