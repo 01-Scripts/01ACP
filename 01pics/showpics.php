@@ -1,20 +1,22 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2013 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2014 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Dynamisches Generieren von Thumbnails
-	#fv.122#
+	#fv.130#
 */
 
 include("../01acp/system/functions.php");
-include("../01acp/cache/thumbwidth.php");
+@include("../01acp/cache/thumbwidth.php");
 define('ACP_TB_WIDTH', 40);
 define('ACP_TB_WIDTH200', 200);
 define('FILE_404_THUMB', '404thumb.gif');
 define('FILE_GIF_THUMB', 'gifthumb.gif');
+
+if(!isset($settings['thumbwidth'])) $settings['thumbwidth'] = 200;
 
 //Bild-Ausgabe
 if(file_exists($_GET['img'])){
