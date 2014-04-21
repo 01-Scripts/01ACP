@@ -35,7 +35,7 @@ if(preg_match("/([0-9]+)K/i",$upload_max_filesize,$tempregs)) $upload_max_filesi
 if(preg_match("/([0-9]+)M/i",$upload_max_filesize,$tempregs)) $upload_max_filesize = $tempregs[1]*1024*1024;
 if(preg_match("/([0-9]+)G/i",$upload_max_filesize,$tempregs)) $upload_max_filesize = $tempregs[1]*1024*1024*1024;
 
-//C harset setzten
+//Charset setzten
 $result = $mysqli->get_charset();
 if(!$error && $db_connection_charset !== "" && $result->charset != "latin1") $mysqli->set_charset($db_connection_charset);
 

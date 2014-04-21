@@ -114,9 +114,9 @@ elseif(isset($_REQUEST['step']) && $_REQUEST['step'] == 6){
     <tr>
         <td class="tra" width="60%">
 			<b>Absolute URL</b><br />
-			Bitte geben Sie die absolute URL (inkl. http://) zum Verzeichnis 01scripts/ ein.
+			Bitte &uuml;berpr&uuml;fen Sie die absolute URL (inkl. http://) zum Verzeichnis 01scripts/.
 			Beispiel: http://www.domainname.de/pfad/01scripts/</td>
-        <td class="tra"><input type="text" name="absolut_url" size="50" /></td>
+        <td class="tra"><input type="text" name="absolut_url" value="<?PHP echo str_replace("01acp/install.php", "", $_SERVER['SCRIPT_URI']); ?>" size="50" /></td>
     </tr>
 	
     <tr>
@@ -191,7 +191,8 @@ elseif(isset($_REQUEST['step']) && $_REQUEST['step'] == 5 &&
 	}
    
     // Versuchen eine Verbindung zur Datenbank aufzubauen:
-	$mysqli = new mysqli($host, $user, $passw, $database);
+    $mysqli = mysqli_init();
+	$mysqli->real_connect($_POST['mysql_host'], $_POST['mysql_username'], $_POST['mysql_passwort'], $_POST['mysql_datenbank']);
 	if ($mysqli->connect_errno) {
 	    echo "<p class=\"meldung_error\"><b>Fehler:</b> Es konnte keine Verbindung zum MySQL-Server 
 				und/oder der MySQL-Datenbank aufgebaut werden. Bitte gehen Sie zur&uuml;ck und &uuml;berpr&uuml;fen
@@ -200,6 +201,8 @@ elseif(isset($_REQUEST['step']) && $_REQUEST['step'] == 5 &&
 	}
 	// Verbindung wurde aufgebaut -> weitere Ausführung
 	else{
+		$mysqli->get_charset();
+
 		//Zugangsdaten in Datei schreiben:
         $datei = "../01_config.php";
 		$configfile = fopen($datei,"w");
@@ -219,10 +222,9 @@ elseif(isset($_REQUEST['step']) && $_REQUEST['step'] == 5 &&
 		
 		// Weitere Ausführung
 		if($wrotez > 0){
-			echo "<p class=\"meldung_ok\">Die Zugangsdaten wurden erfolgreich in ".$datei." geschrieben<br />
+			echo "<p class=\"meldung_ok\">Die Zugangsdaten wurden erfolgreich in die Datei ".$datei." geschrieben<br />
 					<br />
-					MySQL-Tabellen werden nun angelegt. Bitte warten...<br />
-					...</p>";
+					MySQL-Tabellen werden nun angelegt. Bitte warten...</p>";
 			
 			$instnr = $_POST['install_nummer'];
 			$sql_filename 	= "install_sql.sql";     // Specify the dump filename to suppress the file selection dialog
@@ -246,10 +248,6 @@ elseif(isset($_REQUEST['step']) && $_REQUEST['step'] == 5){
 elseif(isset($_REQUEST['step']) && $_REQUEST['step'] == 4){
 ?>
 <h1>Schritt 4 - MySQL-Zugangsdaten</h1>
-
-<p class="meldung_hinweis">Wenn Sie Daten aus dem 01-Newsscript V 2.x.x.x importieren m&ouml;chten muss das
-<b>01acp</b> in die gleiche Datenbank installiert werden, in dem sich auch die MySQL-Tabellen des 01-Newsscripts
-befinden!</p>
 
 <form action="install.php" method="post">
 <table border="0" align="center" width="100%" cellpadding="3" cellspacing="5" class="rundrahmen">
@@ -327,10 +325,10 @@ elseif(isset($_REQUEST['step']) && $_REQUEST['step'] == 3 &&
 
 	<tr>
 		<td class=\"trb\" colspan=\"2\"><h2>Schreibrechte vergeben</h2>
-		Bitte vergeben Sie f&uuml;r folgende Dateien und Verzeichnisse mit Ihrem FTP-Programm die 
-		<b>Schreibrechte 0777</b> (<a href=\"http://de.wikipedia.org/wiki/Chmod\" target=\"_blank\">chmod</a>).<br />
+		Falls nicht automatisch geschehen, vergeben Sie bitte f&uuml;r folgende Dateien und Verzeichnisse per FTP-Programm die 
+		<a href=\"http://de.wikipedia.org/wiki/Chmod\" target=\"_blank\"><b>Schreibrechte 0777</b></a>.<br />
 		Sollten Sie dabei Probleme haben schlagen Sie bitte im Handbuch Ihres FTP-Programms nach oder Fragen Sie unter Nennung Ihres Programms
-        im <a href=\"http://board.01-scripts.de\" target=\"_blank\">Supportforum</a> nach.<br />
+        im <a href=\"http://forum.01-scripts.de\" target=\"_blank\">Supportforum</a> nach.<br />
 		<br />
 		Wenn Ihr <b>Server(!)</b> unter einem Windows Betriebssystem l&auml;uft k&ouml;nnen Sie diesen Schritt &uuml;berspringen.
 		</td>
