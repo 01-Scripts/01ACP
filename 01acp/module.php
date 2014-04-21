@@ -513,6 +513,7 @@ while($dir = readdir($readverz)){
 				$deaktiv = "<a href=\"".$filename."?aktiv=1&amp;modul=".$dir."\"><img src=\"images/icons/icon_aktivieren.gif\" alt=\"Play-Icon\" title=\"Modul aktivieren (wird im ACP wieder angezeigt)\" /></a>";
 			}
 
+		if(!isset($module[$dir]['nr'])) $module[$dir]['nr'] = "";
 
 		if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
 		echo "<tr>
