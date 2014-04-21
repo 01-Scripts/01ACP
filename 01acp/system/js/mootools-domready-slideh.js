@@ -5,7 +5,7 @@
 
 	Modul:		01ACP
 	Dateiinfo:	JavaScript-Befehl: Horizontales Slide In/Out
-	Unkomprimierte Version der Datei: https://github.com/01-Scripts/01ACP/blob/V1.2.2/01scripts/01acp/system/js/mootools-domready-slideh.js
+	Unkomprimierte Version der Datei: https://github.com/01-Scripts/01ACP/blob/V1.3.0/01scripts/01acp/system/js/mootools-domready-slideh.js
 	#fv.130#
 */
     var links = $$('img.fx_opener,div.fx_opener,td.fx_opener,tr.fx_opener');

@@ -5,7 +5,7 @@
 
 	Modul:		01ACP
 	Dateiinfo:	JavaScript-Befehle die im ACP zum domready-Zeitpunkt ausgeführt werden
-	Unkomprimierte Version der Datei: https://github.com/01-Scripts/01ACP/blob/V1.2.2/01scripts/01acp/system/js/domready-javas.js
+	Unkomprimierte Version der Datei: https://github.com/01-Scripts/01ACP/blob/V1.3.0/01scripts/01acp/system/js/domready-javas.js
 	#fv.130#
 */
 // Ajax-Meldungsboxen ausblenden

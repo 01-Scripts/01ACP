@@ -1,4 +1,4 @@
-// Unkomprimierte Version der Datei: https://github.com/01-Scripts/01ACP/blob/V1.2.2/01scripts/01acp/system/js/mootools-domready-fancyup_fm.js
+// Unkomprimierte Version der Datei: https://github.com/01-Scripts/01ACP/blob/V1.3.0/01scripts/01acp/system/js/mootools-domready-fancyup_fm.js
 	// our uploader instance
 
 	up = new FancyUpload2($('fancy-status'), $('fancy-list'), { // options object
