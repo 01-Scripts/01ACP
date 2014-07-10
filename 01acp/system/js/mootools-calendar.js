@@ -3,7 +3,8 @@
  * @author Rick Hopkins (http://www.styledisplay.com/mootoolsdatepicker/)
  * @modified by Micah Nolte and Martin Vasina
  * @modified again by Arian Stolwijk (version 0.4) (http://www.aryweb.nl/voorbeelden/datepicker/, http://www.mooforum.net/scripts12/mootools-date-picker-t666.html)
- * @version 0.4
+ * @modified again by Michael Lorer - 01-Scripts.de (handle german date format)
+ * @version 0.4(.1)
  * @classDescription A date picker object. Created with the help of MooTools v1.2.1
  * MIT-style License - http://www.opensource.org/licenses/mit-license.php
  *
@@ -25,7 +26,7 @@ var DatePicker = new Class({
 		dayChars: 2,
 		dayNames: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
 		daysInMonth: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
-		format: 'dd.mm.yyyy',
+		format: 'dd.mm.yyyy',	// If changed line 42 must changed or removed accordingly to handle date format properly
 		monthNames: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
 		startDay: 7,
 		yearOrder: 'asc',
@@ -39,7 +40,8 @@ var DatePicker = new Class({
 
 		// Finds the entered date, or uses the current date
 		if(dp.get('value') != '') {
-			this.then = new Date(dp.value);
+			var inputValue = dp.value.substring(3,6)+dp.value.substring(0,3)+dp.value.substring(6);	// To handle german date format
+			this.then = new Date.parse(inputValue);
 			this.today = new Date();
 		} else {
 			this.then = this.today = new Date();
