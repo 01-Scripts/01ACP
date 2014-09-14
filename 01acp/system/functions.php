@@ -1685,7 +1685,7 @@ if(isset($autor) && !empty($autor) &&
 		$comment = utf8_decode($comment);
 	}
 
-	$clist = $mysqli->query("SELECT id,postid,uid,message FROM ".$mysql_tables['comments']." WHERE postid='".$mysqli->escape_string($postid)."' AND uid='".$mysqli->escape_string($uid)."' OR postid='".$mysqli->escape_string($postid)."' AND comment='".$mysqli->escape_string(htmlentities($comment, $htmlent_flags, $htmlent_encoding_pub))."'");
+	$clist = $mysqli->query("SELECT id,postid,uid,message FROM ".$mysql_tables['comments']." WHERE postid='".$mysqli->escape_string($postid)."' AND uid='".$mysqli->escape_string($uid)."' OR postid='".$mysqli->escape_string($postid)."' AND message='".$mysqli->escape_string(htmlentities($comment, $htmlent_flags, $htmlent_encoding_pub))."'");
 
 	if($mysqli->affected_rows == 0){
 	
