@@ -3,7 +3,7 @@
  * @author Rick Hopkins (http://www.styledisplay.com/mootoolsdatepicker/)
  * @modified by Micah Nolte and Martin Vasina
  * @modified again by Arian Stolwijk (version 0.4) (http://www.aryweb.nl/voorbeelden/datepicker/, http://www.mooforum.net/scripts12/mootools-date-picker-t666.html)
- * @modified again by Michael Lorer - 01-Scripts.de (handle german date format)
+ * @modified again by Michael Lorer - 01-Scripts.de (Handle german date format; Dates in January weren't preselected)
  * @version 0.4(.1)
  * @classDescription A date picker object. Created with the help of MooTools v1.2.1
  * MIT-style License - http://www.opensource.org/licenses/mit-license.php
@@ -97,13 +97,7 @@ var DatePicker = new Class({
 		var date = new Date();
 		
 		/* create the date object */
-		if (this.month && this.year) {
-			date.setFullYear(this.year, this.month, 1);
-		} else {
-			this.month = date.getMonth();
-			this.year = date.getFullYear();
-			date.setDate(1);
-		}
+		date.setFullYear(this.year, this.month, 1);
 		this.year % 4 == 0 ? this.options.daysInMonth[1] = 29 : this.options.daysInMonth[1] = 28;
 		
 		/* set the day to first of the month */
