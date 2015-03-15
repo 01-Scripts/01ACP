@@ -1,0 +1,74 @@
+01ACP - Copyright 2008-2014 by Michael Lorer - 01-Scripts.de
+Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
+Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
+=========================================================
+
+Update:	01ACP V 1.2.1 nach V 1.3.0
+==================================
+
+!!! ACHTUNG !!!
+Bei Einem Update des 01ACP auf die Version 1.3.0 MÜSSEN gleichzeitig ALLE verwendeten Module ebenfalls
+auf die neuste Version aktualisiert werden!
+Bereiten Sie zuerst alle Update-Dateien vor, bevor Sie mit dem Update beginnen!
+Die aktuellste Version der Module kann direkt von http://www.01-scripts.de heruntergeladen werden.
+!!! ACHTUNG !!!
+
+- Legen Sie ein Backup ihrer Datenbank an!
+- Legen Sie ein Backup ihrer Daten via FTP-Programm an!
+
+- Löschen Sie das Verzeichnis 01scripts/01acp/system/tiny_mce/*
+
+- Markieren Sie alle im Verzeichnis 01scripts/ enthaltenen Unterverzeichnisse
+!!NICHT die Datei 01scripts/01_config.php kopieren! Für ein Update die bereits existierende Datei behalten!!
+
+- Laden Sie die markierten Verzeichnisse per FTP-Programm auf Ihren Webspace hoch. Überschreiben Sie dabei
+  alle bereits existierende Daten (AUßER die Datei 01_config.php !).
+
+- Rufen Sie die Datei 01scripts/01acp/update.php
+  in Ihrem Browser auf und folgen Sie den weiteren Anweisungen
+
+- Löschen Sie nach erfolgreichem Update folgende Dateien & Verzeichnisse mit Ihrem FTP-Programm:
+  * 01scripts/01acp/_up_data.php
+
+- Loggen Sie sich danach in den Administrationsbereich ein und aktualisieren Sie die von ihnen verwendeten Module!
+  Erst wenn Sie die Module aktualisiert haben, können Sie sie wieder wie gewohnt nutzen!
+
+
+!!! ACHTUNG !!!
+Bei Einem Update des 01ACP auf die Version 1.3.0 MÜSSEN gleichzeitig ALLE verwendeten Module ebenfalls
+auf die neuste Version aktualisiert werden!
+Bereiten Sie zuerst alle Update-Dateien vor, bevor Sie mit dem Update beginnen!
+Die aktuellste Version der Module kann direkt von http://www.01-scripts.de heruntergeladen werden.
+!!! ACHTUNG !!!
+
+
+Changelog 01ACP - 1.3.0
+=======================
+- 0000455: [Backend (Sonstiges)] 	Behebung kleinerer Bugs
+- 0000700: [TinyMCE] TinyMCE: 		Keine Rechtschreibhilfe anzeigbar
+- 0000681: [Filemanager] 		Sicherheit von hochgeladenen Dateien verbessern
+- 0000683: [Global] 			Passwort Hashing für 01ACP verbessern
+- 0000645: [Global] 			PHP 5.4.x:Changed default value of "default_charset" php.ini option from ISO-8859-1 to UTF-8.
+- 0000680: [Global] 			Diverse reserviertes MySQL-Schlüsselwort als Spaltennamen ersetzen.
+- 0000660: [Backend] 			Login / Session-Verwaltung überarbeiten!
+- 0000688: [Frontend] 			Filedownload auf Ipad und mit manchen Android-Browsern nicht möglich
+- 0000612: [Mootools / JavaScript] 	Javascript-Datei-Handling
+- 0000493: [functions.php] 		In Funktion makepages() $_GET durch $_REQUEST ersetzen
+- 0000636: [Modulverwaltung] 		p-Tags in Erfoglsmeldung bei Modulinstallation in _info.xml-Dateien auslagern
+- 0000468: [Modulverwaltung] 		ModulDEinstallation funktioniert nicht, wenn idname != modulname
+- 0000548: [TinyMCE] 			TinyMCE-Editor aktualisiert auf Version 3.5.9
+- 0000464: [Global] 			Neue Funktion check_checkbox() und check_select()
+- 0000661: [Global] 			Replace all deprecated mysql_-functions
+- 0000467: [Kommentarverwaltung] 	UTF-8-Kompatibilität bei Kommentaren
+ - 0000645: [Global] 			PHP 5.4.x:Changed default value of "default_charset" php.ini option from ISO-8859-1 to UTF-8.
+- 0000001: [TinyMCE] 			TinyMCE: Bilder Einfüge-Position (IE)
+- 0000591: [Design/Layout] 		Farbliche Hervorherbung von tra/trb Tabellenzeilen direkt per CSS lösen
+- 0000564: [Frontend] 			Falsche Parameteranzahl in showpics.php
+ - 0000200: [Global] 			Bildausgabe auch ohne showpics.php
+  - 0000495: [functions.php] 		Von showpics() generierte Thumbnails speichern
+- 0000583: [functions.php] 		Für getEndung() pathinfo() verwenden
+- 0000555: [TinyMCE] 			Probleme mit dem IE9 beim Einfügen von Bildern in Beiträge
+- 0000470: [TinyMCE] 			TinyMCE-Update auf Version 3.4.8
+- 0000559: [Filemanager] 		RÜCKGÄNGIG MACHEN: PDF via downloads.php nicht zum Download anbieten
+- 0000560: [Filemanager] 		Lightbox-Klasse auch bei Datei-Downloads
+- 0000463: [TinyMCE] 			Neuen Embed-Code für Youtube / Vimeo
