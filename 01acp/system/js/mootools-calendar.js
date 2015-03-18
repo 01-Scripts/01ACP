@@ -7,8 +7,6 @@
  * @version 0.4(.1)
  * @classDescription A date picker object. Created with the help of MooTools v1.2.1
  * MIT-style License - http://www.opensource.org/licenses/mit-license.php
- *
- * Unkomprimierte Version der Datei: https://github.com/01-Scripts/01ACP/blob/V1.3.0/01scripts/01acp/system/js/mootools-calendar.js
 
 -- start it up by doing this in your domready:
 

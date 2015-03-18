@@ -5,7 +5,6 @@
 
 	Modul:		01ACP
 	Dateiinfo:	JavaScript-Funktionen für AJAX-Requests and Answers
-	Unkomprimierte Version der Datei: https://github.com/01-Scripts/01ACP/blob/V1.3.0/01scripts/01acp/system/js/mootools-request.js
 	#fv.130#
 */
 

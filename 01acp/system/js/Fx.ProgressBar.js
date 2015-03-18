@@ -7,8 +7,6 @@
  *
  * @author		Harald Kirschner <mail [at] digitarald [dot] de>
  * @copyright	Authors
- *
- * Unkomprimierte Version der Datei: https://github.com/01-Scripts/01ACP/blob/V1.3.0/01scripts/01acp/system/js/Fx.ProgressBar.js
  */
 
 Fx.ProgressBar = new Class({
