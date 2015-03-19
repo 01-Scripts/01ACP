@@ -25,6 +25,7 @@
     "01acp/system/js/Swiff.Uploader.js"
   ],
   "Files2Delete": [
+    "01acp/fileman/Uploads/.gitignore",
     "01files/.gitignore",
     "01module/.gitignore",
     "01pics/.gitignore",
