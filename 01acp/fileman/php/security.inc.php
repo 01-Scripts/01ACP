@@ -21,7 +21,10 @@
   Contact: Lyubomir Arsov, liubo (at) web-lobby.com
 */
 function checkAccess($action){
+  //global $userdata;
   if(!session_id())
     session_start();
+
+  //if(!isset($userdata['id']) || isset($userdata['id']) && ($userdata['id'] == 0 || $userdata['dateimanager'] == 0) ) exit;
 }
 ?>

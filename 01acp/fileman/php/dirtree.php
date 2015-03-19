@@ -20,53 +20,92 @@
 
   Contact: Lyubomir Arsov, liubo (at) web-lobby.com
 */
+$subfolder = "../../../";
+include("../../system/headinclude.php");
 include '../system.inc.php';
 include 'functions.inc.php';
+
+$shasalt = sha1($salt);
+if(isset($_SESSION['01_idsession_'.$shasalt]) && isset($_SESSION['01_passsession_'.$shasalt]) && !empty($_SESSION['01_passsession_'.$shasalt]) && strlen($_SESSION['01_passsession_'.$shasalt]) == 40){
+    $userdata = getUserdata("",TRUE);
+    if($userdata['sperre'] == 1){
+        $flag_loginerror = true;
+        break;
+    }
+}
 
 verifyAction('DIRLIST');
 checkAccess('DIRLIST');
 
-function getFilesNumber($path, $type){
-  $files = 0;
-  $dirs = 0;
-  $tmp = listDirectory($path);
-  foreach ($tmp as $ff){
-    if($ff == '.' || $ff == '..')
-      continue;
-    elseif(is_file($path.'/'.$ff) && ($type == '' || ($type == 'image' && RoxyFile::IsImage($ff)) || ($type == 'flash' && RoxyFile::IsFlash($ff))))
-      $files++;
-    elseif(is_dir($path.'/'.$ff))
-      $dirs++;
-  }
-
-  return array('files'=>$files, 'dirs'=>$dirs);
-}
-function GetDirs($path, $type){
-  $ret = $sort = array();
-  $files = listDirectory(fixPath($path), 0);
-  foreach ($files as $f){
-    $fullPath = $path.'/'.$f;
-    if(!is_dir(fixPath($fullPath)) || $f == '.' || $f == '..')
-      continue;
-    $tmp = getFilesNumber(fixPath($fullPath), $type);
-    $ret[$fullPath] = array('path'=>$fullPath,'files'=>$tmp['files'],'dirs'=>$tmp['dirs']);
-    $sort[$fullPath] = $f;
-  }
-  natcasesort($sort);
-  foreach ($sort as $k => $v) {
-    $tmp = $ret[$k];
-    echo ',{"p":"'.mb_ereg_replace('"', '\\"', $tmp['path']).'","f":"'.$tmp['files'].'","d":"'.$tmp['dirs'].'"}';
-    GetDirs($tmp['path'], $type);
-  }
-}
-
 $type = (empty($_GET['type'])?'':strtolower($_GET['type']));
-if($type != 'image' && $type != 'flash')
-  $type = '';
+if($type == "image")
+    $type = "pic";
+elseif($type == "files" || $type == "flash")
+    $type = "file";
+else
+    $type = "all";
+
+// Rekursiv alle Datei-Verzeichnisse auflisten
+/* $parentid      Verzeichnis-ID des übergeordneten Verzeichnisses
+   $deep        Aktuelle Tiefe
+   $maxdeep       Maximale Tiefe (int)
+   $callfunction    Name der Funktion, die zur sichtbaren Ausgabe von Daten aufgerufen werden soll
+            An die Funktion wird $row als 1. Parameter übergeben
+   $givedeeperparam   Weiterer Parameter, der als 3. Parameter an die in $callfunction angegebene Funktion weitergereicht wird
+
+RETURN: true
+  */
+function getFileVerz_Rek2($parentid,$deep=0,$callfunction="",$givedeeperparam="Dateimanager"){
+global $mysqli,$mysql_tables;
+$return = "";
+
+$list = $mysqli->query("SELECT * FROM ".$mysql_tables['filedirs']." WHERE parentid = '".$mysqli->escape_string($parentid)."' ORDER BY name");
+while($row = $list->fetch_assoc()){
+    if(!empty($callfunction) && function_exists($callfunction)) $return .= call_user_func($callfunction,$row,$deep,$givedeeperparam);
+
+    // Rekursion
+    $return .= getFileVerz_Rek2($row['id'],($deep+1),$callfunction,$givedeeperparam."/".$row['name']);
+    }
+
+return $return;
+
+}
+
+function echo_FileVerz_4roxy($row,$deep,$para=""){
+    return ',{"p":"'.  mb_ereg_replace('"', '\\"', $para."/".$row['name']).'","f":"'.echoFileCount($row['id']).'","d":"'.echoDirCount($row['id']).'"}';
+}
+
+function echoFileCount($dir){
+    global $filecount;
+
+    if(isset($filecount[$dir])) return $filecount[$dir];
+    else return 0;
+}
+
+function echoDirCount($dir){
+    global $dircount;
+
+    if(isset($dircount[$dir])) return $dircount[$dir];
+    else return 0;
+}
+
+// Count files:
+if($type == "all")
+    $list = $mysqli->query("SELECT dir, COUNT(*) FROM ".$mysql_tables['files']." GROUP BY dir");
+else
+    $list = $mysqli->query("SELECT dir, COUNT(*) FROM ".$mysql_tables['files']." WHERE filetype = '".$type."' GROUP BY dir");
+while($row = $list->fetch_assoc()){
+    $filecount[$row['dir']] = $row['COUNT(*)'];
+}
+
+// Count directories:
+$list = $mysqli->query("SELECT parentid, COUNT(*) FROM ".$mysql_tables['filedirs']." GROUP BY parentid");
+while($row = $list->fetch_assoc()){
+    $dircount[$row['parentid']] = $row['COUNT(*)'];
+}
 
 echo "[\n";
-$tmp = getFilesNumber(fixPath(getFilesPath()), $type);
-echo '{"p":"'.  mb_ereg_replace('"', '\\"', getFilesPath()).'","f":"'.$tmp['files'].'","d":"'.$tmp['dirs'].'"}';
-GetDirs(getFilesPath(), $type);
+echo '{"p":"Dateimanager","f":"'.echoFileCount(0).'","d":"'.echoDirCount(0).'"}';
+echo getFileVerz_Rek2(0,0,"echo_FileVerz_4roxy");
 echo "\n]";
 ?>

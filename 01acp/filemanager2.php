@@ -22,7 +22,7 @@ if(isset($userdata['id']) && $userdata['id'] > 0 && $userdata['dateimanager'] >=
 
 ?>
 
-<iframe src="fileman/index.html?integration=custom&type=files&txtFieldId=txtSelectedFile" style="width:100%;height:800px" frameborder="0"></iframe>
+<iframe src="fileman/index.html?integration=custom&type=&txtFieldId=txtSelectedFile" style="width:100%;height:800px" frameborder="0"></iframe>
 
 <?PHP
 
