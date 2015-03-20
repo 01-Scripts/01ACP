@@ -45,16 +45,11 @@ elseif($type == "files" || $type == "flash")
 else
     $type = "all";
 
-// Rekursiv alle Datei-Verzeichnisse auflisten
-/* $parentid      Verzeichnis-ID des übergeordneten Verzeichnisses
-   $deep        Aktuelle Tiefe
-   $maxdeep       Maximale Tiefe (int)
-   $callfunction    Name der Funktion, die zur sichtbaren Ausgabe von Daten aufgerufen werden soll
-            An die Funktion wird $row als 1. Parameter übergeben
-   $givedeeperparam   Weiterer Parameter, der als 3. Parameter an die in $callfunction angegebene Funktion weitergereicht wird
-
-RETURN: true
-  */
+/* $parentid          Verzeichnis-ID des übergeordneten Verzeichnisses
+   $deep              Aktuelle Tiefe
+   $callfunction      Funktion zur eigentlichen Ausgabe der Daten
+   $givedeeperparam   Parameter wird zum Aufbau des Verzeichnispfads verwendet
+*/
 function getFileVerz_Rek2($parentid,$deep=0,$callfunction="",$givedeeperparam="Dateimanager"){
 global $mysqli,$mysql_tables;
 $return = "";
@@ -68,7 +63,6 @@ while($row = $list->fetch_assoc()){
     }
 
 return $return;
-
 }
 
 function echo_FileVerz_4roxy($row,$deep,$para=""){
