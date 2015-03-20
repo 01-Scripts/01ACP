@@ -14,6 +14,7 @@ $flag_acp = true;
 $flag_loginerror = false;
 
 // Datei wird nur im ACP (statt direkt der headinclude.php) eingebunden
+@header('Content-Type: text/html; charset=ISO-8859-1');
 include_once("system/headinclude.php");
 
 // Session-Bugfix für Fancyupload
