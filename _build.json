@@ -36,6 +36,7 @@
     "01acp/system/default.css",
     "01acp/system/functions.php",
     "01acp/system/main.php",
-    "01acp/popups.php"
+    "01acp/popups.php",
+    "01files/download.php"
   ]
 }

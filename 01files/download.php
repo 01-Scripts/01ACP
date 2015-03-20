@@ -1,12 +1,12 @@
 <?php
 /*
-	01ACP - Copyright 2008-2014 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2015 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 
 	Modul:		01ACP
 	Dateiinfo:	File-Download-Funktion
-	#fv.130#
+	#fv.131#
 */
 
 $flag_acp = false;
@@ -44,7 +44,7 @@ if(isset($query)){
 		else{
 			// downloads+1
 			if(!isset($_GET['nocount']))
-				$mysqli->query("UPDATE ".$mysql_tables['files']." SET downloads = downloads+1 WHERE id = '".$mysqli->escape_string($_GET['fileid'])."' LIMIT 1");
+				$mysqli->query("UPDATE ".$mysql_tables['files']." SET downloads = downloads+1 WHERE id = '".$row['id']."' LIMIT 1");
 			
 			$path_parts = pathinfo(basename($row['orgname']));
 
