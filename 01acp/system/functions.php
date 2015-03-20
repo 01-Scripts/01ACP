@@ -1,13 +1,13 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2014 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2015 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
-	Dateiinfo:	Globale PHP-Funktionen
+	Dateiinfo:	Globale PHP-Funktionen für das 01ACP und alle Module
 				Auf Funktionen kann nach dem Include der headinclude.php zugrgriffen werden
-	#fv.130#
+	#fv.131#
 */
 
 // E-Mail-Adresse auf äußerliche Gültigkeit überprüfen
@@ -17,7 +17,6 @@ function check_mail($email){
 }
 
 
-	
 // Seiten-Funktion
 /*&$query			MySQL-Query, der "limitiert" werden soll
   &$sites			Gesamtzahl der vorhandenen Seiten
@@ -100,12 +99,45 @@ return $return;
 }
 
 
+// Link für Administrationsbereich mit einer beliebigen Kombination an $_GET-Parametern erstellen
+/* @param    string      $ziel      Ziel-Dateiname
+   @param    string      $parameter Namen der $_GET-Variablen, die angehängt werden sollen
+   @param    string      $add       Weitere, manuell definierte Parameter, die angehängt werden sollen
+
+   @return  string link
+*/
+function BuildLink401ACP($ziel,$parameter,$add=""){
+global $_GET;
+
+    $pstring = "";
+    $params = explode(",", $parameter);
+    foreach ($params as $param){
+        $pstring .= "&amp;".$param."=".$_GET[$param];
+    }
+
+    return parse_cleanerlinks(addParameter2Link(addParameter2Link($ziel,$pstring),$add));
+
+}
 
 
+// Generiert hidden input fields um in GET-Formularen bereits vorhandene $_GET-Parameter weiterzugeben
+/* @param    string      $parameter Namen der $_GET-Variablen, die angehängt werden sollen
 
+   @return  string with all needed hidden fields
+*/
+function CreateHiddenGETFields($parameter){
+global $_GET;
 
+    $string = "";
+    $params = explode(",", $parameter);
+    foreach ($params as $param){
+        if(isset($_GET[$param]) && !empty($_GET[$param]))
+            $string .= "<input type=\"hidden\" name=\"".$param."\" value=\"".$_GET[$param]."\" />\n";
+    }
 
+    return $string;
 
+}
 
 
 // Funktion zum Verkleinern der Bilder
@@ -129,7 +161,6 @@ if($bigside > $maxwidth){
     $picheight = $picheight/$k;
     }
 }
-
 
 
 // ACP-Submenü generieren
@@ -175,7 +206,6 @@ return $return;
 }
 
 
-
 // Neues Zufallspasswort generieren
 /*$laenge			Anzahl Zeichen des Passworts*/
 function create_NewPassword($laenge){
@@ -186,10 +216,6 @@ $newpass = substr($passzahl, 0,$laenge);
 
 return $newpass;
 }
-
-
-
-
 
 // Passwort Hash-Funktion
 /*$password				Zu hashendes Passwort*/
@@ -217,7 +243,6 @@ return $password;
 }
 
 
-
 // Einstellungs-Kategorien / Rechte-Kategorien in Array einlesen
 /*$modul			Modulname
   $mysqltab			MySQL-Tabelle
@@ -241,9 +266,6 @@ while($row = $list->fetch_assoc()){
 	}
 return $return;
 }
-
-
-
 
 
 // Installierte Module in Array einlesen
@@ -276,12 +298,6 @@ else
 }
 
 
-
-
-
-
-
-
 // Dropdown-Box aus installierten Modulen generieren (ohne Select-Tag)
 /*$restricted			TRUE/FALSE es werden nur Module angezeigt für die der Benutzer auch Zugriffsrechte hat
 
@@ -305,12 +321,6 @@ foreach($inst_module as $value){
 	
 return $return;
 }
-
-
-
-
-
-
 
 
 // Dropdown-Box mit allen angelegten Benutzern generieren
@@ -339,12 +349,6 @@ return $return;
 }
 
 
-
-
-
-
-
-
 // Komplettes Modul-Change-Formular generieren und ausgeben
 /*$ziel				Zieladresse für Formular
   $class			CSS-Klasse für Submit-Button
@@ -361,11 +365,6 @@ $return .= "</form>";
 
 return $return;
 }
-
-
-
-
-
 
 
 // Formularfeldtypen (Settings & Rights-Verwaltung) parsen
@@ -460,9 +459,6 @@ elseif($nrcols > "50"){
 unset($nrcols);
 return $return;
 }
-
-
-
 
 
 // Neuen Dateien oder Bilder hochladen
@@ -599,11 +595,6 @@ function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="
 }
 
 
-
-
-
-
-
 // Datei oder Bild löschen
 /*$dir				Verzeichnis in dem sich die zu löschende Datei befindet
   $file				Datei (inkl. Endung), die gelöscht werden soll
@@ -637,12 +628,6 @@ else return FALSE;
 }
 
 
-
-
-
-
-
-
 // Dateiendung einer Datei holen
 /*$filestring		Dateiname inkl. Endung der Datei Form: abc.end
 
@@ -659,12 +644,6 @@ else{
 	return "";
 	}
 }
-
-
-
-
-
-
 
 
 // Dynamisches Bild-Resizing durchführen
@@ -769,14 +748,6 @@ else{
 }
 
 
-
-
-
-
-
-
-
-
 // TinyMCE-JS generieren und Editor laden
 /*$barlook			Vordefinierte Buttonbars/Schaltflächen (biu,small,advanced,none)
   $bar_own			Individuelle Buttons (Nur eine Reihe möglich, Zusätzlich zu $barlook)
@@ -868,11 +839,6 @@ mode : \"textareas\"
 
 return $return;
 }
-
-
-
-
-
 
 
 // Bilder und Dateien aus DB auflisten
@@ -1059,11 +1025,6 @@ return $return;
 }
 
 
-
-
-
-
-
 // Bilder und Dateien aus DB auflisten
 /*$sizeof			Dateigröße in Byte
   $einheit			Gewünschte Zieleinheit (B, KB, MB)
@@ -1084,11 +1045,6 @@ switch($einheit){
   break;
   }
 }
-
-
-
-
-
 
 
 // Bilder und Dateien aus DB auflisten
@@ -1144,11 +1100,6 @@ switch($endung){
   
 return "<img src=\"images/filetypes/".$icon."\" alt=\"Filetype / Icon: ".$endung."\" />";
 }
-
-
-
-
-
 
 
 // Kommentare auflisten (ACP)
@@ -1210,11 +1161,6 @@ $return .= "</form>";
 	
 return $return;
 }
-
-
-
-
-
 
 
 // Kommentare auflisten (ACP)
@@ -1286,11 +1232,6 @@ $return .= "\n</table>\n<br />";
 
 return $return;
 }
-
-
-
-
-
 
 
 // BB-Code-Funktion für Kommentare
@@ -1409,12 +1350,6 @@ return $text;
 }
 
 
-
-
-
-
-
-
 // Userstatistiken holen
 /*$userid			UserID, zu der die Infos geholt werden sollen
 
@@ -1440,11 +1375,6 @@ if(isset($userid) && is_integer(intval($userid))){
 else
 	return false;
 }
-
-
-
-
-
 
 
 // Usernamen oder alle vorhandenen Userdaten holen
@@ -1492,13 +1422,6 @@ else
 }
 
 
-
-
-
-
-
-
-
 // Individuelle Userfields holen
 /*$uid				Userinformationen für User mit der ID $uid;
   $fields			Kommasperierte Rechte-Liste mit den GENAUEN MySQL-Spaltennamen!
@@ -1528,12 +1451,6 @@ while($row = $list->fetch_assoc()){
 	}
 return $userdata;
 }
-
-
-
-
-
-
 
 
 // Individuelle Userfields holen (weniger Querys)
@@ -1575,13 +1492,6 @@ return $userdata;
 }
 
 
-
-
-
-
-
-
-
 // Captcha ausgeben
 /*
 RETURN: HTML-Ausgabe des Spamschutzes und erstellen der Ergebnis-Session-Var $_SESSION['antispam01']
@@ -1591,13 +1501,6 @@ global $picuploaddir;
 
 return "<img src=\"".$picuploaddir."secimg.php\" alt=\"Sicherheitscode (Spamschutz)\" title=\"Sicherheitscode: Anti-Spam-System\" />";
 }
-
-
-
-
-
-
-
 
 
 // Kommentar in DB hinzufügen und übergebene Werte überprüfen
@@ -1753,13 +1656,6 @@ return $message;
 }
 
 
-
-
-
-
-
-
-
 // RSS-Framework (Head/Footer) generieren
 /*$titel			RSS-Feed-Titel
   $url				URL zur zu verlinkenden Datei
@@ -1819,13 +1715,6 @@ return $return;
 }
 
 
-
-
-
-
-
-
-
 // Neue Versionsinfos der Module vom 01-Scripts.de-Server holen
 /*$quelle				Quelldatei (URL)
   $ziel					Zieldatei (URL)
@@ -1855,13 +1744,6 @@ return TRUE;
 }
 
 
-
-
-
-
-
-
-
 // SQL-Daten parsen (bestimmte Ersetzungen vornehmen)
 /*$dumpline				MySQL-Datenline
   $modulnr				Modulinstallationsnummer für MySQL-Tabelle
@@ -1884,13 +1766,6 @@ return $dumpline;
 }
 
 
-
-
-
-
-
-
-
 // Von einem Post/Eintrag abhängige Kommentare löschen
 /*$postid			ID des Eintrags, der gelöscht wurde
   
@@ -1901,13 +1776,6 @@ global $mysqli,$mysql_tables,$modul;
 
 $mysqli->query("DELETE FROM ".$mysql_tables['comments']." WHERE modul='".$mysqli->escape_string($modul)."' AND postid='".$mysqli->escape_string($postid)."'");
 }
-
-
-
-
-
-
-
 
 
 // Von einem Sub-Post/Eintrag abhängige Kommentare löschen
@@ -1921,11 +1789,6 @@ global $mysqli,$mysql_tables,$modul;
 
 $mysqli->query("DELETE FROM ".$mysql_tables['comments']." WHERE modul='".$mysqli->escape_string($modul)."' AND postid='".$mysqli->escape_string($postid)."' AND subpostid='".$mysqli->escape_string($subpostid)."'");
 }
-
-
-
-
-
 
 
 // Umlaute ersetzen
@@ -1943,11 +1806,6 @@ for($x=0;$x<count($array_search)-1;$x++){
 	
 return $string;
 }
-
-
-
-
-
 
 
 // Storage-Data aus Datenbank lesen und unserialize anwenden
@@ -1975,10 +1833,6 @@ for($x=1;$x<=STORAGE_MAX;$x++){
 
 return $return;
 }
-
-
-
-
 
 
 // Rekursiv alle Datei-Verzeichnisse auflisten
@@ -2010,14 +1864,6 @@ return $return;
 
 }
 
-
-
-
-
-
-
-
-
 // Ausgabe der Verzeichnisnamen (Aufruf über Rekursive Funktion) für SELECT-Felder
 /*$row				Array mit allen MySQL-Feldern aus der File-Verzeichnis-Tabelle zur entsprechenden ID
   $deep				Aktuelle "Tiefe"
@@ -2044,14 +1890,6 @@ return $return;
 }
 
 
-
-
-
-
-
-
-
-
 // Fügt weitere Parameter an einen übergeben Link an (es wird herausgefunden, ob zuerst ? oder & verwendet werden muss)
 /*$links			Link, an den der Parameter angehängt werden soll
   $parameter		Ohne den ersten Parameter-Trenner (also ohne ? oder & am Anfang) Bei mehreren Parameter aber schon verwenden
@@ -2072,14 +1910,6 @@ else
 }
 
 
-
-
-
-
-
-
-
-
 // Setzt einen Cookie via blind-image-Datei
 /*$cookiename		Gewünschter Name für den Cookie
   $cookiewert		Gewünschter Wert für den Cookie
@@ -2093,14 +1923,6 @@ global $subfolder;
 return "<img src=\"".$subfolder."01acp/system/set_a_cookie.php?cookiename=".$cookiename."&amp;cookiewert=".$cookiewert."&amp;cookietime=".$cookietime."\" height=\"1\" width=\"1\" alt=\" \" style=\"border:0; position:absolute; top:0; left:0;\" />";
 
 }
-
-
-
-
-
-
-
-
 
 
 // Benötigte Mootool und JS-Dateien / DOM ggf. laden
@@ -2146,14 +1968,6 @@ return true;
 }
 
 
-
-
-
-
-
-
-
-
 // Leere Link-Parameter aus Links entfernen
 /*$link				Link, der bereinigt werden soll
 
@@ -2187,14 +2001,6 @@ if(isset($url['fragment']) && !empty($url['fragment'])) $makelink .= "#".$url['f
 return $makelink;
 
 }
-
-
-
-
-
-
-
-
 
 
 // Unserialize serialized Session-Daten für $_SESSION-Array
@@ -2231,14 +2037,6 @@ return $return;
 }
 
 
-
-
-
-
-
-
-
-
 // Wendet htmlentities, stripslashes und ggf. utf8_decode in Abhängigkeit von $flag_utf8 auf den übergebenen String an
 /*$string				String, der behandelt werden soll
 
@@ -2255,14 +2053,6 @@ if($flag_utf8)
 
 return htmlentities($string, $htmlent_flags,$htmlent_encoding_pub);
 }
-
-
-
-
-
-
-
-
 
 
 // Checkboxen checken bzw. Selectfields selecten
@@ -2284,12 +2074,7 @@ else
 // Funktion für selected=selected
 function check_select($field_value,$standard_value=1){
     return check_checkbox($field_value,$standard_value,"select");
-    }
-
-
-
-
-
+}
 
 
 // Ruft eine modulspezifische Right/Settings-Funktion zur Wertdarstellung auf
@@ -2320,11 +2105,6 @@ else return "Fehler bei der Darstellung der gespeicherten Werte dieses Feldes.";
 }
 
 
-
-
-
-
-
 // Ruft eine modulspezifische Right/Settings-Funktion zur Speicherung von abgesendeten Werten auf
 /*$modul			Modul dessen Funktion aufgerufen werden soll
   $idname			ID-Name des "Rechts" bzw. des Settings
@@ -2353,13 +2133,6 @@ else return "";
 }
 
 
-
-
-
-
-
-
-
 // Formularfeld der Standard Thumbnail-Größe.
 /* @params string $idname		IDName des Feldes (modul_idname)
  * @params string $wert			Enthält bisherigen gespeicherten Wert des Feldes
@@ -2373,13 +2146,6 @@ return "<input type=\"text\" name=\"".$idname."\" value=\"".$wert."\" size=\"5\"
 
 }
 }
-
-
-
-
-
-
-
 
 
 // Funktion gibt den Wert unbearbeitet an die Speicherfunktion durch - legt ihn allerdings gleichzeitig
