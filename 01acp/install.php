@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <!--
-	01ACP - Copyright 2008-2014 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2015 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
@@ -116,7 +116,7 @@ elseif(isset($_REQUEST['step']) && $_REQUEST['step'] == 6){
 			<b>Absolute URL</b><br />
 			Bitte &uuml;berpr&uuml;fen Sie die absolute URL (inkl. http://) zum Verzeichnis 01scripts/.
 			Beispiel: http://www.domainname.de/pfad/01scripts/</td>
-        <td class="tra"><input type="text" name="absolut_url" value="<?PHP echo str_replace("01acp/install.php", "", $_SERVER['SCRIPT_URI']); ?>" size="50" /></td>
+        <td class="tra"><input type="text" name="absolut_url" value="<?PHP echo str_replace("01acp/install.php", "", $_SERVER['HTTP_REFERER']); ?>" size="50" /></td>
     </tr>
 	
     <tr>
@@ -183,9 +183,9 @@ elseif(isset($_REQUEST['step']) && $_REQUEST['step'] == 5 &&
 	function parse_SQLLines($dumpline,$modulnr,$modulidname){
 	global $instnr;
 
-	$dumpline = ereg_replace("\r\n$", "\n", $dumpline);
-	$dumpline = ereg_replace("\r$", "\n", $dumpline);
-	$dumpline = ereg_replace("01prefix_", "01_".$instnr."_", $dumpline);
+	$dumpline = str_replace("\r\n", "\n", $dumpline);
+	$dumpline = str_replace("\r", "\n", $dumpline);
+	$dumpline = str_replace("01prefix_", "01_".$instnr."_", $dumpline);
 
 	return $dumpline;
 	}
