@@ -33,8 +33,9 @@
     "update_liesmich.txt"
   ],
   "Files4Update": [
-    "01acp/system/main.php",
+    "01acp/system/default.css",
     "01acp/system/functions.php",
+    "01acp/system/main.php",
     "01acp/popups.php"
   ]
 }
