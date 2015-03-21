@@ -75,19 +75,7 @@ if(isset($_COOKIE[$instnr.'_start_auth_01acp']) && !empty($_COOKIE[$instnr.'_sta
 // Login wurde abgeschickt
 if(isset($_POST['send']) && $_POST['send'] == 1){
 
-	if($settings['acp_captcha4login'] == 1 && $settings['spamschutz'] == 2 && !empty($settings['ReCaptcha_PubKey']) &&  !empty($settings['ReCaptcha_PrivKey'])){
-	    require_once('system/includes/recaptchalib.php');
-	    $privatekey = $settings['ReCaptcha_PrivKey'];
-	    $resp = recaptcha_check_answer ($privatekey,
-	                                    $_SERVER["REMOTE_ADDR"],
-	                                    $_POST["recaptcha_challenge_field"],
-	                                    $_POST["recaptcha_response_field"]);
-	    if(!$resp->is_valid) $recaptcha_check = false;
-	    else $recaptcha_check = true;
-	    }
-	else $recaptcha_check = true;
-
-	if($settings['acp_captcha4login'] == 0 || $settings['acp_captcha4login'] == 1 && ($settings['spamschutz'] == 1 && isset($_POST['antispam']) && md5($_POST['antispam']) == $_SESSION['antispam01'] || $settings['spamschutz'] == 2 && $recaptcha_check) ){
+	if($settings['acp_captcha4login'] == 0 || $settings['acp_captcha4login'] == 1 && ($settings['spamschutz'] == 1 && isset($_POST['antispam']) && md5($_POST['antispam']) == $_SESSION['antispam01'] || $settings['spamschutz'] == 2 && CheckReCAPTCHA($_POST['g-recaptcha-response'])) ){
 
 		$list = $mysqli->query("SELECT id,username,userpassword,startpage,cookiehash,sessionhash FROM ".$mysql_tables['user']." WHERE username='".$mysqli->escape_string($_POST['username'])."' AND id != '0' LIMIT 1");
 		while($row = $list->fetch_assoc()){

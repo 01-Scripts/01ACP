@@ -1493,19 +1493,41 @@ return $userdata;
 
 
 // Captcha ausgeben
-/*
-RETURN: HTML-Ausgabe des Spamschutzes-Bildes (01ACP-Style oder ReCaptcha)
+/*$type         Welchen Captcha-Type ausgeben? 1: 01-Classic, 2: reCAPTCHA
+
+RETURN: HTML-Ausgabe des Spamschutzes-Bildes (01ACP-Style oder ReCAPTCHA)
   */
 function create_Captcha($type=1){
-global $admindir,$picuploaddir,$settings;
+global $picuploaddir,$settings;
 
 if($type == 2 && !empty($settings['ReCaptcha_PubKey']) &&  !empty($settings['ReCaptcha_PrivKey'])){
-    require_once($admindir.'/system/includes/recaptchalib.php');
-    $publickey = $settings['ReCaptcha_PubKey']; 
-    return recaptcha_get_html($publickey);
+    return "<script src='https://www.google.com/recaptcha/api.js'></script><div class=\"g-recaptcha\" data-theme=\"".reCAPTCHA_THEME."\" data-sitekey=\"".$settings['ReCaptcha_PubKey']."\"></div>\n";
     }
 else
     return "<img src=\"".$picuploaddir."secimg.php\" alt=\"Sicherheitscode (Spamschutz)\" title=\"Sicherheitscode: Anti-Spam-System\" />";
+}
+
+// Request zur Auswertung der reCAPTCHA-Antwort stellen und Zurückliefern
+/*$response       Befüllen mit $_POST['g-recaptcha-response']
+
+RETURN: TRUE/FALSE (TRUE = Erfolg)
+  */
+function CheckReCAPTCHA($response){
+global $admindir,$settings;
+
+if($settings['spamschutz'] == 2 && !empty($settings['ReCaptcha_PubKey']) &&  !empty($settings['ReCaptcha_PrivKey'])){
+    if(isset($response) && !empty($response)){
+        require_once($admindir.'/system/includes/recaptchalib.php');
+
+        $recaptcha = new \ReCaptcha\ReCaptcha($settings['ReCaptcha_PrivKey']);
+        $resp = $recaptcha->verify($response);
+
+        if($resp->isSuccess()) return TRUE;
+    }
+    return FALSE;
+}
+else return TRUE;
+
 }
 
 
@@ -1582,22 +1604,9 @@ if($settings['comments_zensur'] == 1 && !empty($settings['comments_badwords']) &
 	$zcount = $zcount1+$zcount2;
    	}
 
-// Recaptcha
-if($settings['spamschutz'] == 2 && !empty($settings['ReCaptcha_PubKey']) &&  !empty($settings['ReCaptcha_PrivKey'])){
-    require_once($admindir.'/system/includes/recaptchalib.php');
-    $privatekey = $settings['ReCaptcha_PrivKey'];
-    $resp = recaptcha_check_answer ($privatekey,
-                                    $_SERVER["REMOTE_ADDR"],
-                                    $_POST["recaptcha_challenge_field"],
-                                    $_POST["recaptcha_response_field"]);
-    if(!$resp->is_valid) $recaptcha_check = false;
-    else $recaptcha_check = true;
-    }
-else $recaptcha_check = true;
-
 if(isset($autor) && !empty($autor) && 
    isset($comment) && !empty($comment) && 
-   (isset($antispam) && md5($antispam) == $_SESSION['antispam01'] && $settings['spamschutz'] == 1 || $settings['spamschutz'] == 0 || $settings['spamschutz'] == 2 && $recaptcha_check) &&
+   (isset($antispam) && md5($antispam) == $_SESSION['antispam01'] && $settings['spamschutz'] == 1 || $settings['spamschutz'] == 0 || $settings['spamschutz'] == 2 && CheckReCAPTCHA($_POST['g-recaptcha-response'])) &&
    ($spamtrap == "00d2b41064842f9f2146b5830a5c5cdb" || empty($spamtrap)) && 
    ($checktime == "f2b16859a59485575286d4f73a602c14" || !empty($checktime) && is_numeric($checktime) && ($checktime+MIN_COMMENT_TIME) < time()) &&
    ($settings['comments_zensur'] == 0 || empty($settings['comments_badwords']) || ($settings['comments_zensur'] == 1 && !empty($settings['comments_badwords']) && ($settings['comments_zensurlimit'] == "-1" || $zcount < $settings['comments_zensurlimit'])))){

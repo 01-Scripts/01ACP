@@ -79,6 +79,7 @@ define('ACP_PER_PAGE', 15); 					// Einträge pro Seite im ACP
 define('ACP_TB_WIDTH', 40); 					// Max. Kantenlänge von Bildern im ACP (1) (in showpics.php zusätzlich definieren)
 define('ACP_TB_WIDTH200', 200); 				// Max. Kantenlänge von Bildern im ACP (größer) (z.B. Popup-Vorschau nach Hochladen und vor dem Löschen)
 define('MIN_COMMENT_TIME', 5);					// Minimale Zeit, die nach dem Laden eines Kontaktformulars vergehen muss, bevor ein abgesendeter Kommentar angenommen wird (in Sekunden)
+define('reCAPTCHA_THEME', 'light');				// Theme für reCAPTCHA (light, dark)
 define('FILE_404_THUMB', '404thumb.gif');		// gif im Verzeichnis 01pics, dass angezeigt wird, wenn die eigentliche Datei nicht gefunden werden kann (gelöscht)
 define('FILE_GIF_THUMB', 'gifthumb.gif');		// gif im Verzeichnis 01pics, dass statt des gif-Bildes bei Aufruf der showpics.php?hidegif=normal angezeigt wird
 define('FILE_NO_THUMBS', 'no_thumbs.gif');		// gif im Verzeichnis 01pics, dass angezeigt wird, wenn kein Thumbnail vorhanden ist
