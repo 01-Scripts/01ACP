@@ -1,7 +1,6 @@
-*
-!smilies/
-catpics/*
-!catpics/
+*.*
+!smilies/*
+!catpics/*
 !.gitignore
 !404thumb.gif
 !Eadui.ttf
