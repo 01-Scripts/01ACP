@@ -1501,7 +1501,7 @@ function create_Captcha($type=1){
 global $picuploaddir,$settings;
 
 if($type == 2 && !empty($settings['ReCaptcha_PubKey']) &&  !empty($settings['ReCaptcha_PrivKey'])){
-    return "<script src='https://www.google.com/recaptcha/api.js'></script><div class=\"g-recaptcha\" data-theme=\"".reCAPTCHA_THEME."\" data-sitekey=\"".$settings['ReCaptcha_PubKey']."\"></div>\n";
+    return "<script src='https://www.google.com/recaptcha/api.js?hl=de'></script><div class=\"g-recaptcha\" data-theme=\"".reCAPTCHA_THEME."\" data-sitekey=\"".$settings['ReCaptcha_PubKey']."\"></div>\n";
     }
 else
     return "<img src=\"".$picuploaddir."secimg.php\" alt=\"Sicherheitscode (Spamschutz)\" title=\"Sicherheitscode: Anti-Spam-System\" />";

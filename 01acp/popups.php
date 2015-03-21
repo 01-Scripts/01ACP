@@ -523,6 +523,72 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "send_feedback" &&
 	}
 
 
+
+
+
+
+
+
+
+
+// Captcha Test-Popup
+if(isset($_REQUEST['action']) && $_REQUEST['action'] == "captcha_test"){
+?>
+<h1>Captchas testen</h1>
+
+<p>Bitte testen sie vor der Nutzung einer Captcha-Variante ob die Captchas angezeigt werden und sich die
+Test-Formulare erfolgreich absenden lassen.<br />
+<b>Bitte verwenden sie nur Captchas, die sie zuvor erfolgreich getestet haben!</b></p>
+
+<h2>01ACP Captcha-Lösung (klassisch)</h2>
+
+<?PHP
+if(isset($_POST['send']) && $_POST['send'] == 1){
+	if(md5($_POST['antispam']) == $_SESSION['antispam01'])
+		echo "<p class=\"meldung_ok\"><b>Test erfolgreich!</b></p>";
+	else
+		echo "<p class=\"meldung_error\"><b>Test fehlgeschlagen!</b></p>";
+}
+?>
+
+<form action="<?PHP echo $filename; ?>" method="post">
+	<p><?php echo create_Captcha(); ?> <input type="text" name="antispam" id="input_captcha" size="10" class="input_field" /></p>
+	
+	<input type="submit" value="Jetzt testen" class="input" />
+	<input type="hidden" name="action" value="captcha_test" />
+	<input type="hidden" name="send" value="1" />
+
+</form>
+
+<h2>reCAPTCHA-Lösung</h2>
+
+<?PHP
+if(isset($_POST['send']) && $_POST['send'] == 2){
+    require_once('system/includes/recaptchalib.php');
+
+	$recaptcha = new \ReCaptcha\ReCaptcha($settings['ReCaptcha_PrivKey']);
+	$resp = $recaptcha->verify($_POST['g-recaptcha-response']);
+
+	if($resp->isSuccess())
+		echo "<p class=\"meldung_ok\"><b>Test erfolgreich!</b></p>";
+	else
+		echo "<p class=\"meldung_error\"><b>Test fehlgeschlagen!</b></p>";
+}
+?>
+
+<form action="<?PHP echo $filename; ?>" method="post">
+	<?php echo create_Captcha(2); ?>
+	
+	<input type="submit" value="Jetzt testen" class="input" />
+	<input type="hidden" name="action" value="captcha_test" />
+	<input type="hidden" name="send" value="2" />
+
+</form>
+	
+<?PHP
+	}//Ende: Captcha Test-Popup
+	
+
 }//Ende: 01ACP-Modul-Part
 
 

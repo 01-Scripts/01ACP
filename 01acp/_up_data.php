@@ -10,15 +10,20 @@ if(isset($_POST['update']) && $_POST['update'] == "130_zu_131"){
 	// 01acp #209 - reCAPTCHA hinzufügen (dazu: Neue Settings-Kategorie 'Webservice')
 	$sql_insert = "INSERT INTO ".$mysql_tables['settings']." (modul,is_cat,catid,sortid,idname,name,exp,formename,formwerte,input_exp,standardwert,wert,nodelete,hide) VALUES
 				('01acp',1,5,5,'webservices','Webservices', NULL , NULL , NULL , NULL , NULL , NULL ,0,0),
-            	('01acp',0,5,1,'reCAPTCHA_PubKey','reCAPTCHA Websiteschl&uuml;ssel','reCAPTCHA API-Key von <a href=\"https://www.google.com/recaptcha/admin\" target=\"_blank\">https://www.google.com/recaptcha/admin</a>','text','50','','','',0,0),
-            	('01acp',0,5,2,'reCAPTCHA_PrivKey','reCAPTCHA Geheimer Schl&uuml;ssel','','text','50','','','',0,0)";
+            	('01acp',0,5,1,'ReCaptcha_PubKey','reCAPTCHA Websiteschl&uuml;ssel','reCAPTCHA API-Key von <a href=\"https://www.google.com/recaptcha/admin\" target=\"_blank\">https://www.google.com/recaptcha/admin</a>','text','50','','','',0,0),
+            	('01acp',0,5,2,'ReCaptcha_PrivKey','reCAPTCHA Geheimer Schl&uuml;ssel','','text','50','','','',0,0)";
 	$result = $mysqli->query($sql_insert) OR die($mysqli->error);
+
+	// Spalte 'input_exp' jew. von 50 auf 255 chars vergrößern
+	$mysqli->query("ALTER TABLE ".$mysql_tables['settings']." CHANGE `input_exp`  `input_exp` VARCHAR( 255 ) NULL DEFAULT NULL");
+	$mysqli->query("ALTER TABLE ".$mysql_tables['rights']." CHANGE `input_exp`  `input_exp` VARCHAR( 255 ) NULL DEFAULT NULL");
 
 	$mysqli->query("UPDATE ".$mysql_tables['settings']." SET 
     `catid` = '1', 
     `exp` = 'Zur Nutzung von reCAPTCHA m&uuml;ssen Daten im Abschnitt <i>Webservices</i> hinterlegt werden.', 
     `formename` =  '01ACP Captcha-Bild|reCAPTCHA|kein Spamschutz', 
-    `formwerte` =  '1|2|0' 
+    `formwerte` =  '1|2|0',
+    `input_exp` =  '<a href=\"javascript:popup(\'captcha_test\',\'\',\'\',\'\',500,550);\">Testen</a>'
     WHERE `modul` = '01acp' AND `idname` = 'spamschutz' LIMIT 1");
     $mysqli->query("UPDATE ".$mysql_tables['settings']." SET SET `sortid` = '5' WHERE `modul` = '01acp' AND `idname` = 'acp_captcha4login' LIMIT 1");
 
