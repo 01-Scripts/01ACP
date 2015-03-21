@@ -33,10 +33,18 @@
     "update_liesmich.txt"
   ],
   "Files4Update": [
+    "01acp/system/includes/credits.html",
+    "01acp/system/includes/recaptchalib.php",
     "01acp/system/default.css",
     "01acp/system/functions.php",
+    "01acp/system/headinclude.php",
     "01acp/system/main.php",
+    "01acp/index.php",
     "01acp/popups.php",
-    "01files/download.php"
+    "01files/download.php",
+    "01pics/Eadui.ttf",
+    "01pics/Eadui_fontlog.txt",
+    "01pics/Eadui_OFL_licence.txt",
+    "01pics/secimg.php"
   ]
 }

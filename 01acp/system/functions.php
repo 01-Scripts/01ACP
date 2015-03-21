@@ -1494,12 +1494,18 @@ return $userdata;
 
 // Captcha ausgeben
 /*
-RETURN: HTML-Ausgabe des Spamschutzes und erstellen der Ergebnis-Session-Var $_SESSION['antispam01']
+RETURN: HTML-Ausgabe des Spamschutzes-Bildes (01ACP-Style oder ReCaptcha)
   */
-function create_Captcha(){
-global $picuploaddir;
+function create_Captcha($type=1){
+global $admindir,$picuploaddir,$settings;
 
-return "<img src=\"".$picuploaddir."secimg.php\" alt=\"Sicherheitscode (Spamschutz)\" title=\"Sicherheitscode: Anti-Spam-System\" />";
+if($type == 2 && !empty($settings['ReCaptcha_PubKey']) &&  !empty($settings['ReCaptcha_PrivKey'])){
+    require_once($admindir.'/system/includes/recaptchalib.php');
+    $publickey = $settings['ReCaptcha_PubKey']; 
+    return recaptcha_get_html($publickey);
+    }
+else
+    return "<img src=\"".$picuploaddir."secimg.php\" alt=\"Sicherheitscode (Spamschutz)\" title=\"Sicherheitscode: Anti-Spam-System\" />";
 }
 
 
@@ -1512,11 +1518,14 @@ return "<img src=\"".$picuploaddir."secimg.php\" alt=\"Sicherheitscode (Spamschu
   $deaktivieren		Formulardaten (BBC/Smilies deaktivieren?)
   $postid			Formulardaten (Was für einem Post ist der Kommentar zugeordnet?)
   $uid				Formulardaten (UID - unique)
+  $subpostid        Zur Zuordnung eines Kommentars zu einem Eintrag unterhalb einer übergeordneten ID (z.B Bild innerhalb einer Kategorie)
+  $spamtrap         Wenn das Feld übergeben wurde, muss es leer sein (#531)
+  $checktime        Es mussen mindestens MIN_COMMENT_TIME vergangen sein, damit ein Kommentar angenommen wird
   
 RETURN: $message mit Erfolgs/Fehler-Nummer
   */
-function insert_Comment($autor,$email_form,$url_form,$comment,$antispam,$deaktivieren,$postid,$uid,$subpostid=0){
-global $mysqli,$mysql_tables,$settings,$_SESSION,$modul,$filename,$names,$flag_utf8,$htmlent_encoding_pub,$htmlent_flags;
+function insert_Comment($autor,$email_form,$url_form,$comment,$antispam,$deaktivieren,$postid,$uid,$subpostid=0,$spamtrap="00d2b41064842f9f2146b5830a5c5cdb",$checktime="f2b16859a59485575286d4f73a602c14"){
+global $mysqli,$mysql_tables,$settings,$_SESSION,$modul,$filename,$names,$flag_utf8,$htmlent_encoding_pub,$htmlent_flags,$_POST,$admindir;
 $zcount = $zcount2 = $zcount1 = 0;
 
 // Zensur-Funktion
@@ -1573,9 +1582,24 @@ if($settings['comments_zensur'] == 1 && !empty($settings['comments_badwords']) &
 	$zcount = $zcount1+$zcount2;
    	}
 
+// Recaptcha
+if($settings['spamschutz'] == 2 && !empty($settings['ReCaptcha_PubKey']) &&  !empty($settings['ReCaptcha_PrivKey'])){
+    require_once($admindir.'/system/includes/recaptchalib.php');
+    $privatekey = $settings['ReCaptcha_PrivKey'];
+    $resp = recaptcha_check_answer ($privatekey,
+                                    $_SERVER["REMOTE_ADDR"],
+                                    $_POST["recaptcha_challenge_field"],
+                                    $_POST["recaptcha_response_field"]);
+    if(!$resp->is_valid) $recaptcha_check = false;
+    else $recaptcha_check = true;
+    }
+else $recaptcha_check = true;
+
 if(isset($autor) && !empty($autor) && 
    isset($comment) && !empty($comment) && 
-   (isset($antispam) && md5($antispam) == $_SESSION['antispam01'] && $settings['spamschutz'] == 1 || $settings['spamschutz'] == 0) &&
+   (isset($antispam) && md5($antispam) == $_SESSION['antispam01'] && $settings['spamschutz'] == 1 || $settings['spamschutz'] == 0 || $settings['spamschutz'] == 2 && $recaptcha_check) &&
+   ($spamtrap == "00d2b41064842f9f2146b5830a5c5cdb" || empty($spamtrap)) && 
+   ($checktime == "f2b16859a59485575286d4f73a602c14" || !empty($checktime) && is_numeric($checktime) && ($checktime+MIN_COMMENT_TIME) < time()) &&
    ($settings['comments_zensur'] == 0 || empty($settings['comments_badwords']) || ($settings['comments_zensur'] == 1 && !empty($settings['comments_badwords']) && ($settings['comments_zensurlimit'] == "-1" || $zcount < $settings['comments_zensurlimit'])))){
 
 	if(check_mail($email_form)) $email = $mysqli->escape_string(strip_tags($email_form)); else $email = "";
