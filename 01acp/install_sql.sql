@@ -252,7 +252,8 @@ INSERT INTO `01prefix_settings` (`modul`, `is_cat`, `catid`, `sortid`, `idname`,
 ('01acp', 0, 4, 3, 'rss_copyright', 'Copyright-Informationen', '', 'textarea', '5|50', '', 'Die Inhalte werden unter einer Creative-Commons-Lizenz veröffentlicht, die <a href=\\"http://creativecommons.org/licenses/by-nc-sa/3.0/de/\\" target=\\"_blank\\">hier</a> einsehbar ist.', 'Die Inhalte werden unter einer Creative-Commons-Lizenz veröffentlicht, die unter folgender URL einsehbar ist:\r\nhttp://creativecommons.org/licenses/by-nc-sa/3.0/de/', 0, 0),
 ('01acp', 1, 5, 5, 'webservices','Webservices', NULL , NULL , NULL , NULL , NULL , NULL ,0,0),
 ('01acp', 0, 5, 1, 'ReCaptcha_PubKey','reCAPTCHA Websiteschl&uuml;ssel','reCAPTCHA API-Key von <a href=\"https://www.google.com/recaptcha/admin\" target=\"_blank\">https://www.google.com/recaptcha/admin</a>','text','50','','','',0,0),
-('01acp', 0, 5, 2, 'ReCaptcha_PrivKey','reCAPTCHA Geheimer Schl&uuml;ssel','','text','50','','','',0,0);
+('01acp', 0, 5, 2, 'ReCaptcha_PrivKey','reCAPTCHA Geheimer Schl&uuml;ssel','','text','50','','','',0,0),
+('01acp', 0, 5, 3, 'Disqus_Username','Disqus Username','Registrierung bei <a href=\"https://disqus.com/admin/signup/\" target=\"_blank\">Disqus.com</a> n&ouml;tig.','text','50','','','',0,0);
 
 -- --------------------------------------------------------
 
