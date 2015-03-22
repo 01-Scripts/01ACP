@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `01prefix_files` (
   `modul` varchar(25) NULL DEFAULT NULL,
   `utimestamp` int(15) NOT NULL DEFAULT '0',
   `dir` int(10) NOT NULL DEFAULT '0',
-  `orgname` varchar(50) NULL DEFAULT NULL,
+  `orgname` varchar(255) NULL DEFAULT NULL,
   `name` varchar(25) NOT NULL DEFAULT '',
   `size` varchar(20) NULL DEFAULT NULL,
   `ext` varchar(5) NULL DEFAULT NULL,

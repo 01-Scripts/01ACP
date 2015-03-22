@@ -27,6 +27,9 @@ if(isset($_POST['update']) && $_POST['update'] == "130_zu_131"){
     WHERE `modul` = '01acp' AND `idname` = 'spamschutz' LIMIT 1");
     $mysqli->query("UPDATE ".$mysql_tables['settings']." SET SET `sortid` = '5' WHERE `modul` = '01acp' AND `idname` = 'acp_captcha4login' LIMIT 1");
 
+    // Spalte 'orgname' von 50 auf 255 chars vergrößern
+	$mysqli->query("ALTER TABLE ".$mysql_tables['files']." CHANGE `orgname`  `orgname` VARCHAR( 255 ) NULL DEFAULT NULL");
+
 	// Versionsnummer aktualisieren
 	$mysqli->query("UPDATE ".$mysql_tables['settings']." SET standardwert = '1.3.1', wert = '1.3.1' WHERE idname = 'acpversion' LIMIT 1");
 	}
