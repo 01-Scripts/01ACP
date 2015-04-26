@@ -100,23 +100,35 @@ return $return;
 
 
 // Link für Administrationsbereich mit einer beliebigen Kombination an $_GET-Parametern erstellen
-/* @param    string      $ziel      Ziel-Dateiname
-   @param    string      $parameter Namen der $_GET-Variablen, die angehängt werden sollen
-   @param    string      $add       Weitere, manuell definierte Parameter, die angehängt werden sollen
+/* @param    string      $filename      Ziel-Dateiname
+   @param    string      $parameter     Array mit Key => Value-Paaren der zu verwendenden Parameter. Wenn Null Übernahme von $_SERVER['QUERY_STRING']
+   @param    string      $add_replace   Array mit Key => Value-Paaren die die Werte von $parameter ggf. überschreiben oder hinzugefügt werden
+   @param    string      $seperator     Der zu verwendende Seperator. Default: &amp;
 
    @return  string link
 */
-function BuildLink401ACP($ziel,$parameter,$add=""){
-global $_GET;
+function BuildURL($filename, $parameter = NULL, $add_replace = array(), $seperator = NULL){
+    if($parameter == NULL)
+        parse_str($_SERVER['QUERY_STRING'],$parameter);
 
-    $pstring = "";
-    $params = explode(",", $parameter);
-    foreach ($params as $param){
-        $pstring .= "&amp;".$param."=".$_GET[$param];
-    }
+    if(!is_array($add_replace))
+        $add_replace = array();
 
-    return parse_cleanerlinks(addParameter2Link(addParameter2Link($ziel,$pstring),$add));
+    if(strpos($filename, "?") !== FALSE){
+        parse_str(parse_url(str_replace("&amp;","&",$filename), PHP_URL_QUERY),$additionalParameters);
+        $filename = parse_url($filename, PHP_URL_PATH);
+    }else
+        $additionalParameters = array();
 
+    // Elemente aus den Default-Parametern ersetzen oder weitere hinzufügen:
+    $parameter = array_replace($parameter, $additionalParameters, $add_replace);
+
+    $parameter = array_filter($parameter);  //leere Elemente entfernen
+
+    if(!$seperator)
+        $seperator = "&amp;";
+    
+    return addParameter2Link($filename,http_build_query($parameter, NULL, $seperator));
 }
 
 
