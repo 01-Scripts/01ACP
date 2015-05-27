@@ -372,7 +372,7 @@ function create_ModulForm($ziel,$class,$restricted=FALSE){
 $return  = "<form action=\"".$ziel."\" method=\"get\">\n";
 $return .= "<select name=\"modul\" size=\"1\" class=\"input_select\" onchange=\"location.href='".$ziel."modul='+this.options[this.selectedIndex].value+''\">\n";
 $return .= create_ModulDropDown($restricted);
-$return .= "</select>\n<input type=\"submit\" value=\"Go &raquo;\" class=\"".$class."\" />\n";
+$return .= "</select>\n";
 $return .= "</form>";
 
 return $return;
