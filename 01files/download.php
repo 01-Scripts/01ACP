@@ -47,6 +47,7 @@ if(isset($query)){
 				$mysqli->query("UPDATE ".$mysql_tables['files']." SET downloads = downloads+1 WHERE id = '".$row['id']."' LIMIT 1");
 			
 			$path_parts = pathinfo(basename($row['orgname']));
+			if(!isset($path_parts['extension']) || empty($path_parts['extension'])) $path_parts['extension'] = getEndung($row['name']);
 
 			header("Pragma: public");
 			header("Expires: 0");
