@@ -17,6 +17,14 @@ function check_mail($email){
 }
 
 
+// Clean up strings before inserting into DB
+function CleanStr($string){
+    global $mysqli;
+
+    return $mysqli->escape_string(trim(preg_replace("/[<>\"']/", '',strip_tags($string))));
+}
+
+
 // Seiten-Funktion
 /*&$query			MySQL-Query, der "limitiert" werden soll
   &$sites			Gesamtzahl der vorhandenen Seiten
@@ -390,17 +398,17 @@ RETURN: geparste Dateifelder in entsprechenden Tabellenzellen
 function parse_dynFieldtypes($row,$class,&$count,$jscssclass=""){
 global $userdata;
 
-if($row['exp'] != ""){ $exp = "<br /><span class=\"small\">".nl2br(stripslashes($row['exp']))."</span>"; }else{ $exp = ""; }
+if($row['exp'] != ""){ $exp = "<br /><span class=\"small\">".nl2br($row['exp'])."</span>"; }else{ $exp = ""; }
 
 // Normales Textfeld
 if($row['formename'] == "text"){
-	$inputfield = "<input type=\"text\" name=\"".$row['idname']."\" value=\"".stripslashes($row['wert'])."\" size=\"".$row['formwerte']."\" />";
+	$inputfield = "<input type=\"text\" name=\"".$row['idname']."\" value=\"".$row['wert']."\" size=\"".$row['formwerte']."\" />";
 	}
 	
 // Textarea
 elseif($row['formename'] == "textarea"){
-	@list($nrrows, $nrcols) = explode("|", stripslashes($row['formwerte']),2);
-	$inputfield = "<textarea name=\"".$row['idname']."\" rows=\"".$nrrows."\" cols=\"".$nrcols."\" style=\"font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; font-style: normal;\">".stripslashes($row['wert'])."</textarea>";
+	@list($nrrows, $nrcols) = explode("|", $row['formwerte'],2);
+	$inputfield = "<textarea name=\"".$row['idname']."\" rows=\"".$nrrows."\" cols=\"".$nrcols."\" style=\"font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; font-style: normal;\">".$row['wert']."</textarea>";
 	}
 
 // Funktionsaufruf
@@ -413,36 +421,28 @@ elseif($row['formename'] == "function"){
 elseif(strstr($row['formename'], "|")){
 	$field_array = explode('|', $row['formename']);
 	$werte_array = explode('|', $row['formwerte']);
-	//array_pop($field_array); //Löscht letztes Element des Array
-	//array_pop($werte_array); //Löscht letztes Element des Array
 	
 	// 2 -> Radiobuttons
 	if(count($field_array) == 2){
-		if($werte_array[0] == $row['wert']){
-			$inputfield = "<input type=\"radio\" name=\"".$row['idname']."\" value=\"".$werte_array[0]."\" checked=\"checked\" /> ".stripslashes($field_array[0])."<br />
-						   <input type=\"radio\" name=\"".$row['idname']."\" value=\"".$werte_array[1]."\" /> ".stripslashes($field_array[1])."";
-			}
-		elseif($werte_array[1] == $row['wert']){
-			$inputfield = "<input type=\"radio\" name=\"".$row['idname']."\" value=\"".$werte_array[0]."\" /> ".stripslashes($field_array[0])."<br />
-						   <input type=\"radio\" name=\"".$row['idname']."\" value=\"".$werte_array[1]."\" checked=\"checked\" /> ".stripslashes($field_array[1])."";
-			}
+		$inputfield = "<input type=\"radio\" name=\"".$row['idname']."\" value=\"".$werte_array[0]."\"".check_checkbox($row['wert'],$werte_array[0])." /> ".$field_array[0]."<br />
+					   <input type=\"radio\" name=\"".$row['idname']."\" value=\"".$werte_array[1]."\"".check_checkbox($row['wert'],$werte_array[1])." /> ".$field_array[1]."";
 		}
 	// Auswahlliste mit count($field_array) Elementen
 	elseif(count($field_array) > 2){
+        // Bei der Ausgabe von Berechtigungsfeldern nur Werte <= der eigenen Berechtigung ausgeben
+        if($userdata['level'] == 10 || !isset($userdata[str_replace("01acp_","",$row['idname'])]))
+            $countUntil = count($field_array);
+        else $countUntil = $userdata[str_replace("01acp_","",$row['idname'])]+1;
+
 		$inputfield = "<select name=\"".$row['idname']."\" size=\"1\" class=\"input_select\">\n";
-
-		for($y=0;$y<count($field_array);$y++){
-			if($werte_array[$y] == $row['wert'])
-				$inputfield .= "<option value=\"".$werte_array[$y]."\" selected=\"selected\">".stripslashes($field_array[$y])."</option>\n";
-			else
-				$inputfield .= "<option value=\"".$werte_array[$y]."\">".stripslashes($field_array[$y])."</option>\n";
-
-			}
+		for($y=0;$y<$countUntil;$y++){
+			$inputfield .= "<option value=\"".$werte_array[$y]."\"".check_select($row['wert'],$werte_array[$y]).">".$field_array[$y]."</option>\n";
+		}
 		$inputfield .= "</select>";
 		}
 	}
 
-if($row['input_exp'] != "") $inputfield .= " ".stripslashes(nl2br($row['input_exp']));
+if($row['input_exp'] != "") $inputfield .= " ".nl2br($row['input_exp']);
 
 if($userdata['devmode'] == 1) $returnfname = " <i>".$row['idname']."</i>";
 else $returnfname = "";
@@ -453,14 +453,14 @@ else $display = " style=\"display:none;\"";
 // Ausgabe -> return;
 if(!isset($nrcols) OR $nrcols <= "50"){
 	$return = "\n    <tr class=\"".$jscssclass."\"".$display.">
-<td width=\"60%\" class=\"".$class."\"><b>".stripslashes($row['name'])."</b>".$returnfname.$exp."</td>
+<td width=\"60%\" class=\"".$class."\"><b>".$row['name']."</b>".$returnfname.$exp."</td>
 <td class=\"".$class."\">".$inputfield."</td>
 </tr>";
 	}
 // Breitere Zelle (colspan)
 elseif($nrcols > "50"){
 	$return = "\n    <tr class=\"".$jscssclass."\"".$display.">
-<td colspan=\"2\" class=\"".$class."\" valign=\"top\"><b>".stripslashes($row['name'])."</b>".$returnfname.$exp."</td>
+<td colspan=\"2\" class=\"".$class."\" valign=\"top\"><b>".$row['name']."</b>".$returnfname.$exp."</td>
 </tr>";
 
 	$return .= "\n    <tr class=\"".$jscssclass."\"".$display.">
@@ -1389,12 +1389,13 @@ else
 }
 
 
-// Usernamen oder alle vorhandenen Userdaten holen
+// Usernamen ODER alle vorhandenen Userdaten holen
 /*$uid				Userinformationen für User mit der ID $uid;
   $login			Userinfos für den eingeloggten Benutzer (main.php) TRUE / FALSE
 
-RETURN: Array mit den Userdaten. Name entspricht MySQL-Spaltennamen (ohne ModulPräfix)
-		Es werden nur globale Berechtigungenund die jeweiligen Modul-Berechtigungen geladen
+RETURN: Array mit den Userdaten. Name entspricht MySQL-Spaltennamen (mit/ohne Modul-Präfix)
+		Es werden die globale Berechtigungen, alle Modul-Berechtigungen MIT Modul-Präfix UND
+        die Modul-Berechtigungen des aktuellen Moduls OHNE Präfix geladen.
   */
 function getUserdata($uid,$login=FALSE){
 global $mysqli,$modul,$mysql_tables,$salt;
@@ -1403,12 +1404,13 @@ $list = $mysqli->query("SELECT modul,idname FROM ".$mysql_tables['rights']." WHE
 while($row = $list->fetch_assoc()){
 	$loadrights[] = $row['modul']."_".$row['idname'];
 	$loadrightnames[$row['modul']."_".$row['idname']] = $row['idname'];
-	}
+}
 
 if($login)
-	$list = $mysqli->query("SELECT id,username,mail,userpassword,level,lastlogin,startpage,sperre,".implode(",",$loadrights)." FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($_SESSION['01_idsession_'.sha1($salt)])."' AND sessionhash='".$mysqli->escape_string($_SESSION['01_passsession_'.sha1($salt)])."' AND sessionhash!='' LIMIT 1");
-if(!empty($uid) && $uid > 0 && is_numeric($uid) && $login)
-	$list = $mysqli->query("SELECT id,username,mail,userpassword,level,lastlogin,startpage,sperre,".implode(",",$loadrights)." FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($uid)."' LIMIT 1");
+	$list = $mysqli->query("SELECT * FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($_SESSION['01_idsession_'.sha1($salt)])."' AND sessionhash='".$mysqli->escape_string($_SESSION['01_passsession_'.sha1($salt)])."' AND sessionhash!='' LIMIT 1");
+if(!empty($uid) && $uid > 0 && is_numeric($uid))
+	$list = $mysqli->query("SELECT * FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($uid)."' LIMIT 1");
+
 $fieldmenge = $list->field_count;
 while($row = $list->fetch_assoc()){
 
@@ -1417,15 +1419,17 @@ while($row = $list->fetch_assoc()){
 			$finfo = $list->fetch_field_direct($i);
 			if(isset($loadrightnames[$finfo->name]) && !empty($loadrightnames[$finfo->name]))
 				$userdata[$loadrightnames[$finfo->name]] = stripslashes($row[$finfo->name]);
-			else
-				$userdata[$finfo->name] = stripslashes($row[$finfo->name]);
+
+			// Für ein aktive Modul zusätzlich die Berechtigung auch ohne Modul-Präfix in der Userdata-Variable hinterlegen
+            if(strpos($finfo->name, "01acp_") === FALSE)
+                $userdata[$finfo->name] = stripslashes($row[$finfo->name]);
 			}
 		}
 	else{
 		$userdata['id'] = 0;
 		$userdata['sperre'] = 1;
-		}
 	}
+}
 
 if(isset($userdata))
 	return $userdata;

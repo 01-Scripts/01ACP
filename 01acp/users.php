@@ -254,7 +254,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 		else{
 			$list = $mysqli->query("SELECT * FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($_REQUEST['userid'])."' AND id != '0' AND (level < '".$mysqli->escape_string($userdata['level'])."' OR level = '10' AND level = '".$mysqli->escape_string($userdata['level'])."' OR id = '".$mysqli->escape_string($userdata['id'])."') LIMIT 1");
 			if($list->num_rows < 1) $error = 2;
-			}
+		}
 			
 		$title = "Benutzer bearbeiten";
 		$case = "do_edit";
@@ -279,24 +279,29 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 				if(isset($_POST['sperre']) && $_POST['sperre'] != 1 || !isset($_POST['sperre'])) $_POST['sperre'] = 0;
 				
 				// Überprüfen ob E-Mail-Adresse oder Benutzername schon vorhanden ist
-				$list = $mysqli->query("SELECT id FROM ".$mysql_tables['user']." WHERE username='".$mysqli->escape_string($_POST['username'])."'");
+				$list = $mysqli->query("SELECT id FROM ".$mysql_tables['user']." WHERE username='".CleanStr($_POST['username'])."' LIMIT 1");
 				$row_u		= $list->fetch_assoc();
 				$menge_u	= $list->num_rows;
-				$list = $mysqli->query("SELECT id FROM ".$mysql_tables['user']." WHERE mail='".$mysqli->escape_string($_POST['mail'])."'");
+				$list = $mysqli->query("SELECT id FROM ".$mysql_tables['user']." WHERE mail='".$mysqli->escape_string($_POST['mail'])."' LIMIT 1");
 				$row_m		= $list->fetch_assoc();
 				$menge_m	= $list->num_rows;
 				
-				$add2query = "";    
+				$add2query = "";
+				// Level can only be chaned for other users
+				if($_POST['userid'] != $userdata['id'])
+					$add2query .= "level='".$mysqli->escape_string(intval($_POST['level']))."', ";
+				// Only changed username if it is unique
 				if($menge_u < 1)
-				    $add2query .= "username='".$mysqli->escape_string(trim($_POST['username']))."', ";
+				    $add2query .= "username='".CleanStr($_POST['username'])."', ";
 				elseif($row_u['id'] != $_POST['userid'])
 					echo "<p class=\"meldung_error\">Der <b>Benutzername</b> wurde nicht ge&auml;ndert, da bereits ein Benutzerkonto mit diesem Namen existiert.</p>";
+				// Only changed mail if it is unique
 				if($menge_m < 1)
 				    $add2query .= "mail='".$mysqli->escape_string($_POST['mail'])."', ";
 				elseif($row_m['id'] != $_POST['userid'])
 					echo "<p class=\"meldung_error\">Die <b>E-Mail-Adresse</b> wurde nicht ge&auml;ndert, da bereits ein Benutzerkonto mit dieser Adresse existiert.</p>";
 				
-				$mysqli->query("UPDATE ".$mysql_tables['user']." SET ".$add2query."level='".$mysqli->escape_string($_POST['level'])."', sperre='".$mysqli->escape_string($_POST['sperre'])."' WHERE id='".$mysqli->escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
+				$mysqli->query("UPDATE ".$mysql_tables['user']." SET ".$add2query."sperre='".$mysqli->escape_string($_POST['sperre'])."' WHERE id='".$mysqli->escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
 
 				// Passwort ändern?
 				if(isset($_POST['changepw']) && $_POST['changepw'] == 1){
@@ -307,7 +312,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 						
 						$mysqli->query("UPDATE ".$mysql_tables['user']." SET userpassword='".pwhashing2($_POST['password'], $_POST['userid'])."', cookiehash='' WHERE id='".$mysqli->escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
 						$pwerror = false;
-						}
+					}
 					elseif(isset($_POST['pwwahl']) && $_POST['pwwahl'] == "random" ||
 						isset($_POST['pwwahl']) && $_POST['pwwahl'] == "eigen" && empty($_POST['password'])){
 					
@@ -319,27 +324,41 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 
 				        $header = "From:".$settings['email_absender']."<".$settings['email_absender'].">\n";
 				        $email_betreff = $settings['sitename']." - Neues Passwort für Administrationsbereich";
-				        $emailbody = "Mit dieser E-Mail erhalten Sie ein neues Passwort für den Adminbereich\n\nName: ".$_POST['username']."\nE-Mail-Adresse: ".$_POST['mail']."\nNeues Passwort: ".$newpass."\n\n---\nWebmailer";
+				        $emailbody = "Mit dieser E-Mail erhalten Sie ein neues Passwort für den Adminbereich\n\nName: ".CleanStr($_POST['username'])."\nE-Mail-Adresse: ".$_POST['mail']."\nNeues Passwort: ".$newpass."\n\n---\nWebmailer";
 						$emailbody = preg_replace( "/(content-type:|bcc:|cc:|to:|from:)/im", "",$emailbody);
 
 						$empf = preg_replace( "/[^a-z0-9 !?:;,.\/_\-=+@#$&\*\(\)]/im", "",$_POST['mail']);
 						$empf = preg_replace( "/(content-type:|bcc:|cc:|to:|from:)/im", "",$empf);
 				        mail($empf,$email_betreff,$emailbody,$header);
 				        $pwerror = false;
-						}
 					}
+				}
 
-				// Alle Datensätze in DB durchgehen und neue Formularwerte ggf. speichern
-				$query = "SELECT id,modul,idname,formename FROM ".$mysql_tables['rights']." WHERE is_cat='0' AND hide='0'";
-				$list = $mysqli->query($query);
 				$savequery = "";
-				while($row_save = $list->fetch_assoc()){
-					if($row_save['formename'] == "function" && isset($_POST[$row_save['modul']."_".$row_save['idname']]))
-						$savequery .= $row_save['modul']."_".$row_save['idname']."='".mysql_real_escape_string(call_RightSettingsFunction_Write($row_save['modul'],$row_save['idname'],$_POST[$row_save['modul']."_".$row_save['idname']]))."', ";
-					elseif(isset($_POST[$row_save['modul']."_".$row_save['idname']]))
-						$savequery .= $row_save['modul']."_".$row_save['idname']."='".$mysqli->escape_string($_POST[$row_save['modul']."_".$row_save['idname']])."', ";
-					}
+				// Für Benutzer mit Level < 10 nur Einstellungen speichern auf die der User auch Zugriff hat. Function-Felder werden nicht gespeichert
+				if($_POST['userid'] != $userdata['id'] && $userdata['level'] < 10){
+					$query = "SELECT id,modul,idname,formename FROM ".$mysql_tables['rights']." WHERE formename != 'function' AND is_cat='0' AND hide='0'";
+					$list = $mysqli->query($query);
+					while($row_save = $list->fetch_assoc()){
+						// Nur Einstellungen mit Berechtigungen des Users speichern
+						if(!isset($userdata[str_replace("01acp_","",$row_save['modul']."_".$row_save['idname'])]) || $userdata[str_replace("01acp_","",$row_save['modul']."_".$row_save['idname'])] == 0) continue;
 
+						if(isset($_POST[$row_save['modul']."_".$row_save['idname']]) && $_POST[$row_save['modul']."_".$row_save['idname']] <= $userdata[str_replace("01acp_","",$row_save['modul']."_".$row_save['idname'])])
+							$savequery .= $row_save['modul']."_".$row_save['idname']."='".$mysqli->escape_string($_POST[$row_save['modul']."_".$row_save['idname']])."', ";
+					}
+				}
+				// Für Administratoren alle Felder speichern
+				elseif($userdata['level'] == 10){
+					$query = "SELECT id,modul,idname,formename FROM ".$mysql_tables['rights']." WHERE is_cat='0' AND hide='0'";
+					$list = $mysqli->query($query);
+					while($row_save = $list->fetch_assoc()){
+						if($row_save['formename'] == "function" && isset($_POST[$row_save['modul']."_".$row_save['idname']]))
+							$savequery .= $row_save['modul']."_".$row_save['idname']."='".mysql_real_escape_string(call_RightSettingsFunction_Write($row_save['modul'],$row_save['idname'],$_POST[$row_save['modul']."_".$row_save['idname']]))."', ";
+						elseif(isset($_POST[$row_save['modul']."_".$row_save['idname']]))
+							$savequery .= $row_save['modul']."_".$row_save['idname']."='".$mysqli->escape_string($_POST[$row_save['modul']."_".$row_save['idname']])."', ";
+					}
+				}
+				
 				if(isset($savequery) && !empty($savequery))
 					$mysqli->query("UPDATE ".$mysql_tables['user']." SET ".substr($savequery,0,strlen($savequery)-2)." WHERE id='".$mysqli->escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
 				
@@ -651,16 +670,13 @@ isset($_REQUEST['action']) && $_REQUEST['action'] == "profil" && $userdata['prof
 	if($error == 0){
 		//Normale weitere Programmausführung
 		
+		if($userdata['level'] < 10)
+			echo "<p class=\"meldung_hinweis\">Sie k&ouml;nnen nur Einstellungen vornehmen f&uuml;r die Sie selbst &uuml;ber die entsprechenden Berechtigungen verf&uuml;gen.</p>";
+
 		echo "<table border=\"0\" align=\"center\" width=\"100%\" cellpadding=\"3\" cellspacing=\"5\" class=\"rundrahmen\">";
 		
 		// Datensatz aus Datenbank holen und "besondere" Felder (Name, Passw etc.) ausgeben
 		while($datarow = $list->fetch_assoc()){
-			// Bearbeitungsrechte einschränken, wenn Userlevel < 10 ist und sich der User selber bearbeitet
-			if($datarow['id'] == $userdata['id'] && $userdata['level'] < 10)
-				$restricted = true;
-			else
-				$restricted = false;		
-		
 			// WIRD AUF PROFIL & USER-BEARBEITEN-SEITE ANGEZEIGT
 			echo "<tr>
 				<td colspan=\"2\" class=\"tra\"><h3>Stammdaten</h3></td>
@@ -709,8 +725,7 @@ isset($_REQUEST['action']) && $_REQUEST['action'] == "profil" && $userdata['prof
 				</tr>";
 				
 				// Benutzer sperren / entsperren
-				if($userdata['id'] != $datarow['id']){
-					$nosperre = "";
+				if($userdata['id'] != $datarow['id'] && $datarow['level'] <= $userdata['level']){ "";
 					if($datarow['sperre'] == 1){
 						$s_text = "Benutzer ist gesperrt";
 						$s_color = "tr_red";
@@ -727,10 +742,10 @@ isset($_REQUEST['action']) && $_REQUEST['action'] == "profil" && $userdata['prof
 							<input type=\"checkbox\" name=\"sperre\" value=\"1\"".$s_checked." /> Benutzer sperren
 						</td>
 					</tr>";
-					}else $nosperre = "<input type=\"hidden\" name=\"sperre\" value=\"0\" />";
+				}
 				
 				// Zugriff eingeschänkt?
-				if(!$restricted){
+				if($datarow['id'] != $userdata['id'] || $userdata['level'] == 10){
 					$tempmodarray = array("01acp");
 					$tempmodarray = array_merge($tempmodarray,$inst_module);
 
@@ -738,9 +753,8 @@ isset($_REQUEST['action']) && $_REQUEST['action'] == "profil" && $userdata['prof
 						$cats_rights = getSettingCats($modul_akt,$mysql_tables['rights']);
 						
 						// Berechtigungen für die einzelnen Kategorien vorhanden?
-						if(isset($cats_rights) && !empty($cats_rights)){
+						if(isset($cats_rights) && !empty($cats_rights) && ($userdata['level'] == 10 || ($userdata[$modul_akt] == 1 || $modul_akt == "01acp"))){
 
-							$x = 0;
 							foreach($cats_rights as $catvalue){
 								if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
 								if($modul_akt != "01acp") $echomodulname = $module[$modul_akt]['instname']." &raquo; ";
@@ -748,16 +762,19 @@ isset($_REQUEST['action']) && $_REQUEST['action'] == "profil" && $userdata['prof
 							
 								if($catvalue['modul'] != "01acp")
 									echo "<tr>
-								<td colspan=\"2\" class=\"".$class."\"><h3><a href=\"javascript:moo_hide_unhide_tr('".$catvalue['catid'].$catvalue['modul']."');\" title=\"Berechtigungen einblenden\"><img src=\"images/icons/icon_show.gif\" alt=\"Icon: Auge\" title=\"Berechtigungen einblenden\" style=\"margin-right:8px;\" />".$echomodulname.$catvalue['name']."</a></h3></td>
+								<td colspan=\"2\" class=\"".$class."\"><h3><a href=\"javascript:moo_hide_unhide_tr('".$catvalue['catid'].$catvalue['modul']."');\" title=\"Berechtigungen einblenden\">".$echomodulname.$catvalue['name']."</a></h3></td>
 								</tr>";
 								else
 									echo "<tr>
 								<td colspan=\"2\" class=\"".$class."\"><h3>".$echomodulname.$catvalue['name']."</h3></td>
 								</tr>";
-							
+
 								$query = "SELECT * FROM ".$mysql_tables['rights']." WHERE modul='".$mysqli->escape_string($modul_akt)."' AND is_cat='0' AND catid='".$catvalue['catid']."' AND hide='0' ORDER BY sortid";
 								$list = $mysqli->query($query);
 								while($row = $list->fetch_assoc()){
+									// Nur Einstellungen mit Berechtigungen des Users anzeigen und function-Felder prinzipiell überspringen
+									if($userdata['level'] < 10 && ($userdata[str_replace("01acp_","",$modul_akt.'_'.$row['idname'])] == 0 || $row['formename'] == "function")) continue;
+
 						            if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
 									
 									$row['idname'] = $modul_akt."_".$row['idname'];
@@ -765,19 +782,17 @@ isset($_REQUEST['action']) && $_REQUEST['action'] == "profil" && $userdata['prof
 									
 									// MySQL-Daten verarbeiten
 									echo parse_dynFieldtypes($row,$class,$count,$catvalue['catid'].$catvalue['modul']);
-						            } 
-								
-								$x++;
-								}
+						        }
 							}
 						}
 					}
+				}
 				else{
 					if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
 					echo "<tr>
 			        <td class=\"".$class."\" colspan=\"2\"><b class=\"red\">Das eigene Benutzerkonto kann nur eingesch&auml;nkt bearbeitet werden!</b></td>
 			    </tr>";
-					}
+				}
 					
 				if($count == 1){ $class = "tra"; $count--; }else{ $class = "trb"; $count++; }
 				echo "<tr>
@@ -785,11 +800,10 @@ isset($_REQUEST['action']) && $_REQUEST['action'] == "profil" && $userdata['prof
 		        <td class=\"".$class."\" align=\"right\">
 					<input type=\"hidden\" name=\"action\" value=\"do_edit\" />
 					<input type=\"hidden\" name=\"userid\" value=\"".$_REQUEST['userid']."\" />
-					".$nosperre."
 					<input type=\"submit\" value=\"Benutzer bearbeiten &raquo;\" class=\"input\" />
 				</td>
 		    </tr>";
-				}
+			}
 			else{
 // CASE: PROFIL
 				$modul_temp = $modul;
@@ -836,12 +850,12 @@ isset($_REQUEST['action']) && $_REQUEST['action'] == "profil" && $userdata['prof
 					<input type=\"submit\" value=\"Speichern &raquo;\" class=\"input\" />
 				</td>
 		    </tr>";
-				}
 			}
+		}
 		
 		echo "</table>";
 		echo "</form><br />";
-		}
+	}
 	elseif($error == 1)
 		echo "<p class=\"meldung_error\">Fehler: Die &uuml;bergebene Benutzer-ID ist leider fehlerhaft &amp; in dieser
 			Form nicht g&uuml;ltig. Bitte gehen Sie <a href=\"javascript:history.back();\">zur&uuml;ck</a>.</p>";
@@ -852,8 +866,8 @@ isset($_REQUEST['action']) && $_REQUEST['action'] == "profil" && $userdata['prof
 	else
 		echo "<p class=\"meldung_error\">Es trat ein unvorhergesehener Fehler auf. Bitte gehen Sie <a href=\"javascript:history.back();\">zur&uuml;ck</a>.</p>";
 
-	}elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "edit_user" || isset($_REQUEST['action']) && $_REQUEST['action'] == "profil")
-		$flag_loginerror = true;
+}elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == "edit_user" || isset($_REQUEST['action']) && $_REQUEST['action'] == "profil")
+	$flag_loginerror = true;
 
 }else $flag_loginerror = true;
 include("system/foot.php");
