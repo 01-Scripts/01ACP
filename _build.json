@@ -33,7 +33,11 @@
     "update_liesmich.txt"
   ],
   "Files4Update": [
+    "01acp/system/includes/class.phpmailer.php",
+    "01acp/system/includes/class.pop3.php",
+    "01acp/system/includes/class.smtp.php",
     "01acp/system/includes/credits.html",
+    "01acp/system/includes/PHPMailerAutoload.php",
     "01acp/system/includes/recaptchalib.php",
     "01acp/system/default.css",
     "01acp/system/functions.php",
