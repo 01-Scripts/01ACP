@@ -34,6 +34,16 @@ if(isset($_POST['update']) && $_POST['update'] == "130_zu_131"){
 
 	// Versionsnummer aktualisieren
 	$mysqli->query("UPDATE ".$mysql_tables['settings']." SET standardwert = '1.3.1', wert = '1.3.1' WHERE idname = 'acpversion' LIMIT 1");
+?>
+<div class="meldung_ok">
+	<b>Herzlichen Gl&uuml;ckwunsch!</b><br />
+	Das Update auf <b>Version 1.3.1 des 01ACP</b> wurde erfolgreich beendet.<br />
+	<br />
+	Neben weiteren Verbesserungen steht als Spamschutz nun auch <a href="https://www.google.com/recaptcha/admin" target="_blank">reCAPTCHA</a>
+	von Google zur Verfügung.<br />
+	Die Konfiguration kann schnell und einfach in den <a href="settings.php">Einstellungen</a> erfolgen.
+</div>
+<?PHP
 	}
 elseif(isset($_POST['update']) && $_POST['update'] == "121_zu_130"){
 	

@@ -1,12 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2014 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2015 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Benutzerverwaltung (Benutzer hinzufügen und bearbeiten; Eigenes Profil)
-	#fv.130#
+	#fv.131#
 */
 
 $menuecat = "01acp_users";
