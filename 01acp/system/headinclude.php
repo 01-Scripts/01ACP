@@ -71,11 +71,6 @@ else
 if(!isset($flag_nofunctions)) $flag_nofunctions = FALSE;
 $forbidden_chars = array("ä","Ä","ö","Ö","ü","Ü","ß","-",".",";",",","_","/","\$","(",")","=","?","´","`","#","+","*","'","\\"," ");
 
-// SMTP-Verbindungsdaten
-$smtp['host']		= "";
-$smtp['username'] 	= "";
-$smtp['password'] 	= "";
-
 define('_01ACP_VERSION_NR', '1.3.0');         // Versionsnummer des 01ACP
 define('ACPSTART_RSSFEED_URL', 'http://www.01-scripts.de/01scripts/01module/01article/01article.php?rss=show_rssfeed&modul=01article&catid=15');				// URL zum RSS-Feed, der auf der Startseite des ACP angezeigt werden soll
 define('RSS_CACHEFILE', $admindir.'cache/01rss.xml');
