@@ -250,10 +250,16 @@ INSERT INTO `01prefix_settings` (`modul`, `is_cat`, `catid`, `sortid`, `idname`,
 ('01acp', 0, 4, 1, 'rss_aktiv', 'RSS-Feed aktivieren?', 'Hat Auswirkungen auf die RSS-Feeds <b>aller</b> installierter Module!', 'Ja|Nein', '1|0', '', '1', '1', 0, 0),
 ('01acp', 0, 4, 2, 'rss_sprache', 'Sprache', 'In welcher Sprache stellen Sie Ihre Informationen bereit? Eine &Uuml;bersicht der Sprachk&uuml;rzel finden Sie <a href=\\"http://de.selfhtml.org/diverses/sprachenkuerzel.htm\\" target=\\"_blank\\">hier</a>.', 'text', '10', '', 'de-de', 'de-de', 0, 0),
 ('01acp', 0, 4, 3, 'rss_copyright', 'Copyright-Informationen', '', 'textarea', '5|50', '', 'Die Inhalte werden unter einer Creative-Commons-Lizenz veröffentlicht, die <a href=\\"http://creativecommons.org/licenses/by-nc-sa/3.0/de/\\" target=\\"_blank\\">hier</a> einsehbar ist.', 'Die Inhalte werden unter einer Creative-Commons-Lizenz veröffentlicht, die unter folgender URL einsehbar ist:\r\nhttp://creativecommons.org/licenses/by-nc-sa/3.0/de/', 0, 0),
-('01acp', 1, 5, 5, 'webservices','Webservices', NULL , NULL , NULL , NULL , NULL , NULL ,0,0),
-('01acp', 0, 5, 1, 'ReCaptcha_PubKey','reCAPTCHA Websiteschl&uuml;ssel','reCAPTCHA API-Key von <a href=\"https://www.google.com/recaptcha/admin\" target=\"_blank\">https://www.google.com/recaptcha/admin</a>','text','50','','','',0,0),
-('01acp', 0, 5, 2, 'ReCaptcha_PrivKey','reCAPTCHA Geheimer Schl&uuml;ssel','','text','50','','','',0,0),
-('01acp', 0, 5, 3, 'Disqus_Username','Disqus Username','Registrierung bei <a href=\"https://disqus.com/admin/signup/\" target=\"_blank\">Disqus.com</a> n&ouml;tig.','text','50','','','',0,0);
+('01acp', 1, 5, 5, 'email_settings', 'E-Mail-Versand', NULL , NULL , NULL , NULL , NULL , NULL ,0,0),
+('01acp', 0, 5, 1, 'smtp_enable', 'E-Mail-Versand per SMTP <i>(Beta)</i>','Ausgehende E-Mails werden wenn m&ouml;glich &uuml;ber das nachfolgend konfigurierte SMTP-Konto versendet.','Ja|Nein','1|0','','0','0',0,0),
+('01acp', 0, 5, 2, 'smtp_host', 'SMTP-Server','','text','50','','','',0,0),
+('01acp', 0, 5, 3, 'smtp_port', 'SMTP-Server TCP Port','','text','50','','587','587',0,0),
+('01acp', 0, 5, 4, 'smtp_username', 'SMTP Username','','text','50','','','',0,0),
+('01acp', 0, 5, 5, 'smtp_password', 'SMTP Password','Das SMTP Passwort wird aus technischen Gr&uuml;nden unverschl&uuml;sselt gespeichert.','text','50','','','',0,0),
+('01acp', 1, 6, 6, 'webservices','Webservices', NULL , NULL , NULL , NULL , NULL , NULL ,0,0),
+('01acp', 0, 6, 1, 'ReCaptcha_PubKey','reCAPTCHA Websiteschl&uuml;ssel','reCAPTCHA API-Key von <a href=\"https://www.google.com/recaptcha/admin\" target=\"_blank\">https://www.google.com/recaptcha/admin</a>','text','50','','','',0,0),
+('01acp', 0, 6, 2, 'ReCaptcha_PrivKey','reCAPTCHA Geheimer Schl&uuml;ssel','','text','50','','','',0,0),
+('01acp', 0, 6, 3, 'Disqus_Username','Disqus Username','Registrierung bei <a href=\"https://disqus.com/admin/signup/\" target=\"_blank\">Disqus.com</a> n&ouml;tig.','text','50','','','',0,0);
 
 -- --------------------------------------------------------
 
