@@ -15,7 +15,7 @@ $sitetitle = "Anmelden";
 $filename = $_SERVER['PHP_SELF'];
 $message = "";
 $menge = 0;
-$error = 0;
+$error = 1;
 $des_cookie = "";
 
 if(!isset($_POST['username'])) $_POST['username'] = "";
@@ -81,9 +81,10 @@ if(isset($_POST['send']) && $_POST['send'] == 1){
 		while($row = $list->fetch_assoc()){
 			// Check password for this user:
 			if(pwhashing2($_POST['password'],$row['id']) != $row['userpassword']){
-				$error = 1;
 				break;
 			}
+			else
+				$error = 0;
 
 			// Session erstellen/abrufen / Lastlogin speichern
 			if(empty($row['sessionhash'])){
