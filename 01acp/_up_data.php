@@ -49,9 +49,15 @@ if(isset($_POST['update']) && $_POST['update'] == "130_zu_131"){
 	<b>Herzlichen Gl&uuml;ckwunsch!</b><br />
 	Das Update auf <b>Version 1.3.1 des 01ACP</b> wurde erfolgreich beendet.<br />
 	<br />
-	Neben weiteren Verbesserungen steht als Spamschutz nun auch <a href="https://www.google.com/recaptcha/admin" target="_blank">reCAPTCHA</a>
-	von Google zur Verfügung.<br />
-	Die Konfiguration kann schnell und einfach in den <a href="settings.php">Einstellungen</a> erfolgen.
+
+	<b>Mit dem Update wurde unter anderem folgendes verbessert:</b>
+	<ul>
+		<li>Unterst&uuml;tzung von <a href="https://www.google.com/recaptcha/admin" target="_blank">reCAPTCHA</a> als Spamschutz-Alternative</li>
+		<li><a href="https://disqus.com/" target="_blank">Disqus</a> als Kommentarsystem f&uuml;r das 01-Artikelsystem unterst&uuml;tzt</li>
+		<li>Vorbereitende Integration von <a href="https://github.com/PHPMailer/PHPMailer" target="_blank">PHPMailer</a></li>
+		<li>Datenverarbeitung in Userverwaltung verbessert</li>
+		<li>Diverse Fehler behoben. Siehe <a href="http://www.01-scripts.de/down/01acp_changelog.txt" target="_blank">changelog.txt</a></li>
+	</ul>
 </div>
 <?PHP
 	}
