@@ -13,7 +13,7 @@ if(isset($_POST['update']) && $_POST['update'] == "130_zu_131"){
 				('01acp',1,6,6,'webservices','Webservices', NULL , NULL , NULL , NULL , NULL , NULL ,0,0),
             	('01acp',0,6,1,'ReCaptcha_PubKey','reCAPTCHA Websiteschl&uuml;ssel','reCAPTCHA API-Key von <a href=\"https://www.google.com/recaptcha/admin\" target=\"_blank\">https://www.google.com/recaptcha/admin</a>','text','50','','','',0,0),
             	('01acp',0,6,2,'ReCaptcha_PrivKey','reCAPTCHA Geheimer Schl&uuml;ssel','','text','50','','','',0,0),
-            	('01acp',0,6,3,'Disqus_Username','Disqus Username','Registrierung bei <a href=\"https://disqus.com/admin/signup/\" target=\"_blank\">Disqus.com</a> n&ouml;tig.','text','50','','','01Scripts',0,0);";
+            	('01acp',0,6,3,'Disqus_Username','Disqus Username','Registrierung bei <a href=\"https://disqus.com/admin/signup/\" target=\"_blank\">Disqus.com</a> n&ouml;tig.','text','50','','','',0,0);";
 	$result = $mysqli->query($sql_insert) OR die($mysqli->error);
 
 	// Spalte 'input_exp' jew. von 50 auf 255 chars vergrößern
