@@ -28,6 +28,7 @@
     "01files/.gitignore",
     "01module/.gitignore",
     "01pics/.gitignore",
+    ".gitattributes",
     "readme.textile",
     "_build.json",
     "update_liesmich.txt"
