@@ -5,7 +5,63 @@
 */
 if(!$update_ok) exit;
 
-if(isset($_POST['update']) && $_POST['update'] == "121_zu_130"){
+if(isset($_POST['update']) && $_POST['update'] == "130_zu_131"){
+
+	// 01acp #209 - reCAPTCHA hinzufügen (dazu: Neue Settings-Kategorie 'Webservice')
+	// 01acp #720 - Disqus-Support hinzufügen
+	$sql_insert = "INSERT INTO ".$mysql_tables['settings']." (modul,is_cat,catid,sortid,idname,name,exp,formename,formwerte,input_exp,standardwert,wert,nodelete,hide) VALUES
+				('01acp',1,6,6,'webservices','Webservices', NULL , NULL , NULL , NULL , NULL , NULL ,0,0),
+            	('01acp',0,6,1,'ReCaptcha_PubKey','reCAPTCHA Websiteschl&uuml;ssel','reCAPTCHA API-Key von <a href=\"https://www.google.com/recaptcha/admin\" target=\"_blank\">https://www.google.com/recaptcha/admin</a>','text','50','','','',0,0),
+            	('01acp',0,6,2,'ReCaptcha_PrivKey','reCAPTCHA Geheimer Schl&uuml;ssel','','text','50','','','',0,0),
+            	('01acp',0,6,3,'Disqus_Username','Disqus Shortname','Registrierung bei <a href=\"https://disqus.com/admin/signup/\" target=\"_blank\">Disqus.com</a> n&ouml;tig.','text','50','','','',0,0);";
+	$result = $mysqli->query($sql_insert) OR die($mysqli->error);
+
+	// Spalte 'input_exp' jew. von 50 auf 255 chars vergrößern
+	$mysqli->query("ALTER TABLE ".$mysql_tables['settings']." CHANGE `input_exp`  `input_exp` VARCHAR( 255 ) NULL DEFAULT NULL");
+	$mysqli->query("ALTER TABLE ".$mysql_tables['rights']." CHANGE `input_exp`  `input_exp` VARCHAR( 255 ) NULL DEFAULT NULL");
+
+	$mysqli->query("UPDATE ".$mysql_tables['settings']." SET 
+    `catid` = '1', 
+    `exp` = 'Zur Nutzung von reCAPTCHA m&uuml;ssen Daten im Abschnitt <i>Webservices</i> hinterlegt werden.', 
+    `formename` =  '01ACP Captcha-Bild|reCAPTCHA|kein Spamschutz', 
+    `formwerte` =  '1|2|0',
+    `input_exp` =  '<a href=\"javascript:popup(\'captcha_test\',\'\',\'\',\'\',500,550);\">Testen</a>'
+    WHERE `modul` = '01acp' AND `idname` = 'spamschutz' LIMIT 1");
+    $mysqli->query("UPDATE ".$mysql_tables['settings']." SET `sortid` = '5' WHERE `modul` = '01acp' AND `idname` = 'acp_captcha4login' LIMIT 1");
+
+    // Spalte 'orgname' von 50 auf 255 chars vergrößern
+	$mysqli->query("ALTER TABLE ".$mysql_tables['files']." CHANGE `orgname`  `orgname` VARCHAR( 255 ) NULL DEFAULT NULL");
+
+	// #723 Add PHPMailer library and support
+	$sql_insert = "INSERT INTO ".$mysql_tables['settings']." (modul,is_cat,catid,sortid,idname,name,exp,formename,formwerte,input_exp,standardwert,wert,nodelete,hide) VALUES
+            ('01acp',1,5,5,'email_settings','E-Mail-Versand', NULL , NULL , NULL , NULL , NULL , NULL ,0,0),
+            ('01acp',0,5,1,'smtp_enable','E-Mail-Versand per SMTP <i>(Beta)</i>','Ausgehende E-Mails werden wenn m&ouml;glich &uuml;ber das nachfolgend konfigurierte SMTP-Konto versendet.','Ja|Nein','1|0','','0','0',0,0),
+            ('01acp',0,5,2,'smtp_host','SMTP-Server','','text','50','','','',0,0),
+            ('01acp',0,5,3,'smtp_port','SMTP-Server TCP Port','','text','50','','587','587',0,0),
+            ('01acp',0,5,4,'smtp_username','SMTP Username','','text','50','','','',0,0),
+            ('01acp',0,5,5,'smtp_password','SMTP Password','Das SMTP Passwort wird aus technischen Gr&uuml;nden unverschl&uuml;sselt gespeichert.','text','50','','','',0,0);";
+	$result = $mysqli->query($sql_insert) OR die($mysqli->error);
+
+	// Versionsnummer aktualisieren
+	$mysqli->query("UPDATE ".$mysql_tables['settings']." SET standardwert = '1.3.1', wert = '1.3.1' WHERE idname = 'acpversion' LIMIT 1");
+?>
+<div class="meldung_ok">
+	<b>Herzlichen Gl&uuml;ckwunsch!</b><br />
+	Das Update auf <b>Version 1.3.1 des 01ACP</b> wurde erfolgreich beendet.<br />
+	<br />
+
+	<b>Mit dem Update wurde unter anderem folgendes verbessert:</b>
+	<ul>
+		<li>Unterst&uuml;tzung von <a href="https://www.google.com/recaptcha/admin" target="_blank">reCAPTCHA</a> als Spamschutz-Alternative (<a href="http://www.01-scripts.de/forum/index.php?page=Thread&amp;threadID=1846" target="_blank">Anleitung</a>)</li>
+		<li><a href="https://disqus.com/" target="_blank">Disqus</a> als Kommentarsystem f&uuml;r das 01-Artikelsystem unterst&uuml;tzt (<a href="http://www.01-scripts.de/forum/index.php?page=Thread&amp;threadID=1847" target="_blank">Anleitung</a>)</li>
+		<li>Vorbereitende Integration von <a href="https://github.com/PHPMailer/PHPMailer" target="_blank">PHPMailer</a></li>
+		<li>Datenverarbeitung in Userverwaltung verbessert</li>
+		<li>Diverse Fehler behoben. Siehe <a href="http://www.01-scripts.de/down/01acp_changelog.txt" target="_blank">changelog.txt</a></li>
+	</ul>
+</div>
+<?PHP
+	}
+elseif(isset($_POST['update']) && $_POST['update'] == "121_zu_130"){
 	
 	// #495 Setting 'thumbwidth' wieder einblenden (revert #29)
 	// + Setting-Typ des Feldes 'thumbwidth' auf den neuen Typ 'function' ändern

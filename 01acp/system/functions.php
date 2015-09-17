@@ -1,13 +1,13 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2014 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2015 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
-	Dateiinfo:	Globale PHP-Funktionen
+	Dateiinfo:	Globale PHP-Funktionen für das 01ACP und alle Module
 				Auf Funktionen kann nach dem Include der headinclude.php zugrgriffen werden
-	#fv.130#
+	#fv.131#
 */
 
 // E-Mail-Adresse auf äußerliche Gültigkeit überprüfen
@@ -17,7 +17,14 @@ function check_mail($email){
 }
 
 
-	
+// Clean up strings before inserting into DB
+function CleanStr($string){
+    global $mysqli;
+
+    return $mysqli->escape_string(trim(preg_replace("/[<>\"']/", '',strip_tags($string))));
+}
+
+
 // Seiten-Funktion
 /*&$query			MySQL-Query, der "limitiert" werden soll
   &$sites			Gesamtzahl der vorhandenen Seiten
@@ -100,12 +107,57 @@ return $return;
 }
 
 
+// Link für Administrationsbereich mit einer beliebigen Kombination an $_GET-Parametern erstellen
+/* @param    string      $filename      Ziel-Dateiname
+   @param    string      $parameter     Array mit Key => Value-Paaren der zu verwendenden Parameter. Wenn Null Übernahme von $_SERVER['QUERY_STRING']
+   @param    string      $add_replace   Array mit Key => Value-Paaren die die Werte von $parameter ggf. überschreiben oder hinzugefügt werden
+   @param    string      $seperator     Der zu verwendende Seperator. Default: &amp;
+
+   @return  string link
+*/
+function BuildURL($filename, $parameter = NULL, $add_replace = array(), $seperator = NULL){
+    if($parameter == NULL)
+        parse_str($_SERVER['QUERY_STRING'],$parameter);
+
+    if(!is_array($add_replace))
+        $add_replace = array();
+
+    if(strpos($filename, "?") !== FALSE){
+        parse_str(parse_url(str_replace("&amp;","&",$filename), PHP_URL_QUERY),$additionalParameters);
+        $filename = parse_url($filename, PHP_URL_PATH);
+    }else
+        $additionalParameters = array();
+
+    // Elemente aus den Default-Parametern ersetzen oder weitere hinzufügen:
+    $parameter = array_replace($parameter, $additionalParameters, $add_replace);
+
+    $parameter = array_filter($parameter);  //leere Elemente entfernen
+
+    if(!$seperator)
+        $seperator = "&amp;";
+    
+    return addParameter2Link($filename,http_build_query($parameter, NULL, $seperator));
+}
 
 
+// Generiert hidden input fields um in GET-Formularen bereits vorhandene $_GET-Parameter weiterzugeben
+/* @param    string      $parameter Namen der $_GET-Variablen, die angehängt werden sollen
 
+   @return  string with all needed hidden fields
+*/
+function CreateHiddenGETFields($parameter){
+global $_GET;
 
+    $string = "";
+    $params = explode(",", $parameter);
+    foreach ($params as $param){
+        if(isset($_GET[$param]) && !empty($_GET[$param]))
+            $string .= "<input type=\"hidden\" name=\"".$param."\" value=\"".$_GET[$param]."\" />\n";
+    }
 
+    return $string;
 
+}
 
 
 // Funktion zum Verkleinern der Bilder
@@ -129,7 +181,6 @@ if($bigside > $maxwidth){
     $picheight = $picheight/$k;
     }
 }
-
 
 
 // ACP-Submenü generieren
@@ -175,7 +226,6 @@ return $return;
 }
 
 
-
 // Neues Zufallspasswort generieren
 /*$laenge			Anzahl Zeichen des Passworts*/
 function create_NewPassword($laenge){
@@ -186,10 +236,6 @@ $newpass = substr($passzahl, 0,$laenge);
 
 return $newpass;
 }
-
-
-
-
 
 // Passwort Hash-Funktion
 /*$password				Zu hashendes Passwort*/
@@ -217,7 +263,6 @@ return $password;
 }
 
 
-
 // Einstellungs-Kategorien / Rechte-Kategorien in Array einlesen
 /*$modul			Modulname
   $mysqltab			MySQL-Tabelle
@@ -241,9 +286,6 @@ while($row = $list->fetch_assoc()){
 	}
 return $return;
 }
-
-
-
 
 
 // Installierte Module in Array einlesen
@@ -276,12 +318,6 @@ else
 }
 
 
-
-
-
-
-
-
 // Dropdown-Box aus installierten Modulen generieren (ohne Select-Tag)
 /*$restricted			TRUE/FALSE es werden nur Module angezeigt für die der Benutzer auch Zugriffsrechte hat
 
@@ -305,12 +341,6 @@ foreach($inst_module as $value){
 	
 return $return;
 }
-
-
-
-
-
-
 
 
 // Dropdown-Box mit allen angelegten Benutzern generieren
@@ -339,12 +369,6 @@ return $return;
 }
 
 
-
-
-
-
-
-
 // Komplettes Modul-Change-Formular generieren und ausgeben
 /*$ziel				Zieladresse für Formular
   $class			CSS-Klasse für Submit-Button
@@ -356,16 +380,11 @@ function create_ModulForm($ziel,$class,$restricted=FALSE){
 $return  = "<form action=\"".$ziel."\" method=\"get\">\n";
 $return .= "<select name=\"modul\" size=\"1\" class=\"input_select\" onchange=\"location.href='".$ziel."modul='+this.options[this.selectedIndex].value+''\">\n";
 $return .= create_ModulDropDown($restricted);
-$return .= "</select>\n<input type=\"submit\" value=\"Go &raquo;\" class=\"".$class."\" />\n";
+$return .= "</select>\n";
 $return .= "</form>";
 
 return $return;
 }
-
-
-
-
-
 
 
 // Formularfeldtypen (Settings & Rights-Verwaltung) parsen
@@ -379,17 +398,17 @@ RETURN: geparste Dateifelder in entsprechenden Tabellenzellen
 function parse_dynFieldtypes($row,$class,&$count,$jscssclass=""){
 global $userdata;
 
-if($row['exp'] != ""){ $exp = "<br /><span class=\"small\">".nl2br(stripslashes($row['exp']))."</span>"; }else{ $exp = ""; }
+if($row['exp'] != ""){ $exp = "<br /><span class=\"small\">".nl2br($row['exp'])."</span>"; }else{ $exp = ""; }
 
 // Normales Textfeld
 if($row['formename'] == "text"){
-	$inputfield = "<input type=\"text\" name=\"".$row['idname']."\" value=\"".stripslashes($row['wert'])."\" size=\"".$row['formwerte']."\" />";
+	$inputfield = "<input type=\"text\" name=\"".$row['idname']."\" value=\"".$row['wert']."\" size=\"".$row['formwerte']."\" />";
 	}
 	
 // Textarea
 elseif($row['formename'] == "textarea"){
-	@list($nrrows, $nrcols) = explode("|", stripslashes($row['formwerte']),2);
-	$inputfield = "<textarea name=\"".$row['idname']."\" rows=\"".$nrrows."\" cols=\"".$nrcols."\" style=\"font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; font-style: normal;\">".stripslashes($row['wert'])."</textarea>";
+	@list($nrrows, $nrcols) = explode("|", $row['formwerte'],2);
+	$inputfield = "<textarea name=\"".$row['idname']."\" rows=\"".$nrrows."\" cols=\"".$nrcols."\" style=\"font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; font-style: normal;\">".$row['wert']."</textarea>";
 	}
 
 // Funktionsaufruf
@@ -402,36 +421,28 @@ elseif($row['formename'] == "function"){
 elseif(strstr($row['formename'], "|")){
 	$field_array = explode('|', $row['formename']);
 	$werte_array = explode('|', $row['formwerte']);
-	//array_pop($field_array); //Löscht letztes Element des Array
-	//array_pop($werte_array); //Löscht letztes Element des Array
 	
 	// 2 -> Radiobuttons
 	if(count($field_array) == 2){
-		if($werte_array[0] == $row['wert']){
-			$inputfield = "<input type=\"radio\" name=\"".$row['idname']."\" value=\"".$werte_array[0]."\" checked=\"checked\" /> ".stripslashes($field_array[0])."<br />
-						   <input type=\"radio\" name=\"".$row['idname']."\" value=\"".$werte_array[1]."\" /> ".stripslashes($field_array[1])."";
-			}
-		elseif($werte_array[1] == $row['wert']){
-			$inputfield = "<input type=\"radio\" name=\"".$row['idname']."\" value=\"".$werte_array[0]."\" /> ".stripslashes($field_array[0])."<br />
-						   <input type=\"radio\" name=\"".$row['idname']."\" value=\"".$werte_array[1]."\" checked=\"checked\" /> ".stripslashes($field_array[1])."";
-			}
+		$inputfield = "<input type=\"radio\" name=\"".$row['idname']."\" value=\"".$werte_array[0]."\"".check_checkbox($row['wert'],$werte_array[0])." /> ".$field_array[0]."<br />
+					   <input type=\"radio\" name=\"".$row['idname']."\" value=\"".$werte_array[1]."\"".check_checkbox($row['wert'],$werte_array[1])." /> ".$field_array[1]."";
 		}
 	// Auswahlliste mit count($field_array) Elementen
 	elseif(count($field_array) > 2){
+        // Bei der Ausgabe von Berechtigungsfeldern nur Werte <= der eigenen Berechtigung ausgeben
+        if($userdata['level'] == 10 || !isset($userdata[str_replace("01acp_","",$row['idname'])]))
+            $countUntil = count($field_array);
+        else $countUntil = $userdata[str_replace("01acp_","",$row['idname'])]+1;
+
 		$inputfield = "<select name=\"".$row['idname']."\" size=\"1\" class=\"input_select\">\n";
-
-		for($y=0;$y<count($field_array);$y++){
-			if($werte_array[$y] == $row['wert'])
-				$inputfield .= "<option value=\"".$werte_array[$y]."\" selected=\"selected\">".stripslashes($field_array[$y])."</option>\n";
-			else
-				$inputfield .= "<option value=\"".$werte_array[$y]."\">".stripslashes($field_array[$y])."</option>\n";
-
-			}
+		for($y=0;$y<$countUntil;$y++){
+			$inputfield .= "<option value=\"".$werte_array[$y]."\"".check_select($row['wert'],$werte_array[$y]).">".$field_array[$y]."</option>\n";
+		}
 		$inputfield .= "</select>";
 		}
 	}
 
-if($row['input_exp'] != "") $inputfield .= " ".stripslashes(nl2br($row['input_exp']));
+if($row['input_exp'] != "") $inputfield .= " ".nl2br($row['input_exp']);
 
 if($userdata['devmode'] == 1) $returnfname = " <i>".$row['idname']."</i>";
 else $returnfname = "";
@@ -442,14 +453,14 @@ else $display = " style=\"display:none;\"";
 // Ausgabe -> return;
 if(!isset($nrcols) OR $nrcols <= "50"){
 	$return = "\n    <tr class=\"".$jscssclass."\"".$display.">
-<td width=\"60%\" class=\"".$class."\"><b>".stripslashes($row['name'])."</b>".$returnfname.$exp."</td>
+<td width=\"60%\" class=\"".$class."\"><b>".$row['name']."</b>".$returnfname.$exp."</td>
 <td class=\"".$class."\">".$inputfield."</td>
 </tr>";
 	}
 // Breitere Zelle (colspan)
 elseif($nrcols > "50"){
 	$return = "\n    <tr class=\"".$jscssclass."\"".$display.">
-<td colspan=\"2\" class=\"".$class."\" valign=\"top\"><b>".stripslashes($row['name'])."</b>".$returnfname.$exp."</td>
+<td colspan=\"2\" class=\"".$class."\" valign=\"top\"><b>".$row['name']."</b>".$returnfname.$exp."</td>
 </tr>";
 
 	$return .= "\n    <tr class=\"".$jscssclass."\"".$display.">
@@ -460,9 +471,6 @@ elseif($nrcols > "50"){
 unset($nrcols);
 return $return;
 }
-
-
-
 
 
 // Neuen Dateien oder Bilder hochladen
@@ -599,11 +607,6 @@ function uploadfile($fname,$fsize,$tname,$allowedtype,$modul="01acp",$destname="
 }
 
 
-
-
-
-
-
 // Datei oder Bild löschen
 /*$dir				Verzeichnis in dem sich die zu löschende Datei befindet
   $file				Datei (inkl. Endung), die gelöscht werden soll
@@ -637,12 +640,6 @@ else return FALSE;
 }
 
 
-
-
-
-
-
-
 // Dateiendung einer Datei holen
 /*$filestring		Dateiname inkl. Endung der Datei Form: abc.end
 
@@ -659,12 +656,6 @@ else{
 	return "";
 	}
 }
-
-
-
-
-
-
 
 
 // Dynamisches Bild-Resizing durchführen
@@ -769,14 +760,6 @@ else{
 }
 
 
-
-
-
-
-
-
-
-
 // TinyMCE-JS generieren und Editor laden
 /*$barlook			Vordefinierte Buttonbars/Schaltflächen (biu,small,advanced,none)
   $bar_own			Individuelle Buttons (Nur eine Reihe möglich, Zusätzlich zu $barlook)
@@ -868,11 +851,6 @@ mode : \"textareas\"
 
 return $return;
 }
-
-
-
-
-
 
 
 // Bilder und Dateien aus DB auflisten
@@ -1059,11 +1037,6 @@ return $return;
 }
 
 
-
-
-
-
-
 // Bilder und Dateien aus DB auflisten
 /*$sizeof			Dateigröße in Byte
   $einheit			Gewünschte Zieleinheit (B, KB, MB)
@@ -1084,11 +1057,6 @@ switch($einheit){
   break;
   }
 }
-
-
-
-
-
 
 
 // Bilder und Dateien aus DB auflisten
@@ -1144,11 +1112,6 @@ switch($endung){
   
 return "<img src=\"images/filetypes/".$icon."\" alt=\"Filetype / Icon: ".$endung."\" />";
 }
-
-
-
-
-
 
 
 // Kommentare auflisten (ACP)
@@ -1210,11 +1173,6 @@ $return .= "</form>";
 	
 return $return;
 }
-
-
-
-
-
 
 
 // Kommentare auflisten (ACP)
@@ -1286,11 +1244,6 @@ $return .= "\n</table>\n<br />";
 
 return $return;
 }
-
-
-
-
-
 
 
 // BB-Code-Funktion für Kommentare
@@ -1409,12 +1362,6 @@ return $text;
 }
 
 
-
-
-
-
-
-
 // Userstatistiken holen
 /*$userid			UserID, zu der die Infos geholt werden sollen
 
@@ -1442,17 +1389,13 @@ else
 }
 
 
-
-
-
-
-
-// Usernamen oder alle vorhandenen Userdaten holen
+// Usernamen ODER alle vorhandenen Userdaten holen
 /*$uid				Userinformationen für User mit der ID $uid;
   $login			Userinfos für den eingeloggten Benutzer (main.php) TRUE / FALSE
 
-RETURN: Array mit den Userdaten. Name entspricht MySQL-Spaltennamen (ohne ModulPräfix)
-		Es werden nur globale Berechtigungenund die jeweiligen Modul-Berechtigungen geladen
+RETURN: Array mit den Userdaten. Name entspricht MySQL-Spaltennamen (mit/ohne Modul-Präfix)
+		Es werden die globale Berechtigungen, alle Modul-Berechtigungen MIT Modul-Präfix UND
+        die Modul-Berechtigungen des aktuellen Moduls OHNE Präfix geladen.
   */
 function getUserdata($uid,$login=FALSE){
 global $mysqli,$modul,$mysql_tables,$salt;
@@ -1461,12 +1404,13 @@ $list = $mysqli->query("SELECT modul,idname FROM ".$mysql_tables['rights']." WHE
 while($row = $list->fetch_assoc()){
 	$loadrights[] = $row['modul']."_".$row['idname'];
 	$loadrightnames[$row['modul']."_".$row['idname']] = $row['idname'];
-	}
+}
 
 if($login)
-	$list = $mysqli->query("SELECT id,username,mail,userpassword,level,lastlogin,startpage,sperre,".implode(",",$loadrights)." FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($_SESSION['01_idsession_'.sha1($salt)])."' AND sessionhash='".$mysqli->escape_string($_SESSION['01_passsession_'.sha1($salt)])."' AND sessionhash!='' LIMIT 1");
-if(!empty($uid) && $uid > 0 && is_numeric($uid) && $login)
-	$list = $mysqli->query("SELECT id,username,mail,userpassword,level,lastlogin,startpage,sperre,".implode(",",$loadrights)." FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($uid)."' LIMIT 1");
+	$list = $mysqli->query("SELECT * FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($_SESSION['01_idsession_'.sha1($salt)])."' AND sessionhash='".$mysqli->escape_string($_SESSION['01_passsession_'.sha1($salt)])."' AND sessionhash!='' LIMIT 1");
+if(!empty($uid) && $uid > 0 && is_numeric($uid))
+	$list = $mysqli->query("SELECT * FROM ".$mysql_tables['user']." WHERE id='".$mysqli->escape_string($uid)."' LIMIT 1");
+
 $fieldmenge = $list->field_count;
 while($row = $list->fetch_assoc()){
 
@@ -1475,28 +1419,23 @@ while($row = $list->fetch_assoc()){
 			$finfo = $list->fetch_field_direct($i);
 			if(isset($loadrightnames[$finfo->name]) && !empty($loadrightnames[$finfo->name]))
 				$userdata[$loadrightnames[$finfo->name]] = stripslashes($row[$finfo->name]);
-			else
-				$userdata[$finfo->name] = stripslashes($row[$finfo->name]);
+
+			// Für ein aktive Modul zusätzlich die Berechtigung auch ohne Modul-Präfix in der Userdata-Variable hinterlegen
+            if(strpos($finfo->name, "01acp_") === FALSE)
+                $userdata[$finfo->name] = stripslashes($row[$finfo->name]);
 			}
 		}
 	else{
 		$userdata['id'] = 0;
 		$userdata['sperre'] = 1;
-		}
 	}
+}
 
 if(isset($userdata))
 	return $userdata;
 else
 	return FALSE;
 }
-
-
-
-
-
-
-
 
 
 // Individuelle Userfields holen
@@ -1528,12 +1467,6 @@ while($row = $list->fetch_assoc()){
 	}
 return $userdata;
 }
-
-
-
-
-
-
 
 
 // Individuelle Userfields holen (weniger Querys)
@@ -1575,29 +1508,43 @@ return $userdata;
 }
 
 
-
-
-
-
-
-
-
 // Captcha ausgeben
-/*
-RETURN: HTML-Ausgabe des Spamschutzes und erstellen der Ergebnis-Session-Var $_SESSION['antispam01']
-  */
-function create_Captcha(){
-global $picuploaddir;
+/*$type         Welchen Captcha-Type ausgeben? 1: 01-Classic, 2: reCAPTCHA
 
-return "<img src=\"".$picuploaddir."secimg.php\" alt=\"Sicherheitscode (Spamschutz)\" title=\"Sicherheitscode: Anti-Spam-System\" />";
+RETURN: HTML-Ausgabe des Spamschutzes-Bildes (01ACP-Style oder ReCAPTCHA)
+  */
+function create_Captcha($type=1){
+global $picuploaddir,$settings;
+
+if($type == 2 && !empty($settings['ReCaptcha_PubKey']) &&  !empty($settings['ReCaptcha_PrivKey'])){
+    return "<script src='https://www.google.com/recaptcha/api.js?hl=de'></script><div class=\"g-recaptcha\" data-theme=\"".reCAPTCHA_THEME."\" data-sitekey=\"".$settings['ReCaptcha_PubKey']."\"></div>\n";
+    }
+else
+    return "<img src=\"".$picuploaddir."secimg.php\" alt=\"Sicherheitscode (Spamschutz)\" title=\"Sicherheitscode: Anti-Spam-System\" />";
 }
 
+// Request zur Auswertung der reCAPTCHA-Antwort stellen und Zurückliefern
+/*$response       Befüllen mit $_POST['g-recaptcha-response']
 
+RETURN: TRUE/FALSE (TRUE = Erfolg)
+  */
+function CheckReCAPTCHA($response){
+global $admindir,$settings;
 
+if($settings['spamschutz'] == 2 && !empty($settings['ReCaptcha_PubKey']) &&  !empty($settings['ReCaptcha_PrivKey'])){
+    if(isset($response) && !empty($response)){
+        require_once($admindir.'/system/includes/recaptchalib.php');
 
+        $recaptcha = new \ReCaptcha\ReCaptcha($settings['ReCaptcha_PrivKey']);
+        $resp = $recaptcha->verify($response);
 
+        if($resp->isSuccess()) return TRUE;
+    }
+    return FALSE;
+}
+else return TRUE;
 
-
+}
 
 
 // Kommentar in DB hinzufügen und übergebene Werte überprüfen
@@ -1609,11 +1556,14 @@ return "<img src=\"".$picuploaddir."secimg.php\" alt=\"Sicherheitscode (Spamschu
   $deaktivieren		Formulardaten (BBC/Smilies deaktivieren?)
   $postid			Formulardaten (Was für einem Post ist der Kommentar zugeordnet?)
   $uid				Formulardaten (UID - unique)
+  $subpostid        Zur Zuordnung eines Kommentars zu einem Eintrag unterhalb einer übergeordneten ID (z.B Bild innerhalb einer Kategorie)
+  $spamtrap         Wenn das Feld übergeben wurde, muss es leer sein (#531)
+  $checktime        Es mussen mindestens MIN_COMMENT_TIME vergangen sein, damit ein Kommentar angenommen wird
   
 RETURN: $message mit Erfolgs/Fehler-Nummer
   */
-function insert_Comment($autor,$email_form,$url_form,$comment,$antispam,$deaktivieren,$postid,$uid,$subpostid=0){
-global $mysqli,$mysql_tables,$settings,$_SESSION,$modul,$filename,$names,$flag_utf8,$htmlent_encoding_pub,$htmlent_flags;
+function insert_Comment($autor,$email_form,$url_form,$comment,$antispam,$deaktivieren,$postid,$uid,$subpostid=0,$spamtrap="00d2b41064842f9f2146b5830a5c5cdb",$checktime="f2b16859a59485575286d4f73a602c14"){
+global $mysqli,$mysql_tables,$settings,$_SESSION,$modul,$filename,$names,$flag_utf8,$htmlent_encoding_pub,$htmlent_flags,$_POST,$admindir;
 $zcount = $zcount2 = $zcount1 = 0;
 
 // Zensur-Funktion
@@ -1672,7 +1622,9 @@ if($settings['comments_zensur'] == 1 && !empty($settings['comments_badwords']) &
 
 if(isset($autor) && !empty($autor) && 
    isset($comment) && !empty($comment) && 
-   (isset($antispam) && md5($antispam) == $_SESSION['antispam01'] && $settings['spamschutz'] == 1 || $settings['spamschutz'] == 0) &&
+   (isset($antispam) && md5($antispam) == $_SESSION['antispam01'] && $settings['spamschutz'] == 1 || $settings['spamschutz'] == 0 || $settings['spamschutz'] == 2 && CheckReCAPTCHA($_POST['g-recaptcha-response'])) &&
+   ($spamtrap == "00d2b41064842f9f2146b5830a5c5cdb" || empty($spamtrap)) && 
+   ($checktime == "f2b16859a59485575286d4f73a602c14" || !empty($checktime) && is_numeric($checktime) && ($checktime+MIN_COMMENT_TIME) < time()) &&
    ($settings['comments_zensur'] == 0 || empty($settings['comments_badwords']) || ($settings['comments_zensur'] == 1 && !empty($settings['comments_badwords']) && ($settings['comments_zensurlimit'] == "-1" || $zcount < $settings['comments_zensurlimit'])))){
 
 	if(check_mail($email_form)) $email = $mysqli->escape_string(strip_tags($email_form)); else $email = "";
@@ -1753,13 +1705,6 @@ return $message;
 }
 
 
-
-
-
-
-
-
-
 // RSS-Framework (Head/Footer) generieren
 /*$titel			RSS-Feed-Titel
   $url				URL zur zu verlinkenden Datei
@@ -1819,13 +1764,6 @@ return $return;
 }
 
 
-
-
-
-
-
-
-
 // Neue Versionsinfos der Module vom 01-Scripts.de-Server holen
 /*$quelle				Quelldatei (URL)
   $ziel					Zieldatei (URL)
@@ -1855,13 +1793,6 @@ return TRUE;
 }
 
 
-
-
-
-
-
-
-
 // SQL-Daten parsen (bestimmte Ersetzungen vornehmen)
 /*$dumpline				MySQL-Datenline
   $modulnr				Modulinstallationsnummer für MySQL-Tabelle
@@ -1884,13 +1815,6 @@ return $dumpline;
 }
 
 
-
-
-
-
-
-
-
 // Von einem Post/Eintrag abhängige Kommentare löschen
 /*$postid			ID des Eintrags, der gelöscht wurde
   
@@ -1901,13 +1825,6 @@ global $mysqli,$mysql_tables,$modul;
 
 $mysqli->query("DELETE FROM ".$mysql_tables['comments']." WHERE modul='".$mysqli->escape_string($modul)."' AND postid='".$mysqli->escape_string($postid)."'");
 }
-
-
-
-
-
-
-
 
 
 // Von einem Sub-Post/Eintrag abhängige Kommentare löschen
@@ -1921,11 +1838,6 @@ global $mysqli,$mysql_tables,$modul;
 
 $mysqli->query("DELETE FROM ".$mysql_tables['comments']." WHERE modul='".$mysqli->escape_string($modul)."' AND postid='".$mysqli->escape_string($postid)."' AND subpostid='".$mysqli->escape_string($subpostid)."'");
 }
-
-
-
-
-
 
 
 // Umlaute ersetzen
@@ -1943,11 +1855,6 @@ for($x=0;$x<count($array_search)-1;$x++){
 	
 return $string;
 }
-
-
-
-
-
 
 
 // Storage-Data aus Datenbank lesen und unserialize anwenden
@@ -1975,10 +1882,6 @@ for($x=1;$x<=STORAGE_MAX;$x++){
 
 return $return;
 }
-
-
-
-
 
 
 // Rekursiv alle Datei-Verzeichnisse auflisten
@@ -2010,14 +1913,6 @@ return $return;
 
 }
 
-
-
-
-
-
-
-
-
 // Ausgabe der Verzeichnisnamen (Aufruf über Rekursive Funktion) für SELECT-Felder
 /*$row				Array mit allen MySQL-Feldern aus der File-Verzeichnis-Tabelle zur entsprechenden ID
   $deep				Aktuelle "Tiefe"
@@ -2044,14 +1939,6 @@ return $return;
 }
 
 
-
-
-
-
-
-
-
-
 // Fügt weitere Parameter an einen übergeben Link an (es wird herausgefunden, ob zuerst ? oder & verwendet werden muss)
 /*$links			Link, an den der Parameter angehängt werden soll
   $parameter		Ohne den ersten Parameter-Trenner (also ohne ? oder & am Anfang) Bei mehreren Parameter aber schon verwenden
@@ -2072,14 +1959,6 @@ else
 }
 
 
-
-
-
-
-
-
-
-
 // Setzt einen Cookie via blind-image-Datei
 /*$cookiename		Gewünschter Name für den Cookie
   $cookiewert		Gewünschter Wert für den Cookie
@@ -2093,14 +1972,6 @@ global $subfolder;
 return "<img src=\"".$subfolder."01acp/system/set_a_cookie.php?cookiename=".$cookiename."&amp;cookiewert=".$cookiewert."&amp;cookietime=".$cookietime."\" height=\"1\" width=\"1\" alt=\" \" style=\"border:0; position:absolute; top:0; left:0;\" />";
 
 }
-
-
-
-
-
-
-
-
 
 
 // Benötigte Mootool und JS-Dateien / DOM ggf. laden
@@ -2146,14 +2017,6 @@ return true;
 }
 
 
-
-
-
-
-
-
-
-
 // Leere Link-Parameter aus Links entfernen
 /*$link				Link, der bereinigt werden soll
 
@@ -2187,14 +2050,6 @@ if(isset($url['fragment']) && !empty($url['fragment'])) $makelink .= "#".$url['f
 return $makelink;
 
 }
-
-
-
-
-
-
-
-
 
 
 // Unserialize serialized Session-Daten für $_SESSION-Array
@@ -2231,14 +2086,6 @@ return $return;
 }
 
 
-
-
-
-
-
-
-
-
 // Wendet htmlentities, stripslashes und ggf. utf8_decode in Abhängigkeit von $flag_utf8 auf den übergebenen String an
 /*$string				String, der behandelt werden soll
 
@@ -2255,14 +2102,6 @@ if($flag_utf8)
 
 return htmlentities($string, $htmlent_flags,$htmlent_encoding_pub);
 }
-
-
-
-
-
-
-
-
 
 
 // Checkboxen checken bzw. Selectfields selecten
@@ -2284,12 +2123,7 @@ else
 // Funktion für selected=selected
 function check_select($field_value,$standard_value=1){
     return check_checkbox($field_value,$standard_value,"select");
-    }
-
-
-
-
-
+}
 
 
 // Ruft eine modulspezifische Right/Settings-Funktion zur Wertdarstellung auf
@@ -2320,11 +2154,6 @@ else return "Fehler bei der Darstellung der gespeicherten Werte dieses Feldes.";
 }
 
 
-
-
-
-
-
 // Ruft eine modulspezifische Right/Settings-Funktion zur Speicherung von abgesendeten Werten auf
 /*$modul			Modul dessen Funktion aufgerufen werden soll
   $idname			ID-Name des "Rechts" bzw. des Settings
@@ -2353,13 +2182,6 @@ else return "";
 }
 
 
-
-
-
-
-
-
-
 // Formularfeld der Standard Thumbnail-Größe.
 /* @params string $idname		IDName des Feldes (modul_idname)
  * @params string $wert			Enthält bisherigen gespeicherten Wert des Feldes
@@ -2373,13 +2195,6 @@ return "<input type=\"text\" name=\"".$idname."\" value=\"".$wert."\" size=\"5\"
 
 }
 }
-
-
-
-
-
-
-
 
 
 // Funktion gibt den Wert unbearbeitet an die Speicherfunktion durch - legt ihn allerdings gleichzeitig

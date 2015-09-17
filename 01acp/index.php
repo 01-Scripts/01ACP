@@ -1,12 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2014 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2015 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Login-Formular für ACP-Bereich
-	#fv.130#
+	#fv.131#
 */
 
 $dontshow = true;
@@ -15,7 +15,7 @@ $sitetitle = "Anmelden";
 $filename = $_SERVER['PHP_SELF'];
 $message = "";
 $menge = 0;
-$error = 0;
+$error = 1;
 $des_cookie = "";
 
 if(!isset($_POST['username'])) $_POST['username'] = "";
@@ -75,15 +75,16 @@ if(isset($_COOKIE[$instnr.'_start_auth_01acp']) && !empty($_COOKIE[$instnr.'_sta
 // Login wurde abgeschickt
 if(isset($_POST['send']) && $_POST['send'] == 1){
 
-	if($settings['acp_captcha4login'] == 0 || isset($_POST['antispam']) && md5($_POST['antispam']) == $_SESSION['antispam01'] && $settings['acp_captcha4login'] == 1){
+	if($settings['acp_captcha4login'] == 0 || $settings['acp_captcha4login'] == 1 && ($settings['spamschutz'] == 1 && isset($_POST['antispam']) && md5($_POST['antispam']) == $_SESSION['antispam01'] || $settings['spamschutz'] == 2 && CheckReCAPTCHA($_POST['g-recaptcha-response'])) ){
 
 		$list = $mysqli->query("SELECT id,username,userpassword,startpage,cookiehash,sessionhash FROM ".$mysql_tables['user']." WHERE username='".$mysqli->escape_string($_POST['username'])."' AND id != '0' LIMIT 1");
 		while($row = $list->fetch_assoc()){
 			// Check password for this user:
 			if(pwhashing2($_POST['password'],$row['id']) != $row['userpassword']){
-				$error = 1;
 				break;
 			}
+			else
+				$error = 0;
 
 			// Session erstellen/abrufen / Lastlogin speichern
 			if(empty($row['sessionhash'])){
@@ -160,9 +161,11 @@ echo $message;
 	
 	<p class="big"><label for="input_username">Benutzername:</label> <input type="text" name="username" value="<?PHP echo $_POST['username']; ?>" id="input_username" size="20" /></p>
 	<p class="big"><span style="margin-right:38px;"><label for="input_password">Passwort:</label></span> <input type="password" name="password" id="input_password" size="20" /></p>
-	<?php if($settings['acp_captcha4login'] == 1){ ?>
+<?php if($settings['acp_captcha4login'] == 1 && $settings['spamschutz'] == 2 && !empty($settings['ReCaptcha_PubKey']) &&  !empty($settings['ReCaptcha_PrivKey'])){ ?>
+	<p class="big"><span style="margin-right:18px;"><?php echo create_Captcha($settings['spamschutz']); ?></span></p>
+<?php }elseif($settings['acp_captcha4login'] == 1 && $settings['spamschutz'] == 1){ ?>
 	<p class="big"><span style="margin-right:18px;"><?php echo create_Captcha(); ?></span> <input type="text" name="antispam" size="20" /></p>
-	<?php } ?>
+<?php } ?>
 	<p class="big"><span style="margin-right:18px;"><label for="input_cookie">2 Wochen eingeloggt bleiben?</label></span> <input type="checkbox" name="setcookie" id="input_cookie" value="1" /></p>
 	<p class="small"><a href="javascript: hide_unhide('loginform'); hide_unhide('passwordbox');">Passwort vergessen?</a></p>
 	<p align="right"><input type="submit" name="absenden" class="input" value="Einloggen &raquo;" /></p>

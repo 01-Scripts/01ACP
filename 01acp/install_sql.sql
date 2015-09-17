@@ -1,10 +1,10 @@
--- 01ACP - Copyright 2008-2014 by Michael Lorer - 01-Scripts.de
+-- 01ACP - Copyright 2008-2015 by Michael Lorer - 01-Scripts.de
 -- Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 -- Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 
 -- Modul:		01acp
 -- Dateiinfo:	SQL-Befehle für die Erstinstallation des 01ACP
--- #fv.130#
+-- #fv.131#
 --  **  **  **  **  **  **  **  **  **  **  **  **  **  **  **  **  *  *
 
 -- --------------------------------------------------------
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `01prefix_files` (
   `modul` varchar(25) NULL DEFAULT NULL,
   `utimestamp` int(15) NOT NULL DEFAULT '0',
   `dir` int(10) NOT NULL DEFAULT '0',
-  `orgname` varchar(50) NULL DEFAULT NULL,
+  `orgname` varchar(255) NULL DEFAULT NULL,
   `name` varchar(25) NOT NULL DEFAULT '',
   `size` varchar(20) NULL DEFAULT NULL,
   `ext` varchar(5) NULL DEFAULT NULL,
@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS `01prefix_rights` (
   `exp` text,
   `formename` text NULL,
   `formwerte` varchar(255) NULL,
-  `input_exp` varchar(50) DEFAULT NULL,
+  `input_exp` varchar(255) DEFAULT NULL,
   `standardwert` text,
   `nodelete` tinyint(1) NOT NULL DEFAULT '0',
   `hide` tinyint(1) DEFAULT '0',
@@ -207,7 +207,7 @@ CREATE TABLE IF NOT EXISTS `01prefix_settings` (
   `exp` text,
   `formename` text NULL,
   `formwerte` varchar(255) NULL,
-  `input_exp` varchar(50) DEFAULT NULL,
+  `input_exp` varchar(255) DEFAULT NULL,
   `standardwert` text,
   `wert` text,
   `nodelete` tinyint(1) NOT NULL DEFAULT '0',
@@ -222,34 +222,44 @@ CREATE TABLE IF NOT EXISTS `01prefix_settings` (
 
 INSERT INTO `01prefix_settings` (`modul`, `is_cat`, `catid`, `sortid`, `idname`, `name`, `exp`, `formename`, `formwerte`, `input_exp`, `standardwert`, `wert`, `nodelete`, `hide`) VALUES
 ('01acp', 1, 1, 1, 'cat_global', 'Globale Einstellungen', NULL, 'text', '', NULL, NULL, NULL, 0, 0),
-('01acp', 1, 4, 4, 'cat_rss', 'RSS-Feed', NULL, 'text', '', NULL, NULL, NULL, 0, 0),
 ('01acp', 0, 1, 1, 'email_absender', 'Kontakt-E-Mail-Adresse', 'Diese Adresse wird als Kontakt- und Absende-Adresse verwendet.', 'text', '50', '', '', '', 0, 0),
 ('01acp', 0, 1, 2, 'sitename', 'Seitentitel', '', 'text', '50', '', 'Seitentitel', 'Seitentitel', 0, 0),
+('01acp', 0, 1, 3, 'absolut_url', 'Absolute URL', 'Bitte geben Sie die absolute URL (inkl. http://) zum Verzeichnis <i>01scripts/</i> ein.\r\nBeispiel: http://www.domainname.de/pfad/01scripts/', 'text', '50', '', '', '', 1, 0),
+('01acp', 0, 1, 4, 'spamschutz', 'Spamschutz', 'Zur Nutzung von reCAPTCHA m&uuml;ssen Daten im Abschnitt <i>Webservices</i> hinterlegt werden.', '01ACP Captcha-Bild|reCAPTCHA|kein Spamschutz', '1|2|0', '<a href=\"javascript:popup(\'captcha_test\',\'\',\'\',\'\',500,550);\">Testen</a>', '1', '1', 0, 0),
+('01acp', 0, 1, 5, 'acp_captcha4login', 'Captcha bei ACP-Login verwenden?', '', 'Ja|Nein', '1|0', '', '0', '0', 1, 0),
+('01acp', 0, 1, 0, 'acpversion', 'ACP-Version', '', 'text', '10', '', '1.3.1', '1.3.1', 0, 1),
+('01acp', 0, 1, 0, 'cachetime', 'Cachetime (XML)', '', 'text', '10', '', '', '0', 0, 1),
+('01acp', 0, 1, 0, 'installed', 'installiert', '', 'text', '10', '', '1', '0', 0, 1),
 ('01acp', 1, 2, 2, 'cat_manager', 'Datei- und Bildmanager', NULL, 'text', '', NULL, NULL, NULL, 0, 0),
 ('01acp', 0, 2, 1, 'pic_end', 'Bilder: Erlaubte Dateiendungen', 'Dateiendungen mit Kommas trennen', 'text', '50', '', 'jpg,jpeg,gif,bmp,png', 'jpg,jpeg,gif,bmp,png', 0, 0),
 ('01acp', 0, 2, 2, 'pic_size', 'Bilder: Maximale Dateigr&ouml;&szlig;e', '', 'text', '5', 'KB', '500', '500', 0, 0),
+('01acp', 0, 2, 3, 'thumbwidth', 'Maximale Thumbnail-Seitenl&auml;nge', '', 'function', '5', 'px', '200', '200', 1, 0),
 ('01acp', 0, 2, 4, 'attachment_end', 'Dateien: Erlaubte Dateiendungen', 'Dateiendungen mit Kommas trennen', 'text', '50', '', 'zip,rar,pdf,txt', 'zip,rar,pdf,txt', 0, 0),
 ('01acp', 0, 2, 5, 'attachment_size', 'Dateien: Maximale Dateigr&ouml;&szlig;e', '', 'text', '5', 'KB', '500', '500', 0, 0),
-('01acp', 0, 1, 3, 'absolut_url', 'Absolute URL', 'Bitte geben Sie die absolute URL (inkl. http://) zum Verzeichnis <i>01scripts/</i> ein.\r\nBeispiel: http://www.domainname.de/pfad/01scripts/', 'text', '50', '', '', '', 1, 0),
-('01acp', 0, 2, 3, 'thumbwidth', 'Maximale Thumbnail-Seitenl&auml;nge', '', 'function', '5', 'px', '200', '200', 1, 0),
+('01acp', 0, 2, 0, 'filesecid','File Security ID','From this ID on only Hash values are allowed to access an uploaded file.','text','5','','0','0',0,1),
 ('01acp', 1, 3, 3, 'commentsettings', 'Kommentarfunktion', NULL, '', '', NULL, NULL, NULL, 0, 0),
 ('01acp', 0, 3, 1, 'comments', 'Kommentarfunktion', '', 'aktivieren|deaktivieren', '1|0', '', '1', '1', 0, 0),
 ('01acp', 0, 3, 2, 'comments_perpage', 'Kommentare pro Seite', '', 'text', '5', '', '25', '25', 0, 0),
 ('01acp', 0, 3, 3, 'commentfreischaltung', 'Kommentare freischalten?', '', 'keine Freischaltung|manuelle Freischaltung', '0|1', '', '0', '0', 0, 0),
-('01acp', 0, 3, 4, 'spamschutz', 'Spamschutz', '', 'Captcha-Bild|kein Spamschutz', '1|0', '', '1', '1', 0, 0),
 ('01acp', 0, 3, 5, 'comments_smilies', 'Smilies aktivieren?', '', 'Ja|Nein', '1|0', '', '1', '1', 0, 0),
 ('01acp', 0, 3, 6, 'comments_bbc', 'BB-Code aktivieren?', '', 'Ja|Nein', '1|0', '', '1', '1', 0, 0),
-('01acp', 0, 4, 1, 'rss_aktiv', 'RSS-Feed aktivieren?', 'Hat Auswirkungen auf die RSS-Feeds <b>aller</b> installierter Module!', 'Ja|Nein', '1|0', '', '1', '1', 0, 0),
-('01acp', 0, 4, 2, 'rss_sprache', 'Sprache', 'In welcher Sprache stellen Sie Ihre Informationen bereit? Eine &Uuml;bersicht der Sprachk&uuml;rzel finden Sie <a href=\\"http://de.selfhtml.org/diverses/sprachenkuerzel.htm\\" target=\\"_blank\\">hier</a>.', 'text', '10', '', 'de-de', 'de-de', 0, 0),
-('01acp', 0, 4, 3, 'rss_copyright', 'Copyright-Informationen', '', 'textarea', '5|50', '', 'Die Inhalte werden unter einer Creative-Commons-Lizenz veröffentlicht, die <a href=\\"http://creativecommons.org/licenses/by-nc-sa/3.0/de/\\" target=\\"_blank\\">hier</a> einsehbar ist.', 'Die Inhalte werden unter einer Creative-Commons-Lizenz veröffentlicht, die unter folgender URL einsehbar ist:\r\nhttp://creativecommons.org/licenses/by-nc-sa/3.0/de/', 0, 0),
-('01acp', 0, 1, 0, 'acpversion', 'ACP-Version', '', 'text', '10', '', '1.3.0', '1.3.0', 0, 1),
-('01acp', 0, 1, 0, 'cachetime', 'Cachetime (XML)', '', 'text', '10', '', '', '0', 0, 1),
-('01acp', 0, 1, 0, 'installed', 'installiert', '', 'text', '10', '', '1', '0', 0, 1),
 ('01acp', 0, 3, 7, 'comments_zensur','Zensur aktivieren?','','Ja|Nein','1|0','','0','1', 0, 0),
 ('01acp', 0, 3, 8, 'comments_badwords','Zu zensierende W&ouml;rter','Pro Zeile ein Wort eingeben, welches zensiert werden soll.','textarea','5|50','','','', 0, 0),
 ('01acp', 0, 3, 9, 'comments_zensurlimit','Kommentar abweisen ab','-1 weist keine Kommentare ab','text','4','erkannten W&ouml;rtern.','5','5', 0, 0),
-('01acp', 0, 1, 4, 'acp_captcha4login', 'Captcha bei ACP-Login verwenden?', '', 'Ja|Nein', '1|0', '', '0', '0', 1, 0),
-('01acp', 0, 2, 0, 'filesecid','File Security ID','From this ID on only Hash values are allowed to access an uploaded file.','text','5','','0','0',0,1);
+('01acp', 1, 4, 4, 'cat_rss', 'RSS-Feed', NULL, 'text', '', NULL, NULL, NULL, 0, 0),
+('01acp', 0, 4, 1, 'rss_aktiv', 'RSS-Feed aktivieren?', 'Hat Auswirkungen auf die RSS-Feeds <b>aller</b> installierter Module!', 'Ja|Nein', '1|0', '', '1', '1', 0, 0),
+('01acp', 0, 4, 2, 'rss_sprache', 'Sprache', 'In welcher Sprache stellen Sie Ihre Informationen bereit? Eine &Uuml;bersicht der Sprachk&uuml;rzel finden Sie <a href=\\"http://de.selfhtml.org/diverses/sprachenkuerzel.htm\\" target=\\"_blank\\">hier</a>.', 'text', '10', '', 'de-de', 'de-de', 0, 0),
+('01acp', 0, 4, 3, 'rss_copyright', 'Copyright-Informationen', '', 'textarea', '5|50', '', 'Die Inhalte werden unter einer Creative-Commons-Lizenz veröffentlicht, die <a href=\\"http://creativecommons.org/licenses/by-nc-sa/3.0/de/\\" target=\\"_blank\\">hier</a> einsehbar ist.', 'Die Inhalte werden unter einer Creative-Commons-Lizenz veröffentlicht, die unter folgender URL einsehbar ist:\r\nhttp://creativecommons.org/licenses/by-nc-sa/3.0/de/', 0, 0),
+('01acp', 1, 5, 5, 'email_settings', 'E-Mail-Versand', NULL , NULL , NULL , NULL , NULL , NULL ,0,0),
+('01acp', 0, 5, 1, 'smtp_enable', 'E-Mail-Versand per SMTP <i>(Beta)</i>','Ausgehende E-Mails werden wenn m&ouml;glich &uuml;ber das nachfolgend konfigurierte SMTP-Konto versendet.','Ja|Nein','1|0','','0','0',0,0),
+('01acp', 0, 5, 2, 'smtp_host', 'SMTP-Server','','text','50','','','',0,0),
+('01acp', 0, 5, 3, 'smtp_port', 'SMTP-Server TCP Port','','text','50','','587','587',0,0),
+('01acp', 0, 5, 4, 'smtp_username', 'SMTP Username','','text','50','','','',0,0),
+('01acp', 0, 5, 5, 'smtp_password', 'SMTP Password','Das SMTP Passwort wird aus technischen Gr&uuml;nden unverschl&uuml;sselt gespeichert.','text','50','','','',0,0),
+('01acp', 1, 6, 6, 'webservices','Webservices', NULL , NULL , NULL , NULL , NULL , NULL ,0,0),
+('01acp', 0, 6, 1, 'ReCaptcha_PubKey','reCAPTCHA Websiteschl&uuml;ssel','reCAPTCHA API-Key von <a href=\"https://www.google.com/recaptcha/admin\" target=\"_blank\">https://www.google.com/recaptcha/admin</a>','text','50','','','',0,0),
+('01acp', 0, 6, 2, 'ReCaptcha_PrivKey','reCAPTCHA Geheimer Schl&uuml;ssel','','text','50','','','',0,0),
+('01acp', 0, 6, 3, 'Disqus_Username','Disqus Shortname','Registrierung bei <a href=\"https://disqus.com/admin/signup/\" target=\"_blank\">Disqus.com</a> n&ouml;tig.','text','50','','','',0,0);
 
 -- --------------------------------------------------------
 
