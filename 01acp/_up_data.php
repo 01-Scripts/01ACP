@@ -13,7 +13,7 @@ if(isset($_POST['update']) && $_POST['update'] == "130_zu_131"){
 				('01acp',1,6,6,'webservices','Webservices', NULL , NULL , NULL , NULL , NULL , NULL ,0,0),
             	('01acp',0,6,1,'ReCaptcha_PubKey','reCAPTCHA Websiteschl&uuml;ssel','reCAPTCHA API-Key von <a href=\"https://www.google.com/recaptcha/admin\" target=\"_blank\">https://www.google.com/recaptcha/admin</a>','text','50','','','',0,0),
             	('01acp',0,6,2,'ReCaptcha_PrivKey','reCAPTCHA Geheimer Schl&uuml;ssel','','text','50','','','',0,0),
-            	('01acp',0,6,3,'Disqus_Username','Disqus Username','Registrierung bei <a href=\"https://disqus.com/admin/signup/\" target=\"_blank\">Disqus.com</a> n&ouml;tig.','text','50','','','',0,0);";
+            	('01acp',0,6,3,'Disqus_Username','Disqus Shortname','Registrierung bei <a href=\"https://disqus.com/admin/signup/\" target=\"_blank\">Disqus.com</a> n&ouml;tig.','text','50','','','',0,0);";
 	$result = $mysqli->query($sql_insert) OR die($mysqli->error);
 
 	// Spalte 'input_exp' jew. von 50 auf 255 chars vergrößern
@@ -52,8 +52,8 @@ if(isset($_POST['update']) && $_POST['update'] == "130_zu_131"){
 
 	<b>Mit dem Update wurde unter anderem folgendes verbessert:</b>
 	<ul>
-		<li>Unterst&uuml;tzung von <a href="https://www.google.com/recaptcha/admin" target="_blank">reCAPTCHA</a> als Spamschutz-Alternative</li>
-		<li><a href="https://disqus.com/" target="_blank">Disqus</a> als Kommentarsystem f&uuml;r das 01-Artikelsystem unterst&uuml;tzt</li>
+		<li>Unterst&uuml;tzung von <a href="https://www.google.com/recaptcha/admin" target="_blank">reCAPTCHA</a> als Spamschutz-Alternative (<a href="http://www.01-scripts.de/forum/index.php?page=Thread&amp;threadID=1846" target="_blank">Anleitung</a>)</li>
+		<li><a href="https://disqus.com/" target="_blank">Disqus</a> als Kommentarsystem f&uuml;r das 01-Artikelsystem unterst&uuml;tzt (<a href="http://www.01-scripts.de/forum/index.php?page=Thread&amp;threadID=1847" target="_blank">Anleitung</a>)</li>
 		<li>Vorbereitende Integration von <a href="https://github.com/PHPMailer/PHPMailer" target="_blank">PHPMailer</a></li>
 		<li>Datenverarbeitung in Userverwaltung verbessert</li>
 		<li>Diverse Fehler behoben. Siehe <a href="http://www.01-scripts.de/down/01acp_changelog.txt" target="_blank">changelog.txt</a></li>
