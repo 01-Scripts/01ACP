@@ -6,4 +6,7 @@
 *.css text eol=crlf
 *.js text eol=crlf
 *.php text eol=crlf
+*.htm text eol=crlf
 *.html text eol=crlf
+*.sql text eol=crlf
+*.xml text eol=crlf
