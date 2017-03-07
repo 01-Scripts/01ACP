@@ -1,12 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <!--
-	01ACP - Copyright 2008-2015 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2017 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Installationsdatei
-	#fv.130#
+	#fv.132#
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -81,7 +81,7 @@ if(isset($_REQUEST['step']) && $_REQUEST['step'] == 7 &&
 <p class="meldung_ok">
 	<b>Herzlichen Gl&uuml;ckwunsch!</b><br />
 	Die Installation des <b>01acp</b> wurde erfolgreich beendet.<br />
-	Sie können sich nun mit Ihrem Account in <a href="index.php">den Administrationsbereich einloggen</a>
+	Sie k&ouml;nnen sich nun mit Ihrem Account in <a href="index.php">den Administrationsbereich einloggen</a>
 	und ein erstes Modul installieren.<br />
 </p>
 <p class="meldung_hinweis">
@@ -409,7 +409,7 @@ elseif(isset($_REQUEST['step']) && $_REQUEST['step'] == 2){
 			<ul>
 				<li>Im Falle einer Verbreitung m&uuml;ssen Sie anderen die Lizenzbedingungen, unter welche dieses Werk f&auml;llt, mitteilen. Am Einfachsten ist es, einen Link auf <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/de/" target="_blank">diese Seite</a> einzubinden.</li>
 				<li>Jede der vorgenannten Bedingungen kann aufgehoben werden, sofern Sie die Einwilligung des Rechteinhabers dazu erhalten.</li>
-				<li>Diese Lizenz l&auml;sst die Urheberpers&ouml;nlichkeitsrechte unberührt.</li>
+				<li>Diese Lizenz l&auml;sst die Urheberpers&ouml;nlichkeitsrechte unber&uuml;hrt.</li>
 			</ul>
 			
 			<p><a href="http://creativecommons.org/licenses/by-nc-sa/3.0/de/" target="_blank"><b>Rechtlich g&uuml;ltigen Lizenzvertrag aufrufen &raquo;</b></a></p>
@@ -418,10 +418,10 @@ elseif(isset($_REQUEST['step']) && $_REQUEST['step'] == 2){
 			F&uuml;r einen <b>kommerziellen Einsatz</b> oder den Einsatz auf Firmenseiten erwerben Sie bitte eine 
 			<b><i>Lizenz zur kommerziellen Nutzung</i></b>.<br />
 			Wenn Sie den sichtbaren <b>Urheberrechtshinweis entfernen</b> m&ouml;chten ist der Erwerb einer 
-			<b><i>Non-Copyright-Lizenz</i></b> nötig.<br />
+			<b><i>Non-Copyright-Lizenz</i></b> n&ouml;tig.<br />
 			Weitere Informationen zu den Lizenzen und den Lizenzpreisen entnehmen Sie bitte 
 			<a href="http://www.01-scripts.de/preise.php" target="_blank">dieser Seite</a>.<br />
-			Bei Fragen oder Problemen stehe ich Ihnen jederzeit gerne <a href="http://www.01-scripts.de/contact.php" target="_blank">zur Verfügung</a>.
+			Bei Fragen oder Problemen stehe ich Ihnen jederzeit gerne <a href="http://www.01-scripts.de/contact.php" target="_blank">zur Verf&uuml;gung</a>.
 			</p>
 		</td>
 	</tr>
@@ -448,10 +448,10 @@ else{
 
 <h1>Schritt 1 - Systemvoraussetzungen</h1>
 
-<p class="meldung_hinweis">Diese Installationsroutine wird Sie durch den Installationsprozess für das <b>01acp</b> begleiten.<br />
+<p class="meldung_hinweis">Diese Installationsroutine wird Sie durch den Installationsprozess f&uuml;r das <b>01acp</b> begleiten.<br />
 Folgen Sie bitte einfach den Anweisungen auf dem Bildschirm.<br />
 <br />
-Halten Sie für die weitere Installations Ihr FTP-Programm sowie Ihre MySQL-Zugangsdaten bereit!</p>
+Halten Sie f&uuml;r die weitere Installations Ihr FTP-Programm sowie Ihre MySQL-Zugangsdaten bereit!</p>
 
 <?PHP
 $flag_error = FALSE;
@@ -517,7 +517,7 @@ else{
 	</tr>
 	
 	<tr>
-		<td width="70%" class="<?PHP echo $phpv_class; ?>"><b>PHP-Version</b> (Version 5.3 oder höher)</td>
+		<td width="70%" class="<?PHP echo $phpv_class; ?>"><b>PHP-Version</b> (Version 5.3 oder h&ouml;her)</td>
 		<td class="<?PHP echo $phpv_class; ?>"><b><?PHP echo PHP_VERSION; ?></b></td>
 	</tr>
 
