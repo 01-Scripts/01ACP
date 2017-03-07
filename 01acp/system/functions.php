@@ -1,13 +1,13 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2015 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2017 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Globale PHP-Funktionen für das 01ACP und alle Module
 				Auf Funktionen kann nach dem Include der headinclude.php zugrgriffen werden
-	#fv.131#
+	#fv.132#
 */
 
 // E-Mail-Adresse auf äußerliche Gültigkeit überprüfen
@@ -1995,7 +1995,7 @@ if(isset($mootools_use) && is_array($mootools_use)){
 	}
 
 // DOMReady ausgeben
-if(isset($mootools_use) && is_array($mootools_use)){
+if(isset($mootools_use) && is_array($mootools_use) && count($mootools_use) > 0){
 	echo "<script type=\"text/javascript\">
 	window.addEvent('domready',function(){
 	";
