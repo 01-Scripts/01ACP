@@ -5,7 +5,27 @@
 */
 if(!$update_ok) exit;
 
-if(isset($_POST['update']) && $_POST['update'] == "130_zu_131"){
+if(isset($_POST['update']) && $_POST['update'] == "131_zu_132"){
+
+	// #748 mail() durch PHPMailer-Integration ersetzen
+	$mysqli->query("UPDATE ".$mysql_tables['settings']." SET `name` = 'E-Mail-Versand per SMTP' WHERE `modul` = '01acp' AND `idname` = 'smtp_enable' LIMIT 1");
+
+	// Versionsnummer aktualisieren
+	$mysqli->query("UPDATE ".$mysql_tables['settings']." SET standardwert = '1.3.2', wert = '1.3.2' WHERE idname = 'acpversion' LIMIT 1");
+?>
+<div class="meldung_ok">
+	<b>Herzlichen Gl&uuml;ckwunsch!</b><br />
+	Das Update auf <b>Version 1.3.2 des 01ACP</b> wurde erfolgreich beendet.<br />
+	<br />
+
+	<b>Mit dem Update wurde unter anderem folgendes verbessert:</b>
+	<ul>
+		<li>Diverse Fehler behoben. Siehe <a href="http://www.01-scripts.de/down/01acp_changelog.txt" target="_blank">changelog.txt</a></li>
+	</ul>
+</div>
+<?PHP
+	}
+elseif(isset($_POST['update']) && $_POST['update'] == "130_zu_131"){
 
 	// 01acp #209 - reCAPTCHA hinzufügen (dazu: Neue Settings-Kategorie 'Webservice')
 	// 01acp #720 - Disqus-Support hinzufügen

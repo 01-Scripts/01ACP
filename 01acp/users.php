@@ -1,12 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2015 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2017 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Benutzerverwaltung (Benutzer hinzufügen und bearbeiten; Eigenes Profil)
-	#fv.131#
+	#fv.132#
 */
 
 $menuecat = "01acp_users";
@@ -17,6 +17,7 @@ $mootools_use = array("moo_core","moo_more","moo_slidev");
 // Config-Dateien
 include("system/main.php");
 include("system/head.php");
+include("system/includes/PHPMailerAutoload.php");
 
 // Sicherheitsabfrage: Login
 if(isset($userdata['id']) && $userdata['id'] > 0){
@@ -63,11 +64,15 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "add_user" && $userdata[
 
 				// ggf. E-Mail @ Benutzer versenden
 				if($_POST['pwwahl'] == "random" || isset($_POST['emailinfo']) && $_POST['emailinfo'] == 1){
-					$header = "From:".$settings['email_absender']."<".$settings['email_absender'].">\n";
-			        $email_betreff = $settings['sitename']." - Ein Benutzerkonto wurde für Sie angelegt";
 			        $emailbody = $settings['sitename']."\n\nFür Sie wurde ein neues Benutzerkonto angelegt. Sie können sich unter\n".$settings['absolut_url']."01acp/\nmit folgenden Zugangsdaten einloggen:\n\nBenutzername: ".$_POST['username']."\nPasswort: ".$password."\n\n---\nWebmailer";
 
-			        if(!mail(stripslashes($_POST['mail']),$email_betreff,$emailbody,$header)){
+					$mail = new PHPMailer;
+					configurePHPMailer($mail);
+					$mail->addAddress($_POST['mail']);
+					$mail->Subject = $settings['sitename']." - Ein Benutzerkonto wurde für Sie angelegt";
+					$mail->Body    = $emailbody;
+
+			        if(!$mail->send()){
 						echo "<p class=\"meldung_error\">Fehler: Es konnte keine E-Mail an den neuen Benutzer versand werden.</p>";
 						}
 					} 
@@ -322,14 +327,15 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "do_edit" && $userdata['
 				        // Datenbank aktualisieren:
 				        $mysqli->query("UPDATE ".$mysql_tables['user']." SET userpassword='".$newpassHash."', cookiehash='' WHERE id='".$mysqli->escape_string($_POST['userid'])."' AND id != '0' LIMIT 1");
 
-				        $header = "From:".$settings['email_absender']."<".$settings['email_absender'].">\n";
-				        $email_betreff = $settings['sitename']." - Neues Passwort für Administrationsbereich";
-				        $emailbody = "Mit dieser E-Mail erhalten Sie ein neues Passwort für den Adminbereich\n\nName: ".CleanStr($_POST['username'])."\nE-Mail-Adresse: ".$_POST['mail']."\nNeues Passwort: ".$newpass."\n\n---\nWebmailer";
-						$emailbody = preg_replace( "/(content-type:|bcc:|cc:|to:|from:)/im", "",$emailbody);
+				        $emailbody = "Mit dieser E-Mail erhalten Sie ein neues Passwort für den Administrationsbereich\n\nName: ".CleanStr($_POST['username'])."\nE-Mail-Adresse: ".$_POST['mail']."\nNeues Passwort: ".$newpass."\n\n---\nWebmailer";
 
-						$empf = preg_replace( "/[^a-z0-9 !?:;,.\/_\-=+@#$&\*\(\)]/im", "",$_POST['mail']);
-						$empf = preg_replace( "/(content-type:|bcc:|cc:|to:|from:)/im", "",$empf);
-				        mail($empf,$email_betreff,$emailbody,$header);
+						$mail = new PHPMailer;
+						configurePHPMailer($mail);
+						$mail->addAddress($_POST['mail']);
+						$mail->Subject = $settings['sitename']." - Neues Passwort für Administrationsbereich";
+						$mail->Body    = $emailbody;
+						$mail->send();
+
 				        $pwerror = false;
 					}
 				}

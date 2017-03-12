@@ -2220,4 +2220,33 @@ return intval($wert);
 }
 }
 
+
+// Globale PHPMailer-Instanz mit Defaultwerten konfigurieren
+/*$mail     Zu konfigurierende PHPMailer-Instanz
+
+RETURN: -
+*/
+if(!function_exists("configurePHPMailer")){
+function configurePHPMailer(&$mail){
+    global $settings;
+
+    // Versand soll per SMTP erfolgen
+    if($settings['smtp_enable'] == "1" && !empty($settings['smtp_host'])){
+        //$mail->SMTPDebug = 3;                               // Enable verbose debug output
+
+        $mail->isSMTP();                                      // Set mailer to use SMTP
+        $mail->Host = $settings['smtp_host'];
+        $mail->SMTPAuth = true;                               // Enable SMTP authentication
+        $mail->Username = $settings['smtp_username'];
+        $mail->Password = $settings['smtp_password'];
+        $mail->SMTPSecure = "tls";                            // Enable TLS encryption, `ssl` also accepted
+        $mail->Port = (!empty($settings['smtp_port'])) ? $settings['smtp_port'] : 587;
+    }
+
+    $mail->From = $settings['email_absender'];
+    $mail->FromName = $settings['email_absender'];
+
+    $mail->Encoding = "quoted-printable"; // Resolve Encoding issues with PHP >= 5.6 when sending from the Frontend
+}
+}
 ?>

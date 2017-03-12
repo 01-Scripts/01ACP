@@ -1,12 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2015 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2017 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Login-Formular für ACP-Bereich
-	#fv.131#
+	#fv.132#
 */
 
 $dontshow = true;
@@ -22,6 +22,7 @@ if(!isset($_POST['username'])) $_POST['username'] = "";
 
 // Config-Dateien
 include("system/main.php");
+include("system/includes/PHPMailerAutoload.php");
 
 //Logout
 if(isset($_GET['action']) && $_GET['action'] == "logout"){
@@ -136,11 +137,14 @@ elseif(isset($_POST['send']) && $_POST['send'] == 2){
         // Datenbank aktualisieren:
         $mysqli->query("UPDATE ".$mysql_tables['user']." SET userpassword='".$newpassmd5."' WHERE id='".$row['id']."'");
 
-        $header = "From:".$settings['email_absender']."<".$settings['email_absender'].">\n";
-        $email_betreff = $settings['sitename']." - Neues Passwort für Administrationsbereich";
-        $emailbody = "Mit dieser E-Mail erhalten Sie ein neues Passwort für den Administrationsbereich\n\nName: ".stripslashes($row['username'])."\nE-Mail-Adresse: ".stripslashes($row['mail'])."\nNeues Passwort: ".$newpass."\n\n---\nWebmailer";
+        $emailbody = "Mit dieser E-Mail erhalten Sie ein neues Passwort für den Administrationsbereich\n\nName: ".$row['username']."\nE-Mail-Adresse: ".$row['mail']."\nNeues Passwort: ".$newpass."\n\n---\nWebmailer";
 
-        mail(stripslashes($row['mail']),$email_betreff,$emailbody,$header);
+		$mail = new PHPMailer;
+		configurePHPMailer($mail);
+		$mail->addAddress($row['mail']);
+		$mail->Subject = $settings['sitename']." - Neues Passwort für Administrationsbereich";
+		$mail->Body    = $emailbody;
+		$mail->send();
 
         $message = "<p class=\"meldung_ok\"><b>Ein neues Passwort wurde an Ihre E-Mail-Adresse verschickt.</b></p>";
 		}

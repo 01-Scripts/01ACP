@@ -1,10 +1,10 @@
--- 01ACP - Copyright 2008-2015 by Michael Lorer - 01-Scripts.de
+-- 01ACP - Copyright 2008-2017 by Michael Lorer - 01-Scripts.de
 -- Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 -- Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 
 -- Modul:		01acp
 -- Dateiinfo:	SQL-Befehle für die Erstinstallation des 01ACP
--- #fv.131#
+-- #fv.132#
 --  **  **  **  **  **  **  **  **  **  **  **  **  **  **  **  **  *  *
 
 -- --------------------------------------------------------
@@ -227,7 +227,7 @@ INSERT INTO `01prefix_settings` (`modul`, `is_cat`, `catid`, `sortid`, `idname`,
 ('01acp', 0, 1, 3, 'absolut_url', 'Absolute URL', 'Bitte geben Sie die absolute URL (inkl. http://) zum Verzeichnis <i>01scripts/</i> ein.\r\nBeispiel: http://www.domainname.de/pfad/01scripts/', 'text', '50', '', '', '', 1, 0),
 ('01acp', 0, 1, 4, 'spamschutz', 'Spamschutz', 'Zur Nutzung von reCAPTCHA m&uuml;ssen Daten im Abschnitt <i>Webservices</i> hinterlegt werden.', '01ACP Captcha-Bild|reCAPTCHA|kein Spamschutz', '1|2|0', '<a href=\"javascript:popup(\'captcha_test\',\'\',\'\',\'\',500,550);\">Testen</a>', '1', '1', 0, 0),
 ('01acp', 0, 1, 5, 'acp_captcha4login', 'Captcha bei ACP-Login verwenden?', '', 'Ja|Nein', '1|0', '', '0', '0', 1, 0),
-('01acp', 0, 1, 0, 'acpversion', 'ACP-Version', '', 'text', '10', '', '1.3.1', '1.3.1', 0, 1),
+('01acp', 0, 1, 0, 'acpversion', 'ACP-Version', '', 'text', '10', '', '1.3.2', '1.3.2', 0, 1),
 ('01acp', 0, 1, 0, 'cachetime', 'Cachetime (XML)', '', 'text', '10', '', '', '0', 0, 1),
 ('01acp', 0, 1, 0, 'installed', 'installiert', '', 'text', '10', '', '1', '0', 0, 1),
 ('01acp', 1, 2, 2, 'cat_manager', 'Datei- und Bildmanager', NULL, 'text', '', NULL, NULL, NULL, 0, 0),
@@ -251,7 +251,7 @@ INSERT INTO `01prefix_settings` (`modul`, `is_cat`, `catid`, `sortid`, `idname`,
 ('01acp', 0, 4, 2, 'rss_sprache', 'Sprache', 'In welcher Sprache stellen Sie Ihre Informationen bereit? Eine &Uuml;bersicht der Sprachk&uuml;rzel finden Sie <a href=\\"http://de.selfhtml.org/diverses/sprachenkuerzel.htm\\" target=\\"_blank\\">hier</a>.', 'text', '10', '', 'de-de', 'de-de', 0, 0),
 ('01acp', 0, 4, 3, 'rss_copyright', 'Copyright-Informationen', '', 'textarea', '5|50', '', 'Die Inhalte werden unter einer Creative-Commons-Lizenz veröffentlicht, die <a href=\\"http://creativecommons.org/licenses/by-nc-sa/3.0/de/\\" target=\\"_blank\\">hier</a> einsehbar ist.', 'Die Inhalte werden unter einer Creative-Commons-Lizenz veröffentlicht, die unter folgender URL einsehbar ist:\r\nhttp://creativecommons.org/licenses/by-nc-sa/3.0/de/', 0, 0),
 ('01acp', 1, 5, 5, 'email_settings', 'E-Mail-Versand', NULL , NULL , NULL , NULL , NULL , NULL ,0,0),
-('01acp', 0, 5, 1, 'smtp_enable', 'E-Mail-Versand per SMTP <i>(Beta)</i>','Ausgehende E-Mails werden wenn m&ouml;glich &uuml;ber das nachfolgend konfigurierte SMTP-Konto versendet.','Ja|Nein','1|0','','0','0',0,0),
+('01acp', 0, 5, 1, 'smtp_enable', 'E-Mail-Versand per SMTP','Ausgehende E-Mails werden wenn m&ouml;glich &uuml;ber das nachfolgend konfigurierte SMTP-Konto versendet.','Ja|Nein','1|0','','0','0',0,0),
 ('01acp', 0, 5, 2, 'smtp_host', 'SMTP-Server','','text','50','','','',0,0),
 ('01acp', 0, 5, 3, 'smtp_port', 'SMTP-Server TCP Port','','text','50','','587','587',0,0),
 ('01acp', 0, 5, 4, 'smtp_username', 'SMTP Username','','text','50','','','',0,0),
