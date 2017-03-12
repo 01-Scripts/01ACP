@@ -194,6 +194,7 @@ elseif(isset($_REQUEST['step']) && $_REQUEST['step'] == 5 &&
     $mysqli = mysqli_init();
 	$mysqli->real_connect($_POST['mysql_host'], $_POST['mysql_username'], $_POST['mysql_passwort'], $_POST['mysql_datenbank']);
 	if ($mysqli->connect_errno) {
+        printf("Connect failed: %s\n", $mysqli->connect_error);
 	    echo "<p class=\"meldung_error\"><b>Fehler:</b> Es konnte keine Verbindung zum MySQL-Server 
 				und/oder der MySQL-Datenbank aufgebaut werden. Bitte gehen Sie zur&uuml;ck und &uuml;berpr&uuml;fen
 				Sie Ihre Zugangsdaten!<br />
