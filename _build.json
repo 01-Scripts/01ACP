@@ -37,10 +37,12 @@
     "01acp/system/includes/class.phpmailer.php",
     "01acp/system/includes/class.pop3.php",
     "01acp/system/includes/class.smtp.php",
+    "01acp/system/foot.php",
     "01acp/system/functions.php",
     "01acp/system/headinclude.php",
     "01acp/_up_data.php",
     "01acp/index.php",
+    "01acp/popups.php",
     "01acp/users.php"
   ]
 }

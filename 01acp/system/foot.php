@@ -12,14 +12,11 @@
 			</ul>
 	        </div>";
 	        
-	if($flag_credits || $flag_feedback)
-	    echo "<p class=\"small\" align=\"right\">";
-	if($flag_credits)
-		echo "<a href=\"javascript:popup('credits','','','',500,450);\">Credits</a>";
-    if($flag_feedback)
-		echo "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"javascript:popup('feedback','','','',500,350);\">Feedback</a>";
-	if($flag_credits || $flag_feedback)
-	    echo "</p>";
+	if($flag_credits){
+	    echo "<p class=\"small\" align=\"right\">
+			<a href=\"javascript:popup('credits','','','',500,450);\">Credits</a>
+	    	</p>";
+	}
 	?>
 	</div>
 </div>

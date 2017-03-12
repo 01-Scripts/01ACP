@@ -1,12 +1,12 @@
 <?PHP
 /* 
-	01ACP - Copyright 2008-2015 by Michael Lorer - 01-Scripts.de
+	01ACP - Copyright 2008-2017 by Michael Lorer - 01-Scripts.de
 	Lizenz: Creative-Commons: Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland
 	Weitere Lizenzinformationen unter: http://www.01-scripts.de/lizenz.php
 	
 	Modul:		01ACP
 	Dateiinfo:	Layout / Framework für Popup-Fenster des 01ACP
-	#fv.131#
+	#fv.132#
 */
 
 // Session starten:
@@ -459,10 +459,6 @@ self.window.close();
 	
 	
 	
-	
-	
-	
-	
 // Credits-Links
 if(isset($_REQUEST['action']) && $_REQUEST['action'] == "credits"){
 	echo "<h2>Credits</h2>";
@@ -470,63 +466,6 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "credits"){
 	include("system/includes/credits.html");
 
 	}//Ende: Credits-Links
-
-
-
-
-
-
-
-
-
-
-// Feedback-Formular
-if(isset($_REQUEST['action']) && $_REQUEST['action'] == "feedback"){
-?>
-<h2>Feedback senden / Fehler melden</h2>
-
-<form action="<?PHP echo $filename; ?>" method="post">
-<p>
-	Fehler gefunden? Idee oder Kritik? - Vielen Dank für Ihre Mithilfe:<br />
-	<textarea name="message" rows="8" cols="52"></textarea><br />
-	<span class="small">Es wird Ihre eingegebene Nachricht und die
-		zu Ihrem Benutzer-Account geh&ouml;rende E-Mail-Adresse (<?PHP echo $userdata['mail']; ?>)
-		an <b><?PHP echo FEEDBACK_MAIL; ?></b> übermittelt.
-	</span><br />
-	
-	<input type="submit" value="Absenden" class="input" />
-	<input type="hidden" name="action" value="send_feedback" />
-	<input type="hidden" name="send" value="1" />
-
-</p>
-</form>	
-	
-	
-<?PHP
-	}//Ende: Feedback-Formular
-	
-// Feedback-Formular senden
-if(isset($_REQUEST['action']) && $_REQUEST['action'] == "send_feedback" &&
-   isset($_REQUEST['message']) && !empty($_REQUEST['message'])){
-	
-	$header 		= "From:".$userdata['mail']."<".$userdata['mail'].">\n";
-	$email_betreff 	= "Neues Feedback - ID: #".md5(time().$userdata['mail'])."";
-	$emailbody 	 	= preg_replace("/(content-type:|bcc:|cc:|to:|from:)/im","",$_REQUEST['message']);
-    if(mail(FEEDBACK_MAIL,$email_betreff,$emailbody,$header))
-		echo "<p class=\"meldung_ok\"><b>Vielen Dank für Ihre Mithilfe. Das Feedback wurde erfolgreich
-				an ".FEEDBACK_MAIL." verschickt!</b><br />
-				<br />
-				<a href=\"javascript:window.close();\">Fenster schlie&szlig;en</a></p>";
-	else
-		echo "<p class=\"meldung_error\">Es trat ein Fehler auf. Das Feedback konnte nicht verschickt werden.<br />
-				<a href=\"javascript:history.back();\">Zur&uuml;ck</a></p>";
-	}
-
-
-
-
-
-
 
 
 

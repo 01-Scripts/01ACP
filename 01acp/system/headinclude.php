@@ -54,7 +54,6 @@ $catuploaddir 				= $picuploaddir."catpics/";
 // Sonstige Variablen
 $flag_modcheck 		= FALSE;
 $flag_showacpRSS 	= TRUE;						// RSS-Feed auf der ACP-Startseite anzeigen?
-$flag_feedback		= TRUE;						// Feedback-Link im Footer des 01ACP anzeigen?
 $flag_credits       = TRUE;						// Credits-Link  im Footer des 01ACP anzeigen?
 $flag_indivstorage	= FALSE;
 $stid				= 0;						// Formular-ID für Storage-Formlare (automatisches ++)
@@ -84,7 +83,6 @@ define('FILE_GIF_THUMB', 'gifthumb.gif');		// gif im Verzeichnis 01pics, dass st
 define('FILE_NO_THUMBS', 'no_thumbs.gif');		// gif im Verzeichnis 01pics, dass angezeigt wird, wenn kein Thumbnail vorhanden ist
 define('PW_LAENGE', 6);							// Minimale Passwortlänge
 define('RSS_GENERATOR', '01-ACP RSS-Generator');
-define('FEEDBACK_MAIL', 'feedback@01-scripts.de');
 define('CACHE_TIME', 600);						// Alle wieviel Sekunden soll die versionsinfo.xml vom Server abgerufen und gecached werden?
 define('CACHE_TIME_01RSS', 43200);				// Alle wieviel Sekunden soll der 01-Scripts.de RSS-Feed vom Server abgerufen und gecached werden?
 define('VINFO_WWW_HOST', 'www.01-scripts.de');
