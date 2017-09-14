@@ -274,8 +274,6 @@ RETURN: $return[catid][catid]	= Catid
 function getSettingCats($modul,$mysqltab){
 global $mysqli;
 
-$return = "";
-
 if(isset($modul) && !empty($modul)) $add2query = " AND modul='".$mysqli->escape_string($modul)."'";
 
 $list = $mysqli->query("SELECT modul,catid,name FROM ".$mysqltab." WHERE is_cat='1'".$add2query." ORDER BY modul,sortid,catid");
