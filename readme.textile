@@ -1,8 +1,8 @@
 h1. 01ACP
 
-Das "_01ACP_":http://www.01-scripts.de/01acp.php stellt einen zentralen Administrationsbereich dar, der entwickelt wurde um die Entwicklung von kundenspezifischen Modulen & Erweiterungen zu erleichtern. Das 01ACP übernimmt dabei die Verwaltung aller installierter Module zusammen mit allen Einstellungen, dem Benutzersystem, dem Kommentarsystem sowie der Datei- & Bildverwaltung (inkl. Multiupload-Funktionalität und WYSIWYG-Editor-Integration).
+Das "_01ACP_":https://www.01-scripts.de/01acp.php stellt einen zentralen Administrationsbereich dar, der entwickelt wurde um die Entwicklung von kundenspezifischen Modulen & Erweiterungen zu erleichtern. Das 01ACP übernimmt dabei die Verwaltung aller installierter Module zusammen mit allen Einstellungen, dem Benutzersystem, dem Kommentarsystem sowie der Datei- & Bildverwaltung (inkl. Multiupload-Funktionalität und WYSIWYG-Editor-Integration).
  Für den Administrationsbereich existieren mittlerweile verschiedene Module, die genutzt werden können. Alle administrativen Aufgaben können dann über eine identische Oberfläche zentral erledigt werden. Verschiedene Logins und Administrationsbereich entfallen dadurch.
-"Weitere Informationen...":http://www.01-scripts.de/01acp.php
+"Weitere Informationen...":https://www.01-scripts.de/01acp.php
 
 h2. Features
 
@@ -19,11 +19,11 @@ h2. Features
 h2. Download
 
 Die jeweils aktuellste Version des 01ACP kann unter
-"http://www.01-scripts.de/01acp.php":http://www.01-scripts.de/01acp.php
+"https://www.01-scripts.de/01acp.php":https://www.01-scripts.de/01acp.php
 heruntergeladen werden.
 
 Einzelne Update-Pakete für alle veröffentlichten Updates sind hier zu finden:
-"http://www.01-scripts.de/01acp.php?updates":http://www.01-scripts.de/01acp.php?updates
+"https://www.01-scripts.de/01acp.php?updates":https://www.01-scripts.de/01acp.php?updates
 
 h2. Repository
 
@@ -31,13 +31,13 @@ Das vorliegende Github-Repository enthält alle Änderungen am 01ACP seit Version 
 
 h2. Lizenz
 
-Das 01ACP ist unter "CC BY-NC-SA":http://www.01-scripts.de/lizenz.php -Lizenz veröffentlicht:
+Das 01ACP ist unter "CC BY-NC-SA":https://www.01-scripts.de/lizenz.php -Lizenz veröffentlicht:
 
 *Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland*
 
-* Alle PHP-Scripte von "01-Scripts.de":http://www.01-scripts.de können für den privaten, nicht-kommerziellen Einsatz kostenlos genutzt werden. 
+* Alle PHP-Scripte von "01-Scripts.de":https://www.01-scripts.de können für den privaten, nicht-kommerziellen Einsatz kostenlos genutzt werden. 
 * Für die kommerzielle Nutzung (darunter fällt auch der Einsatz auf Firmenseiten!) können Sie eine Lizenz zur kommerziellen Nutzung erwerben.
 * Wenn Sie den sichtbaren Urheberrechtshinweis entfernen möchten, erwerben Sie bitte eine Non-Copyright-Lizenz.
 
 Lizenzen können hier erworben werden:
-"http://www.01-scripts.de/shop.php":http://www.01-scripts.de/shop.php
+"https://www.01-scripts.de/shop.php":https://www.01-scripts.de/shop.php
