@@ -1,4 +1,0 @@
-TinyMCE-Version:		3.5.9 ( http://www.tinymce.com/forum/viewtopic.php?id=32792 )
-Datum:				10.10.2013
-Changelog:			http://www.tinymce.com/develop/changelog/index.php?type=tinymce
-http://tinymce.moxiecode.com/index.php

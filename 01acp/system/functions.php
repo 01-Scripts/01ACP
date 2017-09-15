@@ -775,7 +775,7 @@ $return = "";
 
 // .js-Datei nur einmalig einbinden
 if(!isset($_GLOBALS['tiny_loaded']) OR isset($_GLOBALS['tiny_loaded']) && $_GLOBALS['tiny_loaded'] == FALSE){
-	$return .= "<script language=\"javascript\" type=\"text/javascript\" src=\"system/tiny_mce/tiny_mce.js\"></script>";
+	$return .= "<script language=\"javascript\" type=\"text/javascript\" src=\"system/tinymce/tinymce.min.js\"></script>";
 	$_GLOBALS['tiny_loaded'] = TRUE;
 	}
 
@@ -786,7 +786,16 @@ elseif(isset($settings['csscode']) && !empty($settings['csscode']) && (empty($se
 	$cssfile = "content_css : '".CSS_CACHE_DATEI."',";
 else
 	$cssfile = "";
-	
+
+$return .= "
+<script language=\"javascript\" type=\"text/javascript\">
+tinyMCE.init({
+    selector: 'textarea',
+    menubar: false
+});
+</script>\n\n";
+
+/*	
 $return .= "
 <script language=\"javascript\" type=\"text/javascript\">
 tinyMCE.init({
@@ -846,6 +855,7 @@ $return .= "\nplugins : \"".$plugins.$load_plugins."\",
 mode : \"textareas\"
 });
 </script>\n\n";
+*/
 
 return $return;
 }

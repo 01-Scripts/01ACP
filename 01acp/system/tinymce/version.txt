@@ -1,0 +1,2 @@
+TinyMCE-Version: 4.6.6
+https://www.tinymce.com/
