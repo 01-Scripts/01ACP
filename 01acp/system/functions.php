@@ -38,7 +38,7 @@ $slc = $mysqli->query($query);
 $sc = $slc->num_rows;
 $sites = ceil($sc/$perpage);
 
-if(isset($_REQUEST[$get_var]) && $_REQUEST[$get_var] != "" && $_REQUEST[$get_var] <= $sites){
+if(isset($_REQUEST[$get_var]) && is_int($_REQUEST[$get_var]) && $_REQUEST[$get_var] > 0 && $_REQUEST[$get_var] <= $sites){
     $start = $_REQUEST[$get_var]*$perpage-$perpage;
     $query .= " LIMIT ".$mysqli->escape_string($start).",".$mysqli->escape_string($perpage)."";
     }
