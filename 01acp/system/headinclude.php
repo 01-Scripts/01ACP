@@ -16,8 +16,8 @@
 $flag_sessionbugfix = FALSE;					// Workaround fuer Session-Bug im FnacyUp-Fileuploader
 if(session_id() == "" && $flag_sessionbugfix || !$flag_sessionbugfix) @session_start();
 
-@error_reporting(E_ERROR | E_WARNING | E_PARSE);
-//error_reporting(E_ALL);
+//@error_reporting(E_ERROR | E_WARNING | E_PARSE);
+error_reporting(E_ALL);
 @ini_set('session.bug_compat_warn', "0");
 //@ini_set("register_globals", "0");
 
