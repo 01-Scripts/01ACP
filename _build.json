@@ -28,7 +28,11 @@
     "01files/.gitignore",
     "01module/.gitignore",
     "01pics/.gitignore",
+    "dok/01acp_dropdown.gif",
+    "dok/01acp_module.gif",
+    "dok/01acp_moduleinstellungen.gif",
     ".gitattributes",
+    "readme.md",
     "_build.json",
     "update_liesmich.txt"
   ],

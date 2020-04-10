@@ -69,13 +69,15 @@ Laden sie das Verzeichnis (z.B.  `01article/`) mit ihrem  FTP-Programm  in folge
 
 Loggen sie sich nun mit ihrem Admin-Account in das 01ACP ein.  
 Nach dem Login finden sie im linken Menü der 01ACP-Startseite den Menüpunkt _Module verwalten_  klicken sie auf ihn.
-![Menüpunkt Module verwalten zur Modul-Installation](https://www.01-scripts.de/assets/img/doku/01acp_module.gif)
+![Menüpunkt Module verwalten zur Modul-Installation](dok/01acp_module.gif)
+
 In der erscheinenden Tabelle werden alle vorhandenen Module aufgelistet. Mit einem Klick auf den grünen Plus-Button starten sie die Installation des gewünschten Moduls.  
 Geben sie einen Installationsnamen für das Modul an.  
 Nach der Installation steht das Modul sofort zur Verfügung. In den Einstellungen können nun die Einstellungen für das installierte Modul vorgenommen werden.
-![Für Modul-Einstellungen das entsprechende Modul im Dropdown auswählen](https://www.01-scripts.de/assets/img/doku/01acp_moduleinstellungen.gif)
+![Für Modul-Einstellungen das entsprechende Modul im Dropdown auswählen](dok/01acp_moduleinstellungen.gif)
+
 Die Startseite des Moduls rufen sie über die Drop-Down-Box oben rechts im 01ACP auf:
-![Die Modul-Startseite ist per Dropdown oben rechts zu erreichen](https://www.01-scripts.de/assets/img/doku/01acp_dropdown.gif)
+![Die Modul-Startseite ist per Dropdown oben rechts zu erreichen](dok/01acp_dropdown.gif)
 
 ## Lizenz
 
