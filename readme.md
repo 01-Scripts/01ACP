@@ -1,18 +1,18 @@
 # 01ACP
 
-Das **01ACP** stellt einen zentralen Administrationsbereich dar, der entwickelt wurde um die Entwicklung von kundenspezifischen Modulen & Erweiterungen zu erleichtern. Das 01ACP übernimmt dabei die Verwaltung aller installierter Module zusammen mit allen Einstellungen, dem Benutzersystem, dem Kommentarsystem sowie der Datei- & Bildverwaltung (inkl. Multiupload-Funktionalität und WYSIWYG-Editor-Integration).
-Für den Administrationsbereich existieren mittlerweile verschiedene Module, die genutzt werden können. Alle administrativen Aufgaben können dann über eine identische Oberfläche zentral erledigt werden. Verschiedene Logins und Administrationsbereich entfallen dadurch.
+Das **01ACP** stellt einen zentralen Administrationsbereich dar, der entwickelt wurde um die Entwicklung von kundenspezifischen Modulen & Erweiterungen zu erleichtern. Das 01ACP Ã¼bernimmt dabei die Verwaltung aller installierter Module zusammen mit allen Einstellungen, dem Benutzersystem, dem Kommentarsystem sowie der Datei- & Bildverwaltung (inkl. Multiupload-FunktionalitÃ¤t und WYSIWYG-Editor-Integration).
+FÃ¼r den Administrationsbereich existieren mittlerweile verschiedene Module, die genutzt werden kÃ¶nnen. Alle administrativen Aufgaben kÃ¶nnen dann Ã¼ber eine identische OberflÃ¤che zentral erledigt werden. Verschiedene Logins und Administrationsbereich entfallen dadurch.
 
 ## Features
 
 * WYSIWYG-Editor (TinyMCE) integriert 
-* Module online installieren verwalten, aktualisieren, deaktivieren   löschen
-* Einstellungen online für alle Module vornehmen
-* Benutzerverwaltung (Benutzer anlegen, Berechtigungen & Einstellungen für alle Module verwalten, Benutzer sperren, etc.)
-* Datei- & Bildverwaltung (Multipload-Funktion, Dateien bearbeiten, einbinden und löschen, Verzeichnisse erstellen und verwalten)
-* Dynamische Resize- und Caching-Funktion für hochgeladene Bilder
+* Module online installieren verwalten, aktualisieren, deaktivieren   lÃ¶schen
+* Einstellungen online fÃ¼r alle Module vornehmen
+* Benutzerverwaltung (Benutzer anlegen, Berechtigungen & Einstellungen fÃ¼r alle Module verwalten, Benutzer sperren, etc.)
+* Datei- & Bildverwaltung (Multipload-Funktion, Dateien bearbeiten, einbinden und lÃ¶schen, Verzeichnisse erstellen und verwalten)
+* Dynamische Resize- und Caching-Funktion fÃ¼r hochgeladene Bilder
 * Zentrales Kommentarsystem (inkl. Antispam- & Zensurfunktion) zur Nutzung in allen Modulen integriert
-* Erstellung von eigenen Modulen auf Basis des 01ACP möglich
+* Erstellung von eigenen Modulen auf Basis des 01ACP mÃ¶glich
 * kostenlos (CC BY-NC-SA-Lizenz)
 
 ## Download
@@ -21,19 +21,19 @@ Die jeweils aktuellste Version des 01ACP kann unter
 [https://www.01-scripts.de/down_zip.php?godownload=1&01acp=1](https://www.01-scripts.de/down_zip.php?godownload=1&01acp=1)
 heruntergeladen werden.
 
-Einzelne Update-Pakete für alle veröffentlichten Updates sind hier zu finden:
+Einzelne Update-Pakete fÃ¼r alle verÃ¶ffentlichten Updates sind hier zu finden:
 [https://www.01-scripts.de/downloads.php](https://www.01-scripts.de/downloads.php)
 
 ## Installation
 
 ### Den Administrationsbereich (01ACP) installieren
 
-Um einzelne Module wie das [01-Artikelsystem](https://github.com/01-Scripts/01-Artikelsystem) oder die [01-Gallery](https://github.com/01-Scripts/01-Gallery) zu installieren, muss zuerst einmalig der für alle Module benötigte Administrationsbereich (das [01ACP](https://github.com/01-Scripts/01ACP)) installiert werden:
+Um einzelne Module wie das [01-Artikelsystem](https://github.com/01-Scripts/01-Artikelsystem) oder die [01-Gallery](https://github.com/01-Scripts/01-Gallery) zu installieren, muss zuerst einmalig der fÃ¼r alle Module benÃ¶tigte Administrationsbereich (das [01ACP](https://github.com/01-Scripts/01ACP)) installiert werden:
 
 #### Dateien hochladen
 
 Entpacken sie das heruntergeladene .zip-Archiv in einen beliebigen Ordner auf ihrer lokalen Festplatte.  
-Im Verzeichnis  `Administrationsbereich/`  finden sie das Verzeichnis  `01scripts/`  das alle Dateien zur Installation des 01ACP enthält.  
+Im Verzeichnis  `Administrationsbereich/`  finden sie das Verzeichnis  `01scripts/`  das alle Dateien zur Installation des 01ACP enthÃ¤lt.  
 Laden sie das gesamte  `01scripts/`-Verzeichnis mit ihrem  FTP-Programm  in das Hauptverzeichnis ihrer Internetseite hoch. Achten sie dabei unbedingt darauf, dass die Datei- und Verzeichnisstruktur erhalten bleibt!  
   
 Im Idealfalls sollte sich nach dem Hochladen der Daten das Verzeichnis  `01scripts/`  auf der gleichen Verzeichnisebene befinden wie ihre Index- oder Startdatei (meist index.php).
@@ -43,20 +43,20 @@ Im Idealfalls sollte sich nach dem Hochladen der Daten das Verzeichnis  `01scrip
 Nachdem sie alle Dateien auf ihren Webspace hochgeladen haben rufen sie in ihrem Browser bitte folgende Internetadresse auf:  
 `http://www.ihre-domain.de/01scripts/01acp/install.php`  
   
-Falls sich das Verzeichnis  `01scripts/`  **nicht**  im Hauptverzeichnis ihrer Internetseite befindet, müssen sie den Pfad der URL entsprechend anpssen:  
+Falls sich das Verzeichnis  `01scripts/`  **nicht**  im Hauptverzeichnis ihrer Internetseite befindet, mÃ¼ssen sie den Pfad der URL entsprechend anpssen:  
 `http://www.ihre-domain.de/pfad-zum-script/01scripts/01acp/install.php`  
   
-Sie werden anschließend mit der Installationsroutine durch die weitere Installation des 01ACP geführt. Folgen sie dazu einfach den Anweisungen auf dem Bildschirm.
+Sie werden anschlieÃŸend mit der Installationsroutine durch die weitere Installation des 01ACP gefÃ¼hrt. Folgen sie dazu einfach den Anweisungen auf dem Bildschirm.
 
 #### Module installieren
 
-Nachdem sie das 01ACP erfolgreich installiert haben und den ersten Benutzer-Account angelegt haben löschen sie bitte aus Sicherheitsgründen die beiden Dateien install.php und install_sql.php!  
-Anschließend loggen sie sich bitte mit ihrem Admin-Account den sie bei der Installation angelegt haben, in den Administrationsbereich ein:  
+Nachdem sie das 01ACP erfolgreich installiert haben und den ersten Benutzer-Account angelegt haben lÃ¶schen sie bitte aus SicherheitsgrÃ¼nden die beiden Dateien install.php und install_sql.php!  
+AnschlieÃŸend loggen sie sich bitte mit ihrem Admin-Account den sie bei der Installation angelegt haben, in den Administrationsbereich ein:  
 `http://www.ihre-domain.de/01scripts/01acp/index.php`
 
 ### Module in das 01ACP installieren
 
-Für die weiteren Schritte muss das 01ACP bereits installiert sein!
+FÃ¼r die weiteren Schritte muss das 01ACP bereits installiert sein!
 
 #### Modul-Verzeichnis hochladen
 
@@ -68,26 +68,29 @@ Laden sie das Verzeichnis (z.B.  `01article/`) mit ihrem  FTP-Programm  in folge
 #### Hochgeladenes Modul installieren
 
 Loggen sie sich nun mit ihrem Admin-Account in das 01ACP ein.  
-Nach dem Login finden sie im linken Menü der 01ACP-Startseite den Menüpunkt _Module verwalten_  klicken sie auf ihn.
-![Menüpunkt Module verwalten zur Modul-Installation](dok/01acp_module.gif)
+Nach dem Login finden sie im linken MenÃ¼ der 01ACP-Startseite den MenÃ¼punkt _Module verwalten_  klicken sie auf ihn.
 
-In der erscheinenden Tabelle werden alle vorhandenen Module aufgelistet. Mit einem Klick auf den grünen Plus-Button starten sie die Installation des gewünschten Moduls.  
-Geben sie einen Installationsnamen für das Modul an.  
-Nach der Installation steht das Modul sofort zur Verfügung. In den Einstellungen können nun die Einstellungen für das installierte Modul vorgenommen werden.
-![Für Modul-Einstellungen das entsprechende Modul im Dropdown auswählen](dok/01acp_moduleinstellungen.gif)
+![MenÃ¼punkt Module verwalten zur Modul-Installation](dok/01acp_module.gif)
 
-Die Startseite des Moduls rufen sie über die Drop-Down-Box oben rechts im 01ACP auf:
+In der erscheinenden Tabelle werden alle vorhandenen Module aufgelistet. Mit einem Klick auf den grÃ¼nen Plus-Button starten sie die Installation des gewÃ¼nschten Moduls.  
+Geben sie einen Installationsnamen fÃ¼r das Modul an.  
+Nach der Installation steht das Modul sofort zur VerfÃ¼gung. In den Einstellungen kÃ¶nnen nun die Einstellungen fÃ¼r das installierte Modul vorgenommen werden.
+
+![FÃ¼r Modul-Einstellungen das entsprechende Modul im Dropdown auswÃ¤hlen](dok/01acp_moduleinstellungen.gif)
+
+Die Startseite des Moduls rufen sie Ã¼ber die Drop-Down-Box oben rechts im 01ACP auf:
+
 ![Die Modul-Startseite ist per Dropdown oben rechts zu erreichen](dok/01acp_dropdown.gif)
 
 ## Lizenz
 
-Das 01ACP ist unter [CC BY-NC-SA](https://creativecommons.org/licenses/by-nc-sa/3.0/de/) -Lizenz veröffentlicht
+Das 01ACP ist unter [CC BY-NC-SA](https://creativecommons.org/licenses/by-nc-sa/3.0/de/) -Lizenz verÃ¶ffentlicht
 
 *Namensnennung-Keine kommerzielle Nutzung-Weitergabe unter gleichen Bedingungen 3.0 Deutschland*
 
-* Alle PHP-Scripte von [01-Scripts.de](https://www.01-scripts.de) können für den privaten, nicht-kommerziellen Einsatz kostenlos genutzt werden. 
-* Für die kommerzielle Nutzung (darunter fällt auch der Einsatz auf Firmenseiten!) können Sie eine Lizenz zur kommerziellen Nutzung [erwerben](https://www.01-scripts.de/shop.php).
-* Wenn Sie den sichtbaren Urheberrechtshinweis entfernen möchten, erwerben Sie bitte eine Non-Copyright-Lizenz.
+* Alle PHP-Scripte von [01-Scripts.de](https://www.01-scripts.de) kÃ¶nnen fÃ¼r den privaten, nicht-kommerziellen Einsatz kostenlos genutzt werden. 
+* FÃ¼r die kommerzielle Nutzung (darunter fÃ¤llt auch der Einsatz auf Firmenseiten!) kÃ¶nnen Sie eine Lizenz zur kommerziellen Nutzung [erwerben](https://www.01-scripts.de/shop.php).
+* Wenn Sie den sichtbaren Urheberrechtshinweis entfernen mÃ¶chten, erwerben Sie bitte eine Non-Copyright-Lizenz.
 
-Lizenzen können hier bestellt werden:
+Lizenzen kÃ¶nnen hier bestellt werden:
 [https://www.01-scripts.de/shop.php](https://www.01-scripts.de/shop.php)
