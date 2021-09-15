@@ -11,7 +11,7 @@
 
 $menuecat = "01acp_settings";
 $sitetitle = "Einstellungen";
-$filename = $_SERVER['PHP_SELF'];
+$filename = $_SERVER['SCRIPT_NAME'];
 
 // Config-Dateien
 include("system/main.php");

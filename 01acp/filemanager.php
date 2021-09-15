@@ -11,7 +11,7 @@
 
 $menuecat = "01acp_filemanager";
 $sitetitle = "Datei- &amp; Bildverwaltung";
-$filename = $_SERVER['PHP_SELF'];
+$filename = $_SERVER['SCRIPT_NAME'];
 $mootools_use = array("moo_core","moo_more","moo_remooz","moo_request","moo_dragdrop");
 
 

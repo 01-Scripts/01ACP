@@ -11,7 +11,7 @@
 
 $menuecat = "01acp_module";
 $sitetitle = "Module verwalten";
-$filename = $_SERVER['PHP_SELF'];
+$filename = $_SERVER['SCRIPT_NAME'];
 $flag_stopupdate = FALSE;
 
 // Config-Dateien

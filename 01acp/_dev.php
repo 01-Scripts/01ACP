@@ -10,7 +10,7 @@
 
 $menuecat = "01acp_start";
 $sitetitle = "Dev-Übersicht";
-$filename = $_SERVER['PHP_SELF'];
+$filename = $_SERVER['SCRIPT_NAME'];
 
 // Config-Dateien
 include("system/main.php");

@@ -9,7 +9,7 @@
 	#fv.130#
 */
 
-if(!isset($filename)) $filename = $_SERVER['PHP_SELF'];
+if(!isset($filename)) $filename = $_SERVER['SCRIPT_NAME'];
 if(!isset($_REQUEST['formname'])) $_REQUEST['formname'] = "";
 if(!isset($_REQUEST['type'])) $_REQUEST['type'] = "";
 if(!isset($_REQUEST['returnvalue'])) $_REQUEST['returnvalue'] = "";

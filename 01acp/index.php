@@ -12,7 +12,7 @@
 $dontshow = true;
 $menuecat = "login";
 $sitetitle = "Anmelden";
-$filename = $_SERVER['PHP_SELF'];
+$filename = $_SERVER['SCRIPT_NAME'];
 $message = "";
 $menge = 0;
 $error = 1;

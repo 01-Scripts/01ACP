@@ -15,7 +15,7 @@ if(!isset($_REQUEST['loadpage'])) $_REQUEST['loadpage'] = "";
 
 $menuecat = $modul;
 $sitetitle = $module[$modul]['instname'];
-$filename = $_SERVER['PHP_SELF']."?modul=".$modul."&amp;loadpage=".$_REQUEST['loadpage'];
+$filename = $_SERVER['SCRIPT_NAME']."?modul=".$modul."&amp;loadpage=".$_REQUEST['loadpage'];
 
 include("system/head.php");
 

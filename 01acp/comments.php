@@ -17,7 +17,7 @@ $mootools_use = array("moo_core","moo_more","moo_slideh","moo_request");
 include("system/main.php");
 include("system/head.php");
 
-$filename = $_SERVER['PHP_SELF']."?modul=".$modul."";
+$filename = $_SERVER['SCRIPT_NAME']."?modul=".$modul."";
 
 // Sicherheitsabfrage: Login
 if(isset($userdata['id']) && $userdata['id'] > 0 && $userdata['editcomments'] == 1){
@@ -141,7 +141,7 @@ if($modul != "01acp"){
 	}
 else{
 	echo "<div class=\"meldung_hinweis\"><p><b>Bitte w&auml;hlen Sie ein Modul</b></p>".
-		create_ModulForm($_SERVER['PHP_SELF']."?","input",TRUE)."</div>";
+		create_ModulForm($_SERVER['SCRIPT_NAME']."?","input",TRUE)."</div>";
 	}
 
 

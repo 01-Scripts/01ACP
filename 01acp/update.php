@@ -11,7 +11,7 @@
 
 $menuecat = "01acp_start";
 $sitetitle = "01ACP aktualisieren";
-$filename = $_SERVER['PHP_SELF'];
+$filename = $_SERVER['SCRIPT_NAME'];
 $flag_acp = TRUE;
 $flag_nofunctions = TRUE;
 $flag_loginerror = FALSE;

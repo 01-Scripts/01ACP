@@ -11,7 +11,7 @@
 
 $menuecat = "01acp_users";
 $sitetitle = "Benutzerverwaltung";
-$filename = $_SERVER['PHP_SELF'];
+$filename = $_SERVER['SCRIPT_NAME'];
 $mootools_use = array("moo_core","moo_more","moo_slidev");
 
 // Config-Dateien

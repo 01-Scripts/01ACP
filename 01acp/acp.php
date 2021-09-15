@@ -12,7 +12,7 @@
 $menuecat = "01acp_start";
 $sitetitle = "Startseite";
 $mootools_use = array("moo_core","moo_more","moo_slideh","moo_request");
-$filename = $_SERVER['PHP_SELF'];
+$filename = $_SERVER['SCRIPT_NAME'];
 
 
 // Config-Dateien
